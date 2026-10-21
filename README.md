@@ -25,6 +25,7 @@ In this implementation there are 17 levels, indexed 0-16. (The implementation au
 Pyramid: referring to Tile Pyramid/image pyramid.
 
 ![Tile pyramid][image1]
+[image1]: TilePyramid-1024x893.jpg
 
 Each level of the pyramid has a different level of resolution.
 
