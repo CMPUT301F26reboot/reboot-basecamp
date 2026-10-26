@@ -7,13 +7,6 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
  * Has functionality to add a message
  *
  */
-class Chat (owner: Profile, entrant: Profile, ){
+class Chat (val owner: Profile, val entrant: Profile, ){
     var Logs = ArrayList<LogEntry>() //list of messages
-
-    /**
-     * adds a message to the chat
-     */
-    fun add(message: LogEntry){ //adding message to chat
-        Logs.add(message)
-    }
 }

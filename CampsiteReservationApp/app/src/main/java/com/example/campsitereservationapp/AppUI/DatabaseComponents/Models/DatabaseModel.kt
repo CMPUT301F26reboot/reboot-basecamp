@@ -14,6 +14,8 @@ import kotlin.math.log
 
 open class DatabaseModel :ViewModel() {
     protected var db = Firebase.firestore
+
+    //Every collection
     protected var listingsRef = db.collection("Listings")
     protected var lotteriesRef = db.collection("Lotteries")
     protected var profilesRef = db.collection("Profiles")
@@ -21,6 +23,7 @@ open class DatabaseModel :ViewModel() {
     protected var logentriesRef = db.collection("LogEntries")
     protected var chatsRef = db.collection("Chats")
 
+    //Every local copy of each collection
     protected var _listings = ArrayList<Listing>()
     protected var _lotteries = ArrayList<Lottery>()
     protected var _profiles = ArrayList<Profile>()
@@ -28,6 +31,7 @@ open class DatabaseModel :ViewModel() {
     protected var _logentries = ArrayList<LogEntry>()
     protected var _chats = ArrayList<Chat>()
 
+    //Adding a listener to each collection to update local copies
     init{
         listingsRef.addSnapshotListener{ snapshot, error ->
             if(error != null){

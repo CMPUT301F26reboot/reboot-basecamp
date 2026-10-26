@@ -2,5 +2,5 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import java.util.Date
 
-class Reservation (dates: ArrayList<Date>, entrant: Profile, campsite: Listing) {
+class Reservation (var dates: ArrayList<Date>, var entrant: Profile, var campsiteName: String) {
 }
