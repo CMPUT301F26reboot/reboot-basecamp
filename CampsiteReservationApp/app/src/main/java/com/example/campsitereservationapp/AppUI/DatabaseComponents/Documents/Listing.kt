@@ -2,15 +2,14 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import android.location.Location
 
-
-class Listing (
+class Listing(
     var name: String,
-    var location: String,
-    var capacity: Int,
+    var address: String,
+    var maxOccupancy: Int,
     var description: String,
     var rating: Float,
-    var photo: String,
+    var ownerName: String,
+    var tags: ArrayList<String>,
+    var photoUrls: ArrayList<String>,
     var geoLocation: Location
-){
-
-}
+)
