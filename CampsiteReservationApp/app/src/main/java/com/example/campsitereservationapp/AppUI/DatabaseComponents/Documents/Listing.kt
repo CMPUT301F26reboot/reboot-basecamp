@@ -3,13 +3,13 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 import android.location.Location
 
 class Listing(
-    var name: String,
-    var address: String,
-    var maxOccupancy: Int,
-    var description: String,
-    var rating: Float,
-    var ownerName: String,
-    var tags: ArrayList<String>,
-    var photoUrls: ArrayList<String>,
-    var geoLocation: Location
+    var name: String = "",
+    var address: String = "",
+    var maxOccupancy: Int = 0,
+    var description: String = "",
+    var rating: Double = 0.0, //change F->D (firebase only has doubles)
+    var ownerName: String = "",
+    var tags: ArrayList<String> = ArrayList(),
+    var photoUrls: ArrayList<String> = ArrayList(),
+    var availability: String = ""
 )
