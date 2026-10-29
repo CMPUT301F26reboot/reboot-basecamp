@@ -31,6 +31,9 @@ open class DatabaseModel :ViewModel() {
     protected var _logentries = ArrayList<LogEntry>()
     protected var _chats = ArrayList<Chat>()
 
+
+    open val listings: List<Listing> get() = _listings //added
+
     //Adding a listener to each collection to update local copies
     init{
         listingsRef.addSnapshotListener{ snapshot, error ->
@@ -116,6 +119,11 @@ open class DatabaseModel :ViewModel() {
                 }
             }
         }
+    }
+
+    //add delete methods
+    fun addListing(listing: Listing){
+        listingsRef.document(listing.name).set(listing)
     }
 
 

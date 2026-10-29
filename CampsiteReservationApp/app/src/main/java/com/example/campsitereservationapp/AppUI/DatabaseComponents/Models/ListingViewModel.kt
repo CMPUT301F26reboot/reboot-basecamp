@@ -6,7 +6,7 @@ import java.util.Date
 
 open class ListingViewModel: DatabaseModel() {
     //Read only list of Listings for screens
-    val listings: List<Listing> get() = _listings
+    override val listings: List<Listing> get() = _listings
 
     /**
      * Gets available dates of a listing
