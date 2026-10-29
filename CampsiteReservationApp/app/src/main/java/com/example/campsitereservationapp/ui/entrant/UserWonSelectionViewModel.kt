@@ -12,6 +12,9 @@ class UserWonSelectionViewModel(
     val repository: DatabaseModel = DatabaseModel()
 ) : ViewModel() {
 
+    //get listings from repository
+    val listings: List<Listing> get() = repository.listings
+
     init {//adding test data
         repository.addListing(
             Listing(

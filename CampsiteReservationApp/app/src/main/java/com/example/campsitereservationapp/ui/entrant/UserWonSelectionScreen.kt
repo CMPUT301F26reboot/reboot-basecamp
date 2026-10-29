@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 
 
 /**
@@ -64,11 +65,9 @@ fun UserWonSelectionScreen(
     onFinished: () -> Unit,
     viewModel: UserWonSelectionViewModel = viewModel()
 ) {
-    //get campsite listings and
-    val listings = viewModel.CampsiteListings
-    var selectedCampsite by remember {
-        mutableStateOf(value = listings.firstOrNull())
-    }
+
+    //state variable to remember what was selected, default null (nothing selected)
+    var selectedCampsite by remember {mutableStateOf<Listing?>(value = null)}
 
     Scaffold(
         //==============BACKBUTTON================
@@ -89,7 +88,7 @@ fun UserWonSelectionScreen(
                 }
             }
         },
-        //bottom button and review warning
+        //bottom button
         bottomBar = {
             Column(
                 modifier = Modifier
@@ -113,14 +112,6 @@ fun UserWonSelectionScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                val selectedTitle = selectedCampsite?.title ?: "campsite"
-                Text(
-                    text = "Review $selectedTitle details before you book.",
-                    color = Color(0xFF6B7280)
-                )
             }
         }
     ) { padding ->
@@ -134,7 +125,7 @@ fun UserWonSelectionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-            ) { //=======================TITLE AND SUBHEADER++++++++++++++++++
+            ) { //=======================TITLE AND SUBHEADER=====================
                 Text(
                     text = "Choose a campsite",
                     fontWeight = FontWeight.Bold,
@@ -182,14 +173,16 @@ fun UserWonSelectionScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    //Title
                     Text(
                         text = "Campsites in this lottery",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color(0xFF111827)
                     )
+                    //number of campsites counter
                     Text(
-                        text = "${viewModel.CampsiteListings?.size ?: 0} sites",
+                        text = "${viewModel.listings.size} sites",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFF6B7280)
                     )
@@ -206,13 +199,13 @@ fun UserWonSelectionScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                items(viewModel.CampsiteListings.orEmpty()) { campsite ->
-                    val isSelected = (campsite == selectedCampsite)
+                items(viewModel.listings.orEmpty()) { listing ->
+                    val isSelected = (listing == selectedCampsite)
 
                     UserWonSelectionCampsiteCard(
-                        campsite = campsite,
+                        listing = listing,
                         isSelected = isSelected,
-                        onSelect = { selectedCampsite = campsite }
+                        onSelect = { selectedCampsite = listing }
                     )
                 }
             }
@@ -225,14 +218,13 @@ fun UserWonSelectionScreen(
  * Composable card displaying details for a single campsite option within a won lottery.
  * Includes thumbnail image, location, capacity, star rating, availability dates, and a selection radio button.
  *
- * @param campsite the [CampsiteInfo] model containing campsite details.
  * @param modifier optional [Modifier] applied to the outer [Surface].
  * @param isSelected whether this campsite card is currently selected by the user.
  * @param onSelect callback triggered when the user clicks this campsite card or its radio button.
  */
 @Composable
 fun UserWonSelectionCampsiteCard(
-    campsite: CampsiteInfo,
+    listing: Listing,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     onSelect: () -> Unit = {}
@@ -269,10 +261,12 @@ fun UserWonSelectionCampsiteCard(
                         .background(Color(0xFFE5E7EB)),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (!campsite.image.isNullOrEmpty()) {
+                    //select first photo, show nothing if Null
+                    val firstPhoto = listing.photoUrls.firstOrNull()
+                    if (firstPhoto!= null) {
                         AsyncImage(
-                            model = campsite.image,
-                            contentDescription = campsite.title,
+                            model = firstPhoto,
+                            contentDescription = listing.name,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -291,13 +285,13 @@ fun UserWonSelectionCampsiteCard(
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Text(
-                        text = campsite.title,
+                        text = listing.name,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF111827)
                     )
                     Text(
-                        text = campsite.address,
+                        text = listing.address,
                         fontSize = 12.sp,
                         color = Color(0xFF6B7280)
                     )
@@ -313,7 +307,7 @@ fun UserWonSelectionCampsiteCard(
                             tint = Color(0xFF6B7280)
                         )
                         Text(
-                            text = "Up to ${campsite.occupancy} guests",
+                            text = "Up to ${listing.maxOccupancy} guests",
                             fontSize = 11.sp,
                             color = Color(0xFF6B7280)
                         )
@@ -330,7 +324,7 @@ fun UserWonSelectionCampsiteCard(
                             tint = Color(0xFFF59E0B)
                         )
                         Text(
-                            text = "${campsite.rating} (${campsite.numOfReviews} reviews)",
+                            text = "${listing.rating} (${listing.numOfReviews} reviews)",
                             fontSize = 11.sp,
                             color = Color(0xFF111827),
                             fontWeight = FontWeight.SemiBold
@@ -348,7 +342,7 @@ fun UserWonSelectionCampsiteCard(
                             tint = Color(0xFF6B7280)
                         )
                         Text(
-                            text = campsite.availability,
+                            text = listing.availability,
                             fontSize = 11.sp,
                             color = Color(0xFF6B7280)
                         )
