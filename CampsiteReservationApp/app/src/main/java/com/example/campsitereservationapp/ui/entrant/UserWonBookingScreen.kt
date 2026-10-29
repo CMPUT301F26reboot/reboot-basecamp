@@ -65,12 +65,6 @@ import java.time.YearMonth
  * [UserWonBookingViewModel], while [UserWonBookingContent] is stateless UI that can be
  * exercised from the `@Preview` functions at the bottom without a database.
  *
- * Outstanding issues:
- *  - Confirming the Book dialog calls [UserWonBookingViewModel.onBookClicked], which does not
- *    yet create a Reservation (US 01.05.01 is not fully implemented).
- *  - No navigation , it can only be exercised through the
- *    previews below (or Android Studio's Interactive Preview mode).
- *
  * @param lotteryId the lottery the user won, passed through navigation.
  * @param campsiteName the campsite they chose (campsites are matched by name for now).
  * @param profileId the current user. Comes from device identification once that exists.
@@ -112,7 +106,7 @@ fun UserWonBookingScreen(
         name = campsite?.name.orEmpty(),
         address = campsite?.address.orEmpty(),
         maxOccupancy = campsite?.maxOccupancy ?: 0,
-        ownerName = campsite?.ownerName.orEmpty(),
+        ownerName = campsite?.ownerID.orEmpty(),
         description = campsite?.description.orEmpty(),
         tags = campsite?.tags.orEmpty(),
         photoUrls = campsite?.photoUrls.orEmpty(),
