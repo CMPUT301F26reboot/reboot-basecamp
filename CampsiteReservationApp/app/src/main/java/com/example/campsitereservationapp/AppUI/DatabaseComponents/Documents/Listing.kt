@@ -10,6 +10,7 @@ class Listing(
     var maxOccupancy: Int = 0,
     var description: String = "",
     var rating: Double = 0.0,
+    var numOfReviews: Int = 0,
     var ownerID: String = "",
     var tags: List<String> = emptyList(),
     var photoUrls: List<String> = emptyList(),

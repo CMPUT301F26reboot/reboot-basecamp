@@ -23,7 +23,6 @@ class UserWonSelectionViewModel(
                 maxOccupancy = 404,
                 rating = 1.0,
                 numOfReviews = 100,
-                availability = "May1-2",
             )
         )
         repository.addListing(
@@ -33,7 +32,6 @@ class UserWonSelectionViewModel(
                 maxOccupancy = 404,
                 rating = 1.0,
                 numOfReviews = 100,
-                availability = "May1-2",
             )
         )
     }

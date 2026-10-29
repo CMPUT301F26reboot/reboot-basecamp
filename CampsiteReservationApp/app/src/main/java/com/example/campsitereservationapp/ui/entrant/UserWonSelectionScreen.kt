@@ -342,7 +342,7 @@ fun UserWonSelectionCampsiteCard(
                             tint = Color(0xFF6B7280)
                         )
                         Text(
-                            text = listing.availability,
+                            text = "*****TODO*****",
                             fontSize = 11.sp,
                             color = Color(0xFF6B7280)
                         )
