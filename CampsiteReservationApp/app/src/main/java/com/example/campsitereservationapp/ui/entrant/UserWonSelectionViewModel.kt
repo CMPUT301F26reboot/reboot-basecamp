@@ -6,29 +6,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.Databa
 
 
 
-data class CampsiteInfo(
-    val title: String,
-    val address: String,
-    val occupancy: Int,
-    val rating: Double,
-    val numOfReviews: Int,
-    val availability: String,
-    val image: String?
 
-)
-
-/** Converts a database [Listing] document into a UI [CampsiteInfo] model. */
-fun Listing.toCampsiteInfo(): CampsiteInfo {
-    return CampsiteInfo(
-        title = name,
-        address = address,
-        occupancy = maxOccupancy,
-        rating = rating,
-        numOfReviews = 0,
-        availability = availability,
-        image = photoUrls.firstOrNull()
-    )
-}
 
 class UserWonSelectionViewModel(
     val repository: DatabaseModel = DatabaseModel()
@@ -58,11 +36,6 @@ class UserWonSelectionViewModel(
     }
 
 
-    var CampsiteListings: MutableList<CampsiteInfo>? = if (repository.listings.isNotEmpty()) {
-        repository.listings.map { it.toCampsiteInfo() }.toMutableList()
-    } else {
-        null
-    }
 
 
 }

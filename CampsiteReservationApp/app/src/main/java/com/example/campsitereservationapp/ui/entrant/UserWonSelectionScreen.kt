@@ -64,8 +64,10 @@ fun UserWonSelectionScreen(
     onFinished: () -> Unit,
     viewModel: UserWonSelectionViewModel = viewModel()
 ) {
-    var selectedCampsite by remember(viewModel.CampsiteListings) {
-        mutableStateOf<CampsiteInfo?>(viewModel.CampsiteListings?.firstOrNull())
+    //get campsite listings and
+    val listings = viewModel.CampsiteListings
+    var selectedCampsite by remember {
+        mutableStateOf(value = listings.firstOrNull())
     }
 
     Scaffold(
