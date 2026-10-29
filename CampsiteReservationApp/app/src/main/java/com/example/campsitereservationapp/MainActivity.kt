@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.campsitereservationapp.ui.entrant.UserWonBookingScreen
-import com.example.campsitereservationapp.ui.entrant.UserWonSelectionScreen
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,10 +20,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CampsiteReservationAppTheme {
-                UserWonSelectionScreen(
-                    onFinished = {},
-                    onBack = {}
-                )
                 }
             }
         }
