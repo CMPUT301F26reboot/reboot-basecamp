@@ -136,7 +136,7 @@ open class DatabaseModel :ViewModel() {
 
     //add to collection functions
     fun addListing(listing: Listing){
-        listingsRef.document(listing.name).set(listing)
+        listingsRef.add(listing)
     }
 
 
