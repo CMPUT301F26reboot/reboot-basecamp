@@ -121,6 +121,11 @@ open class DatabaseModel :ViewModel() {
         }
     }
 
+    //add delete methods
+    fun addListing(listing: Listing){
+        listingsRef.document(listing.name).set(listing)
+    }
+
 
 
 

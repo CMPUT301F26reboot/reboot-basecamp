@@ -8,6 +8,7 @@ class Listing(
     var maxOccupancy: Int = 0,
     var description: String = "",
     var rating: Double = 0.0, //change F->D (firebase only has doubles)
+    var numOfReviews: Int = 0,
     var ownerName: String = "",
     var tags: ArrayList<String> = ArrayList(),
     var photoUrls: ArrayList<String> = ArrayList(),

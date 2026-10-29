@@ -67,10 +67,6 @@ fun UserWonSelectionScreen(
     var selectedCampsite by remember(viewModel.CampsiteListings) {
         mutableStateOf<CampsiteInfo?>(viewModel.CampsiteListings?.firstOrNull())
     }
-    //update model once when composable enters screen
-    LaunchedEffect(true){
-        viewModel.extractListingsFromDatabase()
-    }
 
     Scaffold(
         //==============BACKBUTTON================

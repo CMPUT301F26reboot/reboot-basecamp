@@ -34,11 +34,30 @@ class UserWonSelectionViewModel(
     val repository: DatabaseModel = DatabaseModel()
 ) : ViewModel() {
 
+    init {//adding test data
+        repository.addListing(
+            Listing(
+                name = "Title",
+                address = "adress",
+                maxOccupancy = 404,
+                rating = 1.0,
+                numOfReviews = 100,
+                availability = "May1-2",
+            )
+        )
+        repository.addListing(
+            Listing(
+                name = "LISTINGS 2",
+                address = "adress",
+                maxOccupancy = 404,
+                rating = 1.0,
+                numOfReviews = 100,
+                availability = "May1-2",
+            )
+        )
+    }
 
-    /**
-     * Mutable list storing [CampsiteInfo] extracted from [DatabaseModel]'s "Listings" collection,
-     * falling back to sample data if database listings are empty.
-     */
+
     var CampsiteListings: MutableList<CampsiteInfo>? = if (repository.listings.isNotEmpty()) {
         repository.listings.map { it.toCampsiteInfo() }.toMutableList()
     } else {
@@ -46,13 +65,4 @@ class UserWonSelectionViewModel(
     }
 
 
-    /** Extracts updated listings from [DatabaseModel] into [CampsiteListings]. */
-    //ran as soon as screen is rendered
-    fun extractListingsFromDatabase() {
-        CampsiteListings = if (repository.listings.isNotEmpty()) {
-            repository.listings.map { it.toCampsiteInfo() }.toMutableList()
-        } else {
-            null
-        }
-    }
 }
