@@ -24,12 +24,12 @@ open class DatabaseModel :ViewModel() {
     protected var chatsRef = db.collection("Chats")
 
     //Every local copy of each collection
-    protected var _listings = ArrayList<Listing>()
-    protected var _lotteries = ArrayList<Lottery>()
-    protected var _profiles = ArrayList<Profile>()
-    protected var _reservations = ArrayList<Reservation>()
-    protected var _logentries = ArrayList<LogEntry>()
-    protected var _chats = ArrayList<Chat>()
+    protected var _listings = mutableListOf<Listing>()
+    protected var _lotteries = mutableListOf<Lottery>()
+    protected var _profiles = mutableListOf<Profile>()
+    protected var _reservations = mutableListOf<Reservation>()
+    protected var _logentries = mutableListOf<LogEntry>()
+    protected var _chats = mutableListOf<Chat>()
 
 
     open val listings: List<Listing> get() = _listings //added
