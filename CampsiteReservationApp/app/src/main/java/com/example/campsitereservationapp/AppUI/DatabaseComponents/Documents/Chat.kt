@@ -1,5 +1,9 @@
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
+import android.devicelock.DeviceId
+import android.provider.Settings
+import com.google.firebase.firestore.DocumentId
+
 /**
  * A message log from an owner to an entrant
  *
@@ -7,6 +11,8 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
  * Has functionality to add a message
  *
  */
-class Chat (val owner: Profile, val entrant: Profile, ){
-    var Logs = ArrayList<LogEntry>() //list of messages
+class Chat (val ownerID: String = "", val entrantID: String = ""){
+    @DocumentId
+    var id = ""
+    var LogIDList = emptyList<String>() //list of LogEntry ids
 }
