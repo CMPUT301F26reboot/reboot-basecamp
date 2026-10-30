@@ -14,8 +14,8 @@ open class ListingViewModel: DatabaseModel() {
      * Takes a listing as input and searches all lotteries that contain its name
      * then returns the dates for all such lotteries
      */
-    fun getAvailability(listing: Listing): List<LocalDate>{
-        var dates = mutableSetOf<LocalDate>()
+    fun getAvailability(listing: Listing): List<Date>{
+        var dates = mutableSetOf<Date>()
         for (lot in _lotteries){
             if(listing.id in lot.campsiteIDs){
                 for(date in lot.dates){
