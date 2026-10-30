@@ -27,7 +27,6 @@ open class DatabaseModel :ViewModel() {
     //Every local copy of each collection
     protected var _listings = mutableStateListOf<Listing>()
     protected var _lotteries = mutableStateListOf<Lottery>()
-
     protected var _profiles = mutableStateListOf<Profile>()
     protected var _reservations = mutableStateListOf<Reservation>()
     protected var _logentries = mutableStateListOf<LogEntry>()
