@@ -33,6 +33,7 @@ open class DatabaseModel :ViewModel() {
     protected var _chats = mutableStateListOf<Chat>()
 
 
+
     //Adding a listener to each collection to update local copies
     init{
         listingsRef.addSnapshotListener{ snapshot, error ->
