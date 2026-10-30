@@ -34,6 +34,8 @@ open class DatabaseModel :ViewModel() {
 
     open val listings: List<Listing> get() = _listings //added
 
+    open val reservations: List<Reservation> get() = _reservations
+
     //Adding a listener to each collection to update local copies
     init{
         listingsRef.addSnapshotListener{ snapshot, error ->
