@@ -26,24 +26,12 @@ open class DatabaseModel :ViewModel() {
 
     //Every local copy of each collection
     protected var _listings = mutableStateListOf<Listing>()
-    open val listings: List<Listing>  //Set to open for ListingViewModel
-        get() = _listings
     protected var _lotteries = mutableStateListOf<Lottery>()
-    val Lotteries: List<Lottery>
-        get() = _lotteries
 
     protected var _profiles = mutableStateListOf<Profile>()
-    val Profiles: List<Profile>
-        get() = _profiles
     protected var _reservations = mutableStateListOf<Reservation>()
-    val Reservations: List<Reservation>
-        get() = _reservations
     protected var _logentries = mutableStateListOf<LogEntry>()
-    val LogEntries: List<LogEntry>
-        get() = _logentries
     protected var _chats = mutableStateListOf<Chat>()
-    val Chats: List<Chat>
-        get() = _chats
 
 
 
