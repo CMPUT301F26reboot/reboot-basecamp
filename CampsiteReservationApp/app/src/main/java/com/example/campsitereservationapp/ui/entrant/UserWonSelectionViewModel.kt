@@ -7,34 +7,32 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.Databa
 
 
 
-
 class UserWonSelectionViewModel(
-    val repository: DatabaseModel = DatabaseModel()
+    //val repository: DatabaseModel = DatabaseModel()
 ) : ViewModel() {
 
-    //get listings from repository
-    val listings: List<Listing> get() = repository.listings
+    val listings: List<Listing> = listOf(
+        Listing(
+            name = "Pine Valley Retreat",
+            address = "Yosemite, CA",
+            maxOccupancy = 4,
+            rating = 4.9,
+            numOfReviews = 128,
+        ),
+        Listing(
+            name = "Coastal Cliffside",
+            address = "Big Sur, CA",
+            maxOccupancy = 4,
+            rating = 4.7,
+            numOfReviews = 74,
+        )
+    )
+    val lottery_date = "May 1-7,2027"
 
-    init {//adding test data
-        repository.addListing(
-            Listing(
-                name = "Title",
-                address = "adress",
-                maxOccupancy = 404,
-                rating = 1.0,
-                numOfReviews = 100,
-            )
-        )
-        repository.addListing(
-            Listing(
-                name = "LISTINGS 2",
-                address = "adress",
-                maxOccupancy = 404,
-                rating = 1.0,
-                numOfReviews = 100,
-            )
-        )
-    }
+
+
+
+
 
 
 

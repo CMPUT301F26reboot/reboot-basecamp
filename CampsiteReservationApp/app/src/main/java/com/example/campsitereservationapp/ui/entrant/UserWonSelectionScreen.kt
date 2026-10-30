@@ -153,7 +153,7 @@ fun UserWonSelectionScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "May 1–7, 2027",
+                            text = viewModel.lottery_date, //TODO: implement date for lottery
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF111827)
                         )
@@ -341,11 +341,7 @@ fun UserWonSelectionCampsiteCard(
                             modifier = Modifier.size(13.dp),
                             tint = Color(0xFF6B7280)
                         )
-                        Text(
-                            text = "*****TODO*****",
-                            fontSize = 11.sp,
-                            color = Color(0xFF6B7280)
-                        )
+
                     }
                 }
             }
