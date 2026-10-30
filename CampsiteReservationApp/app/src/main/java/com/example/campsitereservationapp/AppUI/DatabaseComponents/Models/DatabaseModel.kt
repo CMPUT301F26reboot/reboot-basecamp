@@ -34,6 +34,7 @@ open class DatabaseModel :ViewModel() {
 
 
 
+
     //Adding a listener to each collection to update local copies
     init{
         listingsRef.addSnapshotListener{ snapshot, error ->
