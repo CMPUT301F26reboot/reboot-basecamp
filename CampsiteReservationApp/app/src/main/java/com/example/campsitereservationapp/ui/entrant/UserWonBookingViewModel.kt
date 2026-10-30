@@ -140,23 +140,21 @@ class UserWonBookingViewModel : ListingViewModel() {
     }
 
     /**
-     * Days already reserved at [campsiteName].
+     * Days already reserved at the campsite with id [campsiteId].
      *
-     * Outstanding: cancelled reservations are not excluded here, since [Reservation] has no
-     * status field yet to filter on.
      */
-    private fun reservedDays(campsiteName: String): Set<LocalDate> =
+    private fun reservedDays(campsiteId: String): Set<LocalDate> =
         _reservations
-            .filter { it.campsiteName == campsiteName }
+            .filter { it.campsiteID == campsiteId }
             .flatMap { it.dates }
             .map { it.toLocalDay() }
             .toSet()
 
     /** Days [lottery] offers for [campsite], minus days already reserved there. */
     private fun bookableDays(lottery: Lottery, campsite: Listing): Set<LocalDate> {
-        if (campsite.name !in lottery.campsiteNames) return emptySet()
+        if (campsite.id !in lottery.campsiteIDs) return emptySet()
         val lotteryDays = lottery.dates.map { it.toLocalDay() }.toSet()
-        return computeBookableDays(lotteryDays, reservedDays(campsite.name))
+        return computeBookableDays(lotteryDays, reservedDays(campsite.id))
     }
 
     /** Current selection rule: at least one date must be picked. */

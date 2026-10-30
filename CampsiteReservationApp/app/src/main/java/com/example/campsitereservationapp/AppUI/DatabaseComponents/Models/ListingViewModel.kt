@@ -1,7 +1,6 @@
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import java.time.LocalDate
 import java.util.Date
 
 open class ListingViewModel: DatabaseModel() {
@@ -11,11 +10,11 @@ open class ListingViewModel: DatabaseModel() {
     /**
      * Gets available dates of a listing
      *
-     * Takes a listing as input and searches all lotteries that contain its name
+     * Takes a listing as input and searches all lotteries that contain its id
      * then returns the dates for all such lotteries
      */
-    fun getAvailability(listing: Listing): List<LocalDate>{
-        var dates = mutableSetOf<LocalDate>()
+    fun getAvailability(listing: Listing): List<Date>{
+        var dates = mutableSetOf<Date>()
         for (lot in _lotteries){
             if(listing.id in lot.campsiteIDs){
                 for(date in lot.dates){
