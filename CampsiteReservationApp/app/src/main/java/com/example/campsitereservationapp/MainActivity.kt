@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.campsitereservationapp.ui.entrant.UserWonSelectionScreen
 import com.example.campsitereservationapp.ui.entrant.UserWonBookingScreen
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
+import com.google.firebase.firestore.auth.User
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
