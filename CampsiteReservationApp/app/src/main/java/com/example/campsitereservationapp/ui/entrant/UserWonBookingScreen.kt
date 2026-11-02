@@ -53,8 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
-import java.time.LocalDate
+import com.example.campsitereservationapp.ui.components.dateOf
 import java.time.YearMonth
+import java.util.Date
 
 /**
  * Screen shown after an entrant wins a campsite lottery slot.
@@ -64,12 +65,6 @@ import java.time.YearMonth
  * this function is stateful and talks to
  * [UserWonBookingViewModel], while [UserWonBookingContent] is stateless UI that can be
  * exercised from the `@Preview` functions at the bottom without a database.
- *
- * Outstanding issues:
- *  - Confirming the Book dialog calls [UserWonBookingViewModel.onBookClicked], which does not
- *    yet create a Reservation (US 01.05.01 is not fully implemented).
- *  - No navigation , it can only be exercised through the
- *    previews below (or Android Studio's Interactive Preview mode).
  *
  * @param lotteryId the lottery the user won, passed through navigation.
  * @param campsiteName the campsite they chose (campsites are matched by name for now).
@@ -112,7 +107,7 @@ fun UserWonBookingScreen(
         name = campsite?.name.orEmpty(),
         address = campsite?.address.orEmpty(),
         maxOccupancy = campsite?.maxOccupancy ?: 0,
-        ownerName = campsite?.ownerName.orEmpty(),
+        ownerName = campsite?.ownerID.orEmpty(),
         description = campsite?.description.orEmpty(),
         tags = campsite?.tags.orEmpty(),
         photoUrls = campsite?.photoUrls.orEmpty(),
@@ -144,15 +139,15 @@ internal fun UserWonBookingContent(
     description: String,
     tags: List<String>,
     photoUrls: List<String>,
-    bookableDays: Set<LocalDate>,
-    selectedDays: Set<LocalDate>,
+    bookableDays: Set<Date>,
+    selectedDays: Set<Date>,
     initialMonth: YearMonth?,
     noDatesAvailable: Boolean,
     canBook: Boolean,
     isDeclining: Boolean,
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onDayClick: (LocalDate) -> Unit,
+    onDayClick: (Date) -> Unit,
     onBook: () -> Unit,
     onDecline: () -> Unit
 ) {
@@ -402,9 +397,9 @@ private fun TagChip(text: String) {
 @Preview(showBackground = true, heightDp = 900)
 @Composable
 private fun UserWonBookingPreview() {
-    val march5 = LocalDate.of(2027, 3, 5)
-    val march6 = LocalDate.of(2027, 3, 6)
-    val bookable = setOf(march5, march6, LocalDate.of(2027, 3, 12), LocalDate.of(2027, 3, 13))
+    val march5 = dateOf(2027, 3, 5)
+    val march6 = dateOf(2027, 3, 6)
+    val bookable = setOf(march5, march6, dateOf(2027, 3, 12), dateOf(2027, 3, 13))
     var selected by remember { mutableStateOf(setOf(march5, march6)) }
     MaterialTheme {
         UserWonBookingContent(

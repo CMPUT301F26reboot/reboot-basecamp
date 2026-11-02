@@ -7,9 +7,8 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
 import com.google.firebase.firestore.FieldValue
-import java.time.LocalDate
 import java.time.YearMonth
-import java.time.ZoneId
+import java.util.Calendar
 import java.util.Date
 
 /**
@@ -28,7 +27,7 @@ class UserWonBookingViewModel : ListingViewModel() {
     private var campsiteName by mutableStateOf<String?>(null)
 
     /** Dates the user has tapped in the calendar, before intersecting with [bookableDays]. */
-    private var picked by mutableStateOf<Set<LocalDate>>(emptySet())
+    private var picked by mutableStateOf<Set<Date>>(emptySet())
 
     /** True while the decline write to Firestore is in flight. */
     var isDeclining by mutableStateOf(false)
@@ -51,7 +50,7 @@ class UserWonBookingViewModel : ListingViewModel() {
         get() = findCampsite()
 
     /** Days shown green in the calendar: open in the lottery and not already reserved. */
-    val bookableDays: Set<LocalDate>
+    val bookableDays: Set<Date>
         get() {
             val lottery = findLottery() ?: return emptySet()
             val campsite = findCampsite() ?: return emptySet()
@@ -59,12 +58,16 @@ class UserWonBookingViewModel : ListingViewModel() {
         }
 
     /** Days shown dark in the calendar. Picks that became unavailable are dropped. */
-    val selectedDays: Set<LocalDate>
+    val selectedDays: Set<Date>
         get() = picked.intersect(bookableDays)
 
     /** Month the calendar should open on: the earliest bookable day, if any. */
     val initialMonth: YearMonth?
-        get() = bookableDays.minOrNull()?.let { YearMonth.from(it) }
+        get() = bookableDays.minOrNull()?.let { date ->
+            val cal = Calendar.getInstance()
+            cal.time = date
+            YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
+        }
 
     /** True once loading has finished and the lottery has no bookable days left. */
     val noDatesAvailable: Boolean
@@ -85,7 +88,7 @@ class UserWonBookingViewModel : ListingViewModel() {
     }
 
     /** Select or unselect a date. Dates that can't be booked are ignored. */
-    fun toggleDay(day: LocalDate) {
+    fun toggleDay(day: Date) {
         if (day !in bookableDays) return
         picked = if (day in picked) picked - day else picked + day
     }
@@ -140,39 +143,46 @@ class UserWonBookingViewModel : ListingViewModel() {
     }
 
     /**
-     * Days already reserved at [campsiteName].
+     * Days already reserved at the campsite with id [campsiteId].
      *
      * Outstanding: cancelled reservations are not excluded here, since [Reservation] has no
      * status field yet to filter on.
      */
-    private fun reservedDays(campsiteName: String): Set<LocalDate> =
+    private fun reservedDays(campsiteId: String): Set<Date> =
         _reservations
-            .filter { it.campsiteName == campsiteName }
+            .filter { it.campsiteID == campsiteId }
             .flatMap { it.dates }
-            .map { it.toLocalDay() }
+            .map { it.toDayOnly() }
             .toSet()
 
     /** Days [lottery] offers for [campsite], minus days already reserved there. */
-    private fun bookableDays(lottery: Lottery, campsite: Listing): Set<LocalDate> {
-        if (campsite.name !in lottery.campsiteNames) return emptySet()
-        val lotteryDays = lottery.dates.map { it.toLocalDay() }.toSet()
-        return computeBookableDays(lotteryDays, reservedDays(campsite.name))
+    private fun bookableDays(lottery: Lottery, campsite: Listing): Set<Date> {
+        if (campsite.id !in lottery.campsiteIDs) return emptySet()
+        val lotteryDays = lottery.dates.map { it.toDayOnly() }.toSet()
+        return computeBookableDays(lotteryDays, reservedDays(campsite.id))
     }
 
     /** Current selection rule: at least one date must be picked. */
-    private fun isValidSelection(days: Set<LocalDate>): Boolean = days.isNotEmpty()
+    private fun isValidSelection(days: Set<Date>): Boolean = days.isNotEmpty()
 
     private companion object {
         const val DECLINED_FIELD = "declinedProfileIds"
     }
 }
 
-/** Firestore Timestamps carry a time of day, so compare by calendar day instead. */
-internal fun Date.toLocalDay(): LocalDate =
-    toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+/** Normalizes [Date] to midnight local time, so two Dates on the same calendar day compare equal. */
+internal fun Date.toDayOnly(): Date {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    cal.set(Calendar.MILLISECOND, 0)
+    return cal.time
+}
 
 /** Days the lottery offers, minus days already reserved at the campsite. */
 internal fun computeBookableDays(
-    lotteryDays: Set<LocalDate>,
-    reservedDays: Set<LocalDate>
-): Set<LocalDate> = lotteryDays - reservedDays
+    lotteryDays: Set<Date>,
+    reservedDays: Set<Date>
+): Set<Date> = lotteryDays - reservedDays

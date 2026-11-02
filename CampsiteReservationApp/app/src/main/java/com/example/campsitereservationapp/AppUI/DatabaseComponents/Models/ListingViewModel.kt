@@ -10,18 +10,18 @@ open class ListingViewModel: DatabaseModel() {
     /**
      * Gets available dates of a listing
      *
-     * Takes a listing as input and searches all lotteries that contain its name
+     * Takes a listing as input and searches all lotteries that contain its id
      * then returns the dates for all such lotteries
      */
-    fun getAvailability(listing: Listing): ArrayList<Date>{
-        var dates = ArrayList<Date>()
+    fun getAvailability(listing: Listing): List<Date>{
+        var dates = mutableSetOf<Date>()
         for (lot in _lotteries){
-            if(listing.name in lot.campsiteNames){
-                for (d in lot.dates){
-                    dates.add(d)
+            if(listing.id in lot.campsiteIDs){
+                for(date in lot.dates){
+                    dates.add(date)
                 }
             }
         }
-        return dates
+        return dates.toList()
     }
 }
