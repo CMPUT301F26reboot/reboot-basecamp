@@ -3,6 +3,7 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 import android.location.Location
 
 class Listing(
+    // Should we include a listingId?
     var name: String,
     var address: String,
     var maxOccupancy: Int,
