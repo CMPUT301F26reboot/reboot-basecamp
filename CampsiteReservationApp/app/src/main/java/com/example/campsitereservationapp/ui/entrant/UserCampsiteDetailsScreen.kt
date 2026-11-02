@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalIconButton
@@ -39,8 +41,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,6 +56,7 @@ import com.example.campsitereservationapp.ui.components.dateOf
 import java.util.Date
 import java.time.YearMonth
 import kotlin.collections.plus
+import com.example.campsitereservationapp.R
 
 @Composable
 fun UserCampsiteDetailsScreen(onBack: () -> Unit) {
@@ -63,12 +68,13 @@ fun UserCampsiteDetailsScreen(onBack: () -> Unit) {
         name = "Pine Valley Retreat",
         address = "1284 Pine Valley Road, Yosemite, CA 95389",
         rating = 4.8,
+        reviewNum = 128,
         maxOccupancy = 4,
         ownerName = "Sarah J.",
         description = "Welcome to Pine Valley! Bring your family and friends and splash in " +
                 "the river lake, hike through the forest, and enjoy the beautiful scenery!",
         tags = listOf("Fire Pit", "Swimming", "Hiking", "Picnic Table", "RVs"),
-        photoUrls = emptyList(),
+        photoUrls = listOf("https://picsum.photos/id/128/400/400"),
         availableLotteries = emptyList(), // Should be list of lotteries
         availableDays = setOf(march5, march6),
         initialMonth = YearMonth.of(2027, 3),
@@ -85,6 +91,7 @@ internal fun UserCampsiteDetailsContent(
     name: String,
     address: String,
     rating: Double,
+    reviewNum: Int,
     maxOccupancy: Int,
     ownerName: String,
     description: String,
@@ -152,6 +159,29 @@ internal fun UserCampsiteDetailsContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
+                    Row() {
+
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = "Orange Star",
+                            tint = Color(0xFFFF9800), // Standard material orange
+                            modifier = Modifier.size(18.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(text = "$rating",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(text = "($reviewNum reviews)",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+
                     InfoRow(label = "Maximum Occupancy", value = "$maxOccupancy guests")
                     InfoRow(label = "Owner", value = ownerName)
 
@@ -177,6 +207,8 @@ internal fun UserCampsiteDetailsContent(
                             items(photoUrls) { url ->
                                 AsyncImage(
                                     model = url,
+                                    placeholder = painterResource(R.drawable.sample_campsite),
+                                    error = painterResource(R.drawable.sample_campsite),
                                     contentDescription = "Photo of $name",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
@@ -267,12 +299,13 @@ private fun UserCampsiteDetailsPreview() {
             name = "Pine Valley Retreat",
             address = "1284 Pine Valley Road, Yosemite, CA 95389",
             rating = 4.8,
+            reviewNum = 128,
             maxOccupancy = 4,
             ownerName = "Sarah J.",
             description = "Welcome to Pine Valley! Bring your family and friends and splash in " +
                     "the river lake, hike through the forest, and enjoy the beautiful scenery!",
             tags = listOf("Fire Pit", "Swimming", "Hiking", "Picnic Table", "RVs"),
-            photoUrls = emptyList(),
+            photoUrls = listOf("https://picsum.photos/id/128/400/400"),
             availableLotteries = emptyList(), // Should be list of lotteries
             availableDays = setOf(march5, march6),
             initialMonth = YearMonth.of(2027, 3),
