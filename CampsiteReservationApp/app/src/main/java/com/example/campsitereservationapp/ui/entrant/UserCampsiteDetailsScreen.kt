@@ -48,15 +48,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
-import java.time.LocalDate
+import com.example.campsitereservationapp.ui.components.dateOf
+import java.util.Date
 import java.time.YearMonth
 import kotlin.collections.plus
 
 @Composable
 fun UserCampsiteDetailsScreen(onBack: () -> Unit) {
-    val march5 = LocalDate.of(2027, 3, 5)
-    val march6 = LocalDate.of(2027, 3, 6)
-    var selected by remember { mutableStateOf(setOf(march5, march6)) }
+    val march5 = dateOf(2027, 3, 5)
+    val march6 = dateOf(2027, 3, 6)
     // Later: get the ViewModel here and pass its real data in
     UserCampsiteDetailsContent(
         isLoading = false,
@@ -70,11 +70,11 @@ fun UserCampsiteDetailsScreen(onBack: () -> Unit) {
         tags = listOf("Fire Pit", "Swimming", "Hiking", "Picnic Table", "RVs"),
         photoUrls = emptyList(),
         availableLotteries = emptyList(), // Should be list of lotteries
-        selectedDays = selected,
+        availableDays = setOf(march5, march6),
         initialMonth = YearMonth.of(2027, 3),
         noLotteriesAvailable = false,
         snackbarHostState = remember { SnackbarHostState() },
-        onBack = {},
+        onBack = onBack,
         onJoin = {}
     )
 }
@@ -91,7 +91,7 @@ internal fun UserCampsiteDetailsContent(
     tags: List<String>,
     photoUrls: List<String>,
     availableLotteries: List<String>,
-    selectedDays: Set<LocalDate>,
+    availableDays: Set<Date>,
     initialMonth: YearMonth?,
     noLotteriesAvailable: Boolean,
     snackbarHostState: SnackbarHostState,
@@ -188,8 +188,8 @@ internal fun UserCampsiteDetailsContent(
                     }
 
                     AvailabilityCalendar(
-                        availableDays = selectedDays,
-                        selectedDays = selectedDays,
+                        availableDays = availableDays,
+                        selectedDays = emptySet(),
                         onDayClick = { },
                         title = "Available spots",
                         initialMonth = initialMonth
@@ -259,10 +259,8 @@ private fun TagChip(text: String) {
 @Preview(showBackground = true)
 @Composable
 private fun UserCampsiteDetailsPreview() {
-    val march5 = LocalDate.of(2027, 3, 5)
-    val march6 = LocalDate.of(2027, 3, 6)
-    val bookable = setOf(march5, march6, LocalDate.of(2027, 3, 12), LocalDate.of(2027, 3, 13))
-    var selected by remember { mutableStateOf(setOf(march5, march6)) }
+    val march5 = dateOf(2027, 3, 5)
+    val march6 = dateOf(2027, 3, 6)
     CampsiteReservationAppTheme {
         UserCampsiteDetailsContent(
             isLoading = false,
@@ -276,7 +274,7 @@ private fun UserCampsiteDetailsPreview() {
             tags = listOf("Fire Pit", "Swimming", "Hiking", "Picnic Table", "RVs"),
             photoUrls = emptyList(),
             availableLotteries = emptyList(), // Should be list of lotteries
-            selectedDays = selected,
+            availableDays = setOf(march5, march6),
             initialMonth = YearMonth.of(2027, 3),
             noLotteriesAvailable = false,
             snackbarHostState = remember { SnackbarHostState() },
