@@ -44,6 +44,8 @@ import java.text.DateFormat
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle as DateTextStyle
+import com.example.campsitereservationapp.ui.theme.AvailableGreenBackground
+import com.example.campsitereservationapp.ui.theme.AvailableGreenContent
 import java.util.Calendar
 import java.util.Date
 
@@ -232,7 +234,7 @@ private fun DayCell(
         DayState.Selected ->
             MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary
         DayState.Available ->
-            AvailableBackground to AvailableContent
+            AvailableGreenBackground to AvailableGreenContent
         DayState.Unavailable ->
             MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
     }
@@ -270,9 +272,6 @@ private fun DayCell(
 
 /** Visual state of a single day cell in [MonthGrid]. */
 private enum class DayState { Selected, Available, Unavailable }
-
-private val AvailableBackground = Color(0xFFCDEFD3)
-private val AvailableContent = Color(0xFF1B5E20)
 
 private val YearMonthSaver = Saver<YearMonth, String>(
     save = { it.toString() },
