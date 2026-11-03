@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.campsitereservationapp.ui.theme.MapPlaceholderBackground
 
 /**
  * Static placeholder for "drop a pin" location picking. No Maps/Places SDK or API key is
