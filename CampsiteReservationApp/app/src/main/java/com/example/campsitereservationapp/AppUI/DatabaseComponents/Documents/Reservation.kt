@@ -6,7 +6,8 @@ import java.util.Date
 
 class Reservation (var dates: List<LocalDate> = emptyList<LocalDate>(),
                    var entrantID: String = "",
-                   var campsiteID: String = "") {
+                   var campsiteID: String = "",
+                   var status: String = "reserved") {
     @DocumentId
     var id = ""
 }

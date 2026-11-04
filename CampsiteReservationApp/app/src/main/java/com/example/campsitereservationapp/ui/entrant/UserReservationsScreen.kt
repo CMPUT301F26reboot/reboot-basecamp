@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
@@ -30,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +53,12 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.Reserv
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.UserReservationsViewModel
 import java.time.LocalDate
 
+private val buttonRed = Color(0xFFfef2f2)
+private val textRed = Color(0xFFb91c1c)
+private val outlineRed = Color(0xFFfecaca)
+private val buttonGreen = Color(0xFFcff7d3)
+private val textGreen = Color(0xFF166534)
+private val buttonGrey = Color(0xFFEAEAEA)
 
 /**
  * User Reservations screen - US 01.06.01 (view active), US 01.06.02 (view past + rate),
@@ -74,17 +82,15 @@ fun UserReservationsScreen(
         filter = viewModel.filter,
         rows = rows,
         isCancelling = viewModel.isCancelling,
-        reviewingReservationId = viewModel.reviewingReservationId,
-        isSubmittingReview = viewModel.isSubmittingReview,
+        pendingCancelId = viewModel.pendingCancelId,
         onFilterChange = viewModel::onFilterSelected,
         onBack = onBack,
         onOpen = onOpenReservation,
-        onCancel = viewModel::cancelReservation,
-        onOpenReview = viewModel::openReview,
-        onCloseReview = viewModel::closeReview,
-        onSubmitReview = { id, campsiteId, rating, text ->
-            viewModel.submitReview(id, campsiteId, profileId, rating, text)
-        }
+        onCancel = viewModel::onCancelClicked, //  Opens dialog
+        onDismissCancel = viewModel::dismissCancelDialog, // Closes dialog
+        onConfirmCancel = viewModel::confirmCancel
+        //onLeaveReview = true
+
     )
 }
 
@@ -93,17 +99,14 @@ fun UserReservationContent(
     filter: ReservationFilter,
     rows: List<Pair<Reservation, Listing?>>,
     isCancelling: Boolean,
-    reviewingReservationId: String?,
-    isSubmittingReview: Boolean,
+    pendingCancelId: String?,
     onFilterChange: (ReservationFilter) -> Unit,
     onBack: () -> Unit,
     onOpen: (String) -> Unit,
     onCancel: (String) -> Unit,
-    onOpenReview: (String) -> Unit,
-    onCloseReview: () -> Unit,
-    onSubmitReview: (reservationId: String, campsiteId: String, rating: Int, text: String) -> Unit)
-    {
-        var pendingCancelId by remember { mutableStateOf<String?>(null) }
+    onDismissCancel: () -> Unit,
+    onConfirmCancel: () -> Unit/**,
+    onLeaveReview: () -> Unit*/) {
     Column(Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -173,19 +176,56 @@ fun UserReservationContent(
             //all button
             Button(
                 onClick = { onFilterChange(ReservationFilter.All) },
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+                colors = if (filter == ReservationFilter.All) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color.Black,
+                        contentColor = Color.White
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = buttonGrey,
+                        contentColor = Color.Gray
+                    )
+                }
             ) {
-                Text("All", fontWeight = FontWeight.Medium)
+                Text(
+                    "All",
+                    fontWeight = FontWeight.Medium,
+                )
             }
             //reserved button
             Button(
-                onClick = { onFilterChange(ReservationFilter.Reserved) }
+                onClick = { onFilterChange(ReservationFilter.Reserved) },
+                colors = if (filter == ReservationFilter.Reserved) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color.Black,
+                        contentColor = Color.White
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = buttonGrey,
+                        contentColor = Color.Gray
+                    )
+                }
+
             ) {
                 Text("Reserved", fontWeight = FontWeight.Medium)
             }
             // past button
             Button(
-                onClick = { onFilterChange(ReservationFilter.Past) }
+                onClick = { onFilterChange(ReservationFilter.Past) },
+                colors = if (filter == ReservationFilter.Past) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color.Black,
+                        contentColor = Color.White
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = buttonGrey,
+                        contentColor = Color.Gray
+                    )
+                }
             ) {
                 Text("Past", fontWeight = FontWeight.Medium)
             }
@@ -231,12 +271,30 @@ fun UserReservationContent(
                         isPast = past,
                         isCancelling = isCancelling,
                         onOpen = { onOpen(reservation.id) },
-                        onCancel = { pendingCancelId = reservation.id },
-                        onLeaveReview = { onOpenReview(reservation.id) }
+                        onCancel = { onCancel(reservation.id) }/**,
+                        onLeaveReview = { onOpenReview(reservation.id) }*/
                     )
                 }
             }
         }
+    }
+    // --- The Cancel Confirmation Dialog ---
+    if (pendingCancelId != null) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Cancel this reservation?") },
+            text = { Text("Your dates will become available to other campers. This can't be undone.") },
+            confirmButton = {
+                TextButton(onClick = onConfirmCancel) {
+                    Text("Yes, cancel", color = textRed)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissCancel) {
+                    Text("Keep it")
+                }
+            }
+        )
     }
 }
 
@@ -247,14 +305,14 @@ private fun ReservationCard(
     isPast: Boolean,
     isCancelling: Boolean,
     onOpen: () -> Unit,
-    onCancel: () -> Unit,
-    onLeaveReview: () -> Unit
+    onCancel: () -> Unit/**,
+    onLeaveReview: () -> Unit*/
 ) {
     Surface(
+        color = if(isPast){ Color.LightGray} else{Color.White},
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onOpen)
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.Top) {
@@ -314,9 +372,11 @@ private fun ReservationCard(
 
                     Surface(
                         shape = RoundedCornerShape(50),
+                        color = if (isPast) buttonGrey else buttonGreen
                     ) {
                         Text(
                             text = if (isPast) "Past reservation" else "Reserved",
+                            color = if (isPast) Color.Gray else textGreen,
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
                         )
@@ -345,10 +405,18 @@ private fun ReservationCard(
                         horizontalArrangement = Arrangement.End
                     ) {
                         OutlinedButton(
-                            onClick = {},//onCancel,
+                            onClick = onCancel,
                             enabled = !isCancelling,
+                            border = BorderStroke(2.dp, outlineRed),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = buttonRed // Changes inside color
+                            )
+
+
                         ) {
-                            Text("Cancel Reservation", fontWeight = FontWeight.Bold)
+                            Text("Cancel Reservation",
+                                fontWeight = FontWeight.Bold,
+                                color = textRed)
                         }
                     }
                 }
@@ -358,7 +426,7 @@ private fun ReservationCard(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Button(
-                        onClick = {},//onLeaveReview,
+                        onClick = {}, //{onLeaveReview(reservation.id) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black,
                             contentColor = Color.White
@@ -394,6 +462,12 @@ private fun sampleListing(
 @Preview(showBackground = true, heightDp = 900)
 @Composable
 private fun UserReservationAllPreview() {
+    var clickedReservationId by remember { mutableStateOf<String?>(null) }
+    var currentFilter by remember { mutableStateOf(ReservationFilter.All) }
+
+    var pendingCancelId by remember { mutableStateOf<String?>(null) }
+    var isCancelling by remember { mutableStateOf(false) }
+
     val today = LocalDate.now()
     val active = Reservation(
         dates = listOf(today.plusDays(7), today.plusDays(8)),
@@ -403,18 +477,41 @@ private fun UserReservationAllPreview() {
         dates = listOf(today.minusDays(30), today.minusDays(29)),
         entrantID = "u1", campsiteID = "c2"
     ).apply { id = "r2" } //this .apply{} is used assuming the id value in listing is a var not a val
+    val canceled = Reservation(
+        dates = listOf(today.plusDays(7), today.plusDays(8)),
+        entrantID = "u1", campsiteID = "c3", status = "cancelled"
+    ).apply { id = "r3" }
+
+    val fort = sampleListing("c3", "Fort McMurray", "FortMcMurray, AB", 4.6)
     val pine = sampleListing("c1", "Pine Valley Retreat", "Yosemite, CA", 4.9)
     val red = sampleListing("c2", "Redwood Ridge", "Big Sur, CA", 4.8)
-    MaterialTheme {
-        UserReservationContent(
-            filter = ReservationFilter.All,
-            rows = listOf(active to pine, past to red),
-            isCancelling = false,
-            reviewingReservationId = null,
-            isSubmittingReview = false,
-            onFilterChange = {}, onBack = {}, onOpen = {}, onCancel = {},
-            onOpenReview = {}, onCloseReview = {}, onSubmitReview = { _, _, _, _ -> }
-        )
+    val allRows = listOf(active to pine, past to red, canceled to fort)
+    val filteredRows = allRows.filter { (reservation, _) -> reservation.status != "cancelled"}
+        .filter { (reservation, _) ->
+
+        when (currentFilter) {
+            ReservationFilter.All -> true
+            ReservationFilter.Reserved -> !isPast(reservation)
+            ReservationFilter.Past -> isPast(reservation)
+        }
+    }
+    if (clickedReservationId == null) {
+        MaterialTheme {
+            UserReservationContent(
+                filter = currentFilter,
+                rows = filteredRows,
+                isCancelling = isCancelling,
+                pendingCancelId = pendingCancelId,
+                onFilterChange = { newFilter ->
+                    currentFilter = newFilter
+                }, onBack = {}, onOpen = { clickedReservationId = it },
+                onCancel = { id -> pendingCancelId = id }, onDismissCancel ={pendingCancelId = null },
+                onConfirmCancel = {isCancelling = true
+                    pendingCancelId = null
+                    isCancelling = false }
+
+            )
+        }
     }
 }
 
@@ -428,10 +525,10 @@ private fun UserReservationEmptyPreview() {
             filter = ReservationFilter.All,
             rows = emptyList(),
             isCancelling = false,
-            reviewingReservationId = null,
-            isSubmittingReview = false,
-            onFilterChange = {}, onBack = {}, onOpen = {}, onCancel = {},
-            onOpenReview = {}, onCloseReview = {}, onSubmitReview = { _, _, _, _ -> }
+            pendingCancelId = null,
+            onFilterChange = {}, onBack = {}, onOpen = {},
+            onCancel = {}, onDismissCancel ={}, onConfirmCancel = {}
+
         )
     }
 }

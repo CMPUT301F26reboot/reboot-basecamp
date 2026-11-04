@@ -27,29 +27,24 @@ open class ReservationsViewModel: DatabaseModel() {
         filter = f
     }
 
-    //all reservations for entrantId
-    fun allReservations(entrantId: String): List<Reservation> =
-        _reservations
-            .filter { it.entrantID == entrantId }
+    val allReservations: List<Reservation>
+        get() = _reservations
 
-    //filtered reservations
-    fun filteredReservations(entrantId: String): List<Reservation> {
-        val today = LocalDate.now()
-        val all = allReservations(entrantId)
-        return when (filter) {
-            ReservationFilter.All -> all
-            ReservationFilter.Reserved -> all.filter { (it.dates.maxOrNull() ?: today) >= today }
-            ReservationFilter.Past -> all.filter { (it.dates.maxOrNull() ?: today) < today }
-        }
-    }
+
 
     // get listings for the screen
     fun listingFor(reservation: Reservation): Listing? =
         _listings.firstOrNull { it.id == reservation.campsiteID }
 
-    //still to be implemented
+    //this assumes every reservation has a status that is either active or canceled/rejected (inactive?)
     fun cancelReservation(reservationId: String) {
-
+        if (isCancelling) return
+        isCancelling = true
+        // need to send notification to user here.
+        reservationsRef.document(reservationId)
+            .update("status", "cancelled")
+            .addOnSuccessListener { isCancelling = false }
+            .addOnFailureListener { isCancelling = false }
     }
 
 }
