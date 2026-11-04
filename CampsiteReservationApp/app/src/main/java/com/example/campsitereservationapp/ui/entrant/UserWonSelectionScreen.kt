@@ -54,7 +54,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 /**
  * Screen composable displaying the list of won campsite options in a lottery for the entrant to choose from.
  * Displays the lottery dates banner, campsite card selection list, and a booking action button.
- *
+ * @param lotteryId string input passed in from naviagtion
  * @param onBack callback triggered when tapping the top back button.
  * @param onFinished callback triggered when tapping the "Book Campsite" button after selecting a campsite.
  * @param viewModel injected ViewModel holding the list of won campsite options.

@@ -7,6 +7,10 @@ import java.text.SimpleDateFormat
 import java.time.Month
 
 
+/**
+ * ViewModel of UserWonSelectionScreen. Accesses database and converts data into proper format used
+ * in Screen
+ */
 class UserWonSelectionViewModel(
 ) : DatabaseModel() {
 
@@ -61,11 +65,6 @@ class UserWonSelectionViewModel(
         }
         return listings
     }
-
-
-
-
-
 
 
 }
