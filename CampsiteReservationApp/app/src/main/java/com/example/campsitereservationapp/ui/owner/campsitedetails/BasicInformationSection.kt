@@ -47,7 +47,7 @@ internal fun BasicInformationSection(
         }
         Spacer(Modifier.height(16.dp))
 
-        LabeledField(label = "Location") {
+        LabeledField(label = "Address") {
             OutlinedTextField(
                 value = location,
                 onValueChange = onLocationChange,

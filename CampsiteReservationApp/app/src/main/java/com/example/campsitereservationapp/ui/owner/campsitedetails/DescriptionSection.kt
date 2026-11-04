@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun DescriptionSection(overview: String, onOverviewChange: (String) -> Unit) {
     Column {
-        SectionHeader(title = "Description & Rules", subtitle = "Check-in guidance, Amenities included and fire regulations,")
+        SectionHeader(title = "Description", subtitle = "Check-in guidance, amenities, fire regulations, etc.")
         Spacer(Modifier.height(12.dp))
         LabeledField(label = "Campsite Overview") {
             OutlinedTextField(
