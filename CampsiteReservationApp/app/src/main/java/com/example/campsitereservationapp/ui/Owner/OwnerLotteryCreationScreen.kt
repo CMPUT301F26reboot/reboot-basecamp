@@ -14,6 +14,16 @@ fun OwnerLotteryCreationScreen(
     viewModel: OwnerLotteryCreationViewModel = viewModel()
 ){
 
+    /* Dictionary for all collected information
+    - LotteryStartDate<Date>
+    - LotteryEndDate<Date>
+    - ChosenCampsiteIDs List<String>
+    - EachCampsiteAvailability List<List<Date>>,
+    - WinnersToDraw<Int>
+    - WaitListCapacity<Int>
+
+     */
+
 
 
 }
