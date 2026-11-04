@@ -3,6 +3,7 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import java.util.Date
 
+
 open class ListingViewModel: DatabaseModel() {
     //Read only list of Listings for screens
     val listings: List<Listing> get() = _listings

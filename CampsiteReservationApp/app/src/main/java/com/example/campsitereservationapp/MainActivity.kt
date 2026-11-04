@@ -1,6 +1,5 @@
 package com.example.campsitereservationapp
 
-import CampsiteReservationApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,8 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.ui.entrant.UserWonSelectionScreen
 import com.example.campsitereservationapp.ui.entrant.UserWonBookingScreen
+import com.example.campsitereservationapp.ui.entrant.UserWonSelectionViewModel
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
 import com.google.firebase.firestore.auth.User
 
@@ -23,10 +24,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CampsiteReservationAppTheme {
-                CampsiteReservationApp()
+                UserWonSelectionScreen(
+                    onBack = {},
+                    onFinished = {},
+                )
+
+                // CampsiteReservationApp()
+                }
             }
         }
     }
-}
 
 

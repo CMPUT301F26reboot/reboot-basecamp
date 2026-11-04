@@ -16,7 +16,9 @@ class Listing(
     var ownerName: String = "",
     var tags: List<String> = emptyList(),
     var photoUrls: List<String> = emptyList(),
-    var geoLocation: GeoPoint = GeoPoint(0.0, 0.0)
+    var geoLocation: GeoPoint = GeoPoint(0.0, 0.0),
+    var rules: String = "",
+    var rulesAcceptanceRequired: Boolean = true
 ){
     @DocumentId
     val id: String = ""
