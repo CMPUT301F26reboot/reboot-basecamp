@@ -61,10 +61,16 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
  */
 @Composable
 fun UserWonSelectionScreen(
+    lotteryId: String = "3pTqrKarXVyXaGdHkLGo" ,
     onBack: () -> Unit,
     onFinished: () -> Unit,
     viewModel: UserWonSelectionViewModel = viewModel()
 ) {
+
+    val lotDateAndListings = viewModel.getLotteryDateAndListings(lotteryId)
+    val lotteryDate = lotDateAndListings?.first
+    val listings = lotDateAndListings?.second
+
 
     //state variable to remember what was selected, default null (nothing selected)
     var selectedCampsite by remember {mutableStateOf<Listing?>(value = null)}
@@ -153,16 +159,22 @@ fun UserWonSelectionScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = viewModel.lottery_date, //TODO: implement date for lottery
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF111827)
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Fixed lottery dates · Same for all campsites",
+                            text = "Lottery period:",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF6B7280)
                         )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        if (lotteryDate != null) {
+                            Text(
+                                text = lotteryDate,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                .fillMaxWidth(),
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF111827)
+                            )
+                        }
+
                     }
                 }
 
@@ -182,7 +194,7 @@ fun UserWonSelectionScreen(
                     )
                     //number of campsites counter
                     Text(
-                        text = "${viewModel.listings.size} sites",
+                        text = "${listings.orEmpty().size} sites",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFF6B7280)
                     )
@@ -199,7 +211,7 @@ fun UserWonSelectionScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                items(viewModel.listings.orEmpty()) { listing ->
+                items(listings.orEmpty()) { listing ->
                     val isSelected = (listing == selectedCampsite)
 
                     UserWonSelectionCampsiteCard(
@@ -329,19 +341,6 @@ fun UserWonSelectionCampsiteCard(
                             color = Color(0xFF111827),
                             fontWeight = FontWeight.SemiBold
                         )
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            modifier = Modifier.size(13.dp),
-                            tint = Color(0xFF6B7280)
-                        )
-
                     }
                 }
             }
