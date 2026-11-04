@@ -115,6 +115,13 @@ class UserCampsiteDetailsViewModel : ListingViewModel() {
     /** lottery that the user has picked or null */
     private val selectedLottery: Lottery? get() = _lotteries.firstOrNull { it.id == selectedLotteryId}
 
+    val hasCapacity: Boolean
+        get() {
+            val lottery = selectedLottery ?: return false
+            val capacity = lottery.waitlistCapacity ?: return false
+            return lottery.waitlist.size < capacity
+        }
+
     /** selected lottery days (green) */
     val lotteryDays: Set<Date>
         get() = selectedLottery?.dates?.map { it.toDayOnly() }?.toSet().orEmpty()

@@ -136,6 +136,7 @@ fun UserCampsiteDetailsScreen(
         initialMonth = viewModel.initialMonth,
         lotteries = viewModel.lotteryCards,
         selectedLotteryId = viewModel.selectedLotteryId,
+        hasCapacity = viewModel.hasCapacity,
         onSelectLottery = viewModel::selectLottery,
         onJoin = { lotteryId -> viewModel.joinLottery(lotteryId, profileId = "test-user") },
         onBack = onBack
@@ -184,6 +185,7 @@ internal fun UserCampsiteDetailsContent(
     initialMonth: YearMonth?,
     lotteries: List<LotteryCardInfo>,
     selectedLotteryId: String?,
+    hasCapacity: Boolean,
     onSelectLottery: (String) -> Unit,
     onJoin: (String) -> Unit,
     onBack: () -> Unit,
@@ -194,7 +196,7 @@ internal fun UserCampsiteDetailsContent(
             Surface(tonalElevation = 3.dp) {
                 Button(
                     onClick = { selectedLotteryId?.let(onJoin) },
-                    enabled = selectedLotteryId != null,
+                    enabled = selectedLotteryId != null && hasCapacity,
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
@@ -562,6 +564,7 @@ private fun UserCampsiteDetailsPreview() {
             initialMonth = YearMonth.of(2027, 3),
             lotteries = sampleLotteries,
             selectedLotteryId = null,
+            hasCapacity = True,
             onSelectLottery = { },
             onJoin = { },
             onBack = { }
