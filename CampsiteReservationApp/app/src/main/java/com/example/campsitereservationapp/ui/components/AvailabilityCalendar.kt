@@ -40,12 +40,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.text.DateFormat
 import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.time.format.TextStyle as DateTextStyle
+import com.example.campsitereservationapp.ui.theme.AvailableGreenBackground
+import com.example.campsitereservationapp.ui.theme.AvailableGreenContent
+import java.util.Calendar
+import java.util.Date
 
 /**
  * A month grid that shows which days are available, selected, or unavailable.
@@ -62,9 +64,9 @@ import java.time.format.TextStyle as DateTextStyle
  */
 @Composable
 fun AvailabilityCalendar(
-    availableDays: Set<LocalDate>,
-    selectedDays: Set<LocalDate>,
-    onDayClick: (LocalDate) -> Unit,
+    availableDays: Set<Date>,
+    selectedDays: Set<Date>,
+    onDayClick: (Date) -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
     initialMonth: YearMonth? = null,
@@ -180,12 +182,12 @@ private fun WeekdayHeader(firstDayOfWeek: DayOfWeek) {
 private fun MonthGrid(
     month: YearMonth,
     firstDayOfWeek: DayOfWeek,
-    availableDays: Set<LocalDate>,
-    selectedDays: Set<LocalDate>,
-    onDayClick: (LocalDate) -> Unit
+    availableDays: Set<Date>,
+    selectedDays: Set<Date>,
+    onDayClick: (Date) -> Unit
 ) {
     val daysInMonth = month.lengthOfMonth()
-    val leadingBlanks = (month.atDay(1).dayOfWeek.value - firstDayOfWeek.value + 7) % 7
+    val leadingBlanks = firstWeekdayOffset(month, firstDayOfWeek)
     val rows = (leadingBlanks + daysInMonth + 6) / 7
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -200,13 +202,18 @@ private fun MonthGrid(
                         contentAlignment = Alignment.Center
                     ) {
                         if (dayOfMonth in 1..daysInMonth) {
-                            val date = month.atDay(dayOfMonth)
+                            val date = dateOf(month.year, month.monthValue, dayOfMonth)
                             val state = when {
                                 date in selectedDays -> DayState.Selected
                                 date in availableDays -> DayState.Available
                                 else -> DayState.Unavailable
                             }
-                            DayCell(date = date, state = state, onClick = { onDayClick(date) })
+                            DayCell(
+                                date = date,
+                                dayOfMonth = dayOfMonth,
+                                state = state,
+                                onClick = { onDayClick(date) }
+                            )
                         }
                     }
                 }
@@ -218,7 +225,8 @@ private fun MonthGrid(
 /** One circular day cell, colored by [state] and clickable unless unavailable. */
 @Composable
 private fun DayCell(
-    date: LocalDate,
+    date: Date,
+    dayOfMonth: Int,
     state: DayState,
     onClick: () -> Unit
 ) {
@@ -226,7 +234,7 @@ private fun DayCell(
         DayState.Selected ->
             MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary
         DayState.Available ->
-            AvailableBackground to AvailableContent
+            AvailableGreenBackground to AvailableGreenContent
         DayState.Unavailable ->
             MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
     }
@@ -236,8 +244,9 @@ private fun DayCell(
         DayState.Available -> "available"
         DayState.Unavailable -> "unavailable"
     }
+    val locale = LocalConfiguration.current.locales[0]
     val description =
-        "${date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))}, $spokenState"
+        "${DateFormat.getDateInstance(DateFormat.LONG, locale).format(date)}, $spokenState"
 
     Box(
         modifier = Modifier
@@ -253,7 +262,7 @@ private fun DayCell(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = date.dayOfMonth.toString(),
+            text = dayOfMonth.toString(),
             style = MaterialTheme.typography.bodySmall,
             fontWeight = if (state == DayState.Selected) FontWeight.Bold else FontWeight.Medium,
             color = content
@@ -264,29 +273,25 @@ private fun DayCell(
 /** Visual state of a single day cell in [MonthGrid]. */
 private enum class DayState { Selected, Available, Unavailable }
 
-private val AvailableBackground = Color(0xFFCDEFD3)
-private val AvailableContent = Color(0xFF1B5E20)
-
 private val YearMonthSaver = Saver<YearMonth, String>(
     save = { it.toString() },
     restore = { YearMonth.parse(it) }
 )
 
-/** Preview: a populated calendar with available, selected, and unavailable days. */
-@Preview(showBackground = true)
-@Composable
-private fun AvailabilityCalendarPreview() {
-    val march5 = LocalDate.of(2027, 3, 5)
-    val march6 = LocalDate.of(2027, 3, 6)
-    MaterialTheme {
-        AvailabilityCalendar(
-            availableDays = setOf(march5, march6, LocalDate.of(2027, 3, 12), LocalDate.of(2027, 3, 13)),
-            selectedDays = setOf(march5, march6),
-            onDayClick = {},
-            title = "Available spots",
-            initialMonth = YearMonth.of(2027, 3),
-            showLegend = true,
-            modifier = Modifier.padding(16.dp)
-        )
-    }
+/** Weekday index (0 = [firstDayOfWeek]) of the 1st of [month], computed with [Calendar] instead of `LocalDate`. */
+private fun firstWeekdayOffset(month: YearMonth, firstDayOfWeek: DayOfWeek): Int {
+    val cal = Calendar.getInstance()
+    cal.clear()
+    cal.set(month.year, month.monthValue - 1, 1)
+    // Calendar.DAY_OF_WEEK is Sunday=1..Saturday=7; convert to ISO Monday=1..Sunday=7.
+    val isoDayOfWeek = ((cal.get(Calendar.DAY_OF_WEEK) + 5) % 7) + 1
+    return (isoDayOfWeek - firstDayOfWeek.value + 7) % 7
+}
+
+/** Builds a [Date] for [year]-[month]-[day] at midnight local time, with no time-of-day component. */
+internal fun dateOf(year: Int, month: Int, day: Int): Date {
+    val cal = Calendar.getInstance()
+    cal.clear()
+    cal.set(year, month - 1, day, 0, 0, 0)
+    return cal.time
 }

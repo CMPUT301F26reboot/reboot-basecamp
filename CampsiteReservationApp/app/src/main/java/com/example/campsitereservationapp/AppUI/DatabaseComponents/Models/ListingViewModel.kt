@@ -5,9 +5,10 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 import java.util.Date
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
+
 open class ListingViewModel: DatabaseModel() {
     //Read only list of Listings for screens
-    val listings: SnapshotStateList<Listing> get() = _listings
+    val listings: List<Listing> get() = _listings
 
     /**
      * Gets available dates of a listing
