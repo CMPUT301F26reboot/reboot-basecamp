@@ -13,6 +13,7 @@ class Listing(
     var rating: Double = 0.0,
     var numOfReviews: Int = 0,
     var ownerID: String = "",
+    var ownerName: String = "",
     var tags: List<String> = emptyList(),
     var photoUrls: List<String> = emptyList(),
     var geoLocation: GeoPoint = GeoPoint(0.0, 0.0)

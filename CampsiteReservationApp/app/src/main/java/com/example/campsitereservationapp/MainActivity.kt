@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp
 
+import CampsiteReservationApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,9 +23,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CampsiteReservationAppTheme {
-                }
+                CampsiteReservationApp()
             }
         }
     }
+}
 
 
