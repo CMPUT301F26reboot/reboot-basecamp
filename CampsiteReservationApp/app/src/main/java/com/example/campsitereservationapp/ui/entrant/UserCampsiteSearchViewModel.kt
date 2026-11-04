@@ -2,6 +2,7 @@ package com.example.campsitereservationapp.ui.entrant
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
@@ -11,13 +12,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
+import java.util.Calendar
 import java.util.Date
 
 class UserCampsiteSearchViewModel: DatabaseModel() {
-    private var _searchResults = mutableStateListOf<Listing>()
-    private val _uiState = MutableStateFlow(UserCampsiteSearchUiState())
+     var _searchResults = mutableStateListOf<Listing>()
+     var _selectedDates = mutableStateSetOf<Date>()
 
-    val uiState: StateFlow<UserCampsiteSearchUiState> = _uiState.asStateFlow()
+
 
     val listings: List<Listing> get() = _searchResults
 
@@ -25,7 +27,6 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
         for(listing in _listings){
             _searchResults.add(listing)
         }
-        _uiState.update{ UserCampsiteSearchUiState(_searchResults) }
     }
 
     /**
@@ -39,10 +40,10 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
      * [location] is location of campsite
      * [capacity] is minimum MaxOccupancy of each campsite
      */
-    fun doSearch(keyword: String, selectedDates: Set<Date>, location: String, capacity: Int){
+    fun doSearch(keyword: String, location: String, capacity: Int){
         _searchResults.clear()
         for (listing in _listings){
-            if(meetsDateRequirements(selectedDates, listing) &&
+            if(meetsDateRequirements(_selectedDates, listing) &&
                 meetsKeywordRequirements(keyword, listing) &&
                 meetsLocationRequirements(location, listing) &&
                 listing.maxOccupancy >= capacity
@@ -51,7 +52,6 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
                 _searchResults.add(listing)
             }
         }
-        _uiState.update { UserCampsiteSearchUiState(_searchResults) }
     }
 
 
@@ -87,5 +87,25 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
         if(location.isEmpty())
             return true
         return (location.compareTo(listing.address, ignoreCase = true) == 0)
+    }
+
+    fun toggleDate(date: Date){
+        if(date in _selectedDates){
+            _selectedDates.remove(date)
+        }else{
+            _selectedDates.add(date)
+        }
+    }
+
+    fun get100Dates(): Set<Date>{
+        var dates = mutableSetOf<Date>()
+        val calendar = Calendar.getInstance() // Starts at today
+
+        for (i in 0..100) {
+            dates.add(calendar.time)
+            calendar.add(Calendar.DAY_OF_YEAR, 1) // Move to the next day
+        }
+
+        return dates.toSet()
     }
 }

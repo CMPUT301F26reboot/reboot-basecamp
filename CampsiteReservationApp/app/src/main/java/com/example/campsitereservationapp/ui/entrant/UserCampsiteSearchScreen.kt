@@ -27,9 +27,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.ui.entrant.UserCampsiteSearchViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.time.YearMonth
 import java.util.Date
 import kotlin.collections.emptySet
 
@@ -39,7 +41,6 @@ fun UserCampsiteSearchScreen(
     vm: UserCampsiteSearchViewModel = viewModel(),
     modifier: Modifier = Modifier
 ){
-    val state by vm.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var keyword by remember{mutableStateOf("")}
     var location by remember{mutableStateOf("")}
@@ -50,6 +51,7 @@ fun UserCampsiteSearchScreen(
     var showCalendar by remember{mutableStateOf(false)}
     var showCalText by remember{mutableStateOf("")}
     showCalText = "Date Selection"
+    vm.start()
 
     if(occupancyInput == "")
         occupancy = 0
@@ -73,7 +75,7 @@ fun UserCampsiteSearchScreen(
 
             Button(
                 onClick = {
-                    scope.launch{vm.doSearch(keyword, selectedDates, location, occupancy)}
+                    scope.launch{vm.doSearch(keyword, location, occupancy)}
                 }
             ){
                 Text("Search")
@@ -111,14 +113,16 @@ fun UserCampsiteSearchScreen(
         }
 
         if(showCalendar){
-            //TODO
+            AvailabilityCalendar(
+                vm.get100Dates(), vm._selectedDates, {vm.toggleDate(it)},
+                initialMonth = YearMonth.now())
         }
 
         LazyColumn(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(state.searchResults){ listing ->
+            items(vm._searchResults){ listing ->
                 UserSearchCampsiteCard(listing = listing)
             }
         }
