@@ -1,6 +1,5 @@
 package com.example.campsitereservationapp.ui.Owner
 
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
@@ -9,7 +8,7 @@ import kotlin.collections.List
 
 
 class OwnerLotteryCreationViewModel: DatabaseModel(
-
+    IDGen = GenerateIDModel()
 ){
 
     fun getOwnerListings(ownerID: String): List<Listing>{
@@ -33,10 +32,6 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
 
     }
 
-     /** Creates a random string of characters of 20 length */
-     fun createID(): String{
-        //TODO
-         return " "
-     }
+
 
 }
