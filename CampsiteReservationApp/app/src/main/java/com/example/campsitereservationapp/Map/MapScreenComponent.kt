@@ -42,8 +42,8 @@ import androidx.core.content.ContextCompat
 @Composable
 fun MapScreenComponent(
     modifier: Modifier = Modifier,
-    latitude: Double = 53.5232,
-    longitude: Double = -113.5263,
+    latitude: Double = 51.1784, //default location is Banff
+    longitude: Double = -115.5708,
     viewModel: MapViewModel = viewModel()
 ) {
     //move to given location first loaded in
