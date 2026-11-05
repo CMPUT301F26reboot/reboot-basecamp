@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.Map.MapImplementationExample
 import com.example.campsitereservationapp.Map.MapScreenComponent
 import com.example.campsitereservationapp.ui.entrant.UserWonSelectionScreen
 import com.example.campsitereservationapp.ui.entrant.UserWonBookingScreen
@@ -25,9 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MapScreenComponent(
-
-            )
+            MapImplementationExample()
             }
         }
     }
