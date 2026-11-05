@@ -12,8 +12,6 @@ import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.tan
 import ovh.plrapps.mapcompose.api.addLayer
-import ovh.plrapps.mapcompose.api.centroidX
-import ovh.plrapps.mapcompose.api.centroidY
 import ovh.plrapps.mapcompose.api.scale
 import ovh.plrapps.mapcompose.api.scrollTo
 import ovh.plrapps.mapcompose.core.TileStreamProvider
