@@ -32,7 +32,7 @@ private val DoneButtonColor = Color(0xFF111827)
  *@param description greyed out description of popup
  */
 @Composable
-fun CustomDialog(
+fun CustomDialogComponent(
     onDismissRequest: () -> Unit,
     title: String? = null,
     description: String? = null,

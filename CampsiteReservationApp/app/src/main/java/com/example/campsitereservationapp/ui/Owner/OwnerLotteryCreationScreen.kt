@@ -1,8 +1,14 @@
 package com.example.campsitereservationapp.ui.Owner
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.ui.entrant.UserWonBookingViewModel
 import com.google.apps.card.v1.Columns
 
@@ -14,57 +20,47 @@ fun OwnerLotteryCreationScreen(
     viewModel: OwnerLotteryCreationViewModel = viewModel()
 ){
 
-    /* Dictionary for all collected information
-    - LotteryStartDate<Date>
-    - LotteryEndDate<Date>
-    - ChosenCampsiteIDs List<String>
-    - EachCampsiteAvailability List<List<Date>>,
-    - WinnersToDraw<Int>
-    - WaitListCapacity<Int>
-
-     */
-
 
 
 }
 
+/** Drop down selection for a list of <Listing>, then displays them below the dropdown
+ * @param title optional bolded title string
+ * @param subHeader optional grey subheader string
+ * @param listings list of listings from owner ID
+ * @param modifier modifier of parent compose
+ */
 @Composable
-fun BackButtonTitleAndHeader(
-    modifier: Modifier,
+fun ListingDropDownSelection(
+    title: String? = null,
+    subHeader: String? = null,
+    listings: SnapshotStateList<Listing>,
+    modifier: Modifier
 ){
+
+    var selectedListings by rememberSaveable { mutableStateOf(listOf<Listing>()) }
+
+    //optional title and header
+
+    //dropdown menu of listing listing
+
+    for (listing in selectedListings){
+
+    }
 
 }
 
+/**Cards shown under Selected Campsites,
+ * @param listing listing of <Listing> object to be shown
+ * @param onDelete event call after clicking x in top right of card
+ * @param modifier modifier from parent compose
+ */
 @Composable
-fun LotteryDatesComponent(
-    modifier: Modifier = Modifier,
+fun ListingCard(
+    listing: Listing,
+    onDelete: () -> Unit,
+    modifier: Modifier
 ){
 
-}
-
-@Composable
-fun CampsiteDropDownComponent(
-    modifier: Modifier = Modifier,
-){
-
-}
-
-@Composable
-fun SetCampsiteAvailabilityComponent(
-    modifier: Modifier = Modifier,
-){
-
-}
-
-@Composable
-fun LotteryQuotasComponent(
-    modifier: Modifier = Modifier,
-){
-
-}
-
-fun PopUpComponent(
-    modifier: Modifier = Modifier
-){
 
 }
