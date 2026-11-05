@@ -26,6 +26,18 @@ import ovh.plrapps.mapcompose.api.scale
 import ovh.plrapps.mapcompose.api.scrollTo
 import ovh.plrapps.mapcompose.core.TileStreamProvider
 import ovh.plrapps.mapcompose.ui.state.MapState
+import android.annotation.SuppressLint
+import android.content.Context
+import android.location.LocationManager
+import android.os.CancellationSignal
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat
+import ovh.plrapps.mapcompose.api.onTap
+import kotlin.math.atan
+import kotlin.math.sinh
 
 /** Backend of ViewModel, calls [makeTileStreamProvider] for Tile Map information, converts latitude
  * and longitude double to match TilePyramid dimensions defined in MapCompose
@@ -56,6 +68,53 @@ class MapViewModel : ViewModel() {
     }.apply {
         addLayer(tileStreamProvider)
     }
+    /** (latitude, longitude) of the last dropped pin, or null if none dropped yet. */
+    var droppedPin: Pair<Double, Double>? by mutableStateOf(null)
+        private set
+
+    /** True while waiting for the user to tap where the pin should go. */
+    var isPinDropMode by mutableStateOf(false)
+        private set
+
+    init {
+        //EVENT 2: when in pin-drop mode, the next tap drops the pin
+        state.onTap { x, y ->
+            if (isPinDropMode) {
+                placeMarker(x, y)
+                droppedPin = normalizedToLatLon(x, y)
+                isPinDropMode = false
+            }
+        }
+    }
+
+    /** EVENT 2 trigger: the next tap on the map drops a pin. */
+    fun startPinDrop() {
+        isPinDropMode = true
+    }
+
+    /** EVENT 1: moves the map to the device's current GPS position.
+     * Only call after location permission is granted (see MapScreenComponent). */
+    @SuppressLint("MissingPermission")
+    fun moveToCurrentLocation(context: Context) {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val provider = if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            LocationManager.GPS_PROVIDER
+        } else {
+            LocationManager.NETWORK_PROVIDER
+        }
+        LocationManagerCompat.getCurrentLocation(
+            locationManager,
+            provider,
+            CancellationSignal(),
+            ContextCompat.getMainExecutor(context) //result arrives on main thread, as MapCompose needs
+        ) { location ->
+            if (location != null) { //null when no fix (e.g. location turned off)
+                moveTo(location.latitude, location.longitude)
+            }
+        }
+    }
+
+
     //moves map center to new location and pins a marker there
     fun moveTo(latitude: Double, longitude: Double) {
         val loc = latLonToNormalized(latitude, longitude)
@@ -128,4 +187,11 @@ private fun latLonToNormalized(latitude: Double, longitude: Double): Pair<Double
     val latRad = Math.toRadians(latitude)
     val y = (1.0 - ln(tan(latRad) + 1.0 / cos(latRad)) / PI) / 2.0
     return Pair(x, y)
+}
+
+/** Reverse of latLonToNormalized: normalized (2D tile) to lat/lon */
+private fun normalizedToLatLon(x: Double, y: Double): Pair<Double, Double> {
+    val longitude = x * 360.0 - 180.0
+    val latitude = Math.toDegrees(atan(sinh(PI * (1.0 - 2.0 * y))))
+    return Pair(latitude, longitude)
 }
