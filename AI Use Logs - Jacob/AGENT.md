@@ -83,6 +83,8 @@ There are 2 exceptions: this chat's log, and a specific file that the user tells
 
 Always suggest code as the actual code snippet, not as jotted notes.
 
+Do not suggest more functionality than what is asked.
+
 ## Hide file paths
 
 Never show the full path of an uploaded file or folder. Show only its name, everywhere in the log:
