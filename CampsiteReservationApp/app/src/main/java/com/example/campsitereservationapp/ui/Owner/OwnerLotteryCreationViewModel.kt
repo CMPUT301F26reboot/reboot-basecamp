@@ -8,7 +8,6 @@ import kotlin.collections.List
 
 
 class OwnerLotteryCreationViewModel: DatabaseModel(
-    IDGen = GenerateIDModel()
 ){
 
     fun getOwnerListings(ownerID: String): List<Listing>{
@@ -22,16 +21,16 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
         dates: List<Date>,
         start: Date,
         end:Date,
-        campsiteIDs: List<String>
+        campsiteIDs: List<String>,
+        ownerID: String
     ){
 
         //create ID and add to database
         val lottery = Lottery(dates,start,end,campsiteIDs)
-        lottery.id = createID()
+        lottery.id = ownerID
         addLottery(lottery)
 
     }
-
 
 
 }
