@@ -24,7 +24,7 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
 
     val listings: List<Listing> get() = _searchResults
 
-    fun start() {
+    init {
         for(listing in _listings){
             _searchResults.add(listing)
         }

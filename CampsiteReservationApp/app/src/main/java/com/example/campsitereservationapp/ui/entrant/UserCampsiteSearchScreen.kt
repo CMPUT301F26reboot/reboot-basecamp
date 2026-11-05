@@ -64,7 +64,6 @@ fun UserCampsiteSearchScreen(
     var showCalendar by remember{mutableStateOf(false)}
     var showCalText by remember{mutableStateOf("")}
     showCalText = "Date Selection"
-    vm.start()
 
     if(occupancyInput == "")
         occupancy = 0
