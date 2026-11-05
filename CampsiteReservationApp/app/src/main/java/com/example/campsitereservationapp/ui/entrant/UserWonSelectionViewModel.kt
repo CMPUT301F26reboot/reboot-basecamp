@@ -21,37 +21,25 @@ class UserWonSelectionViewModel(
         return Pair(lotteryDatesToString(lottery), getLotteryListings(lottery))
     }
 
-    /** Takes a lottery as input and returns start and end date as formated string */
+    /** Takes a lottery as input and returns start and end date as a formatted string */
     fun lotteryDatesToString(lottery: Lottery): String {
-        val months = listOf("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+        val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+        val dayFormat = SimpleDateFormat("d", Locale.getDefault())
+        val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
 
-        //turn the date into string format
-        val startString = SimpleDateFormat("MM-dd-yyyy").format(lottery.start);
-        val endString = SimpleDateFormat("MM-dd-yyyy").format(lottery.end);
+        val startMonth = monthFormat.format(lottery.start)
+        val endMonth = monthFormat.format(lottery.end)
+        val startDay = dayFormat.format(lottery.start)
+        val endDay = dayFormat.format(lottery.end)
+        val startYear = yearFormat.format(lottery.start)
+        val endYear = yearFormat.format(lottery.end)
 
-        //split the string
-        val startStringSplit= startString.split("-")
-        val endStringSplit = endString.split("-")
-
-
-        //convert the months from numbers into abreviation
-        val startMonth = months[startStringSplit[0].toInt() - 1]
-        val endMonth = months[startStringSplit[0].toInt() - 1]
-
-        //format the string
-        val startDay = startStringSplit[1]
-        val endDay = endStringSplit[1]
-        val startYear = startStringSplit[2]
-        val endYear = endStringSplit[2]
-
-        return if (startYear != endYear) { //different years: show both years
-            "$startMonth $startDay, $startYear - $endMonth $endDay, $endYear"
-        } else if (startMonth == endMonth) { //same year and month: show the month and year once
-            "$startMonth $startDay-$endDay, $startYear"
-        } else { //same year, different months: show the year once
-            "$startMonth $startDay - $endMonth $endDay, $startYear"
+        return when {
+            startYear != endYear   -> "$startMonth $startDay, $startYear - $endMonth $endDay, $endYear"
+            startMonth != endMonth -> "$startMonth $startDay - $endMonth $endDay, $startYear"
+            startDay != endDay     -> "$startMonth $startDay-$endDay, $startYear"
+            else                   -> "$startMonth $startDay, $startYear"
         }
-
     }
     /** Takes in lottery as input and returns the listings under it*/
     fun getLotteryListings(lottery: Lottery): MutableList<Listing> {
