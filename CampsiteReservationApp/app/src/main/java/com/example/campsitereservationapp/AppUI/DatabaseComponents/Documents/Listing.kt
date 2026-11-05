@@ -18,5 +18,5 @@ class Listing(
     var geoLocation: GeoPoint = GeoPoint(0.0, 0.0)
 ){
     @DocumentId
-    val id: String = ""
+    var id: String = ""
 }

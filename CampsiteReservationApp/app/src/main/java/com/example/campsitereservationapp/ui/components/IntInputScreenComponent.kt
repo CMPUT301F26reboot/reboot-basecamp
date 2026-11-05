@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
  * @param onNumChange called with the new number when a button is pressed or a number is typed
  */
 @Composable
-fun IntInputComponent(
+fun IntInputScreenComponent(
     modifier: Modifier = Modifier,
     title: String? = null,
     subHeader: String? = null,
@@ -160,7 +160,7 @@ fun IntInputComponent(
 fun IntInputComponentExample() {
     var num by remember { mutableIntStateOf(2) }
 
-    IntInputComponent(
+    IntInputScreenComponent(
         title = "title",
         subHeader = "subHeader",
         num = num,

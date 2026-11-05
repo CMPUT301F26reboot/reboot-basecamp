@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
  * @param onBack onclick event, leads to previous screen
  */
 @Composable
-fun BackButtonAndHeaderComponent(
+fun BackButtonAndHeaderScreenComponent(
     modifier: Modifier = Modifier,
     title: String? = null,
     subHeader: String? = null,
@@ -77,7 +77,7 @@ fun BackButtonAndHeaderComponent(
 )
 @Composable
 fun BackButtonAndHeaderPreview(){
-    BackButtonAndHeaderComponent(
+    BackButtonAndHeaderScreenComponent(
         modifier = Modifier.fillMaxSize(),
         title = "Title",
         subHeader = "Subheader",

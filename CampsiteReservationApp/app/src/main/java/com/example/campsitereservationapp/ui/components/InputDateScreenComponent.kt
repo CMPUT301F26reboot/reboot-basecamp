@@ -53,7 +53,7 @@ import java.util.Locale
  */
 
 @Composable
-fun InputDateComponent(
+fun InputDateScreenComponent(
     title: String? = null,
     subheader: String? = null,
     infoDescription: String? = null,
@@ -161,7 +161,7 @@ fun InputDateComponent(
 @Composable
 fun InputDateComponentPreview(){
     var dates by remember { mutableStateOf(emptyList<Date>()) }
-    InputDateComponent(
+    InputDateScreenComponent(
         title = "Title",
         subheader = "Subheader",
         infoDescription = "Info Description",
@@ -178,7 +178,7 @@ fun InputDateComponentPreview(){
 @Composable
 fun InputDataPreview_NoText(){
     var dates by remember { mutableStateOf(emptyList<Date>()) }
-    InputDateComponent(
+    InputDateScreenComponent(
         dates = dates,
         onSelection = { day -> dates = nextDateRange(dates, day) },
         modifier = Modifier.fillMaxWidth()

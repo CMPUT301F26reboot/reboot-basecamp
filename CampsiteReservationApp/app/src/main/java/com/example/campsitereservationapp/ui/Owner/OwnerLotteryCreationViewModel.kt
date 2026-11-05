@@ -3,6 +3,7 @@ package com.example.campsitereservationapp.ui.Owner
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
+import com.google.firebase.firestore.SetOptions
 import java.util.Date
 import kotlin.collections.List
 
@@ -14,21 +15,30 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
         return _listings.filter { it.ownerID == ownerID }
     }
 
-
-
-    /** takes in lottery params,creates lottery ID, then adds to database*/
+    /** takes in lottery params, then adds to database. Firestore creates the lottery ID.
+     * winnersToDraw and waitlistCap aren't fields on Lottery, so they are merged into the same document
+     * @param onSuccess event call after the lottery is saved
+     */
     fun createAndAddLottery(
         dates: List<Date>,
         start: Date,
-        end:Date,
+        end: Date,
         campsiteIDs: List<String>,
-        ownerID: String
+        winnersToDraw: Int,
+        waitlistCap: Int,
+        onSuccess: () -> Unit
     ){
-        //create and add lottery to database
-        val lottery = Lottery(dates,start,end,campsiteIDs)
-        lottery.id = ownerID
-        addLottery(lottery)
+        val lottery = Lottery(dates, start, end, campsiteIDs)
+        val quotas = mapOf(
+            "winnersToDraw" to winnersToDraw,
+            "waitlistCap" to waitlistCap
+        )
+
+        val document = lotteriesRef.document()
+        db.batch()
+            .set(document, lottery)
+            .set(document, quotas, SetOptions.merge())
+            .commit()
+            .addOnSuccessListener { onSuccess() }
     }
-
-
 }

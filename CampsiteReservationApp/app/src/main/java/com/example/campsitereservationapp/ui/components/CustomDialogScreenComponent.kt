@@ -32,7 +32,7 @@ private val DoneButtonColor = Color(0xFF111827)
  *@param description greyed out description of popup
  */
 @Composable
-fun CustomDialogComponent(
+fun CustomDialogScreenComponent(
     onDismissRequest: () -> Unit,
     title: String? = null,
     description: String? = null,
@@ -47,7 +47,8 @@ fun CustomDialogComponent(
     }
 }
 
-/** The dialog's contents: the card, its text, and the Done button. */
+/** The dialog's contents: the card, its text, and the Done button.
+ * Note: Separated the content so it can be previewed (Dialog cannot be normally previewed) */
 @Composable
 private fun CustomDialogContent(
     onDismissRequest: () -> Unit,
