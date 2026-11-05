@@ -56,7 +56,7 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
     }
 
 
-    fun meetsDateRequirements(selectedDates: Set<Date>, listing: Listing): Boolean{
+    internal fun meetsDateRequirements(selectedDates: Set<Date>, listing: Listing): Boolean{
         if(selectedDates.isEmpty()){
             return true
         }
@@ -76,7 +76,7 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
      *
      * Compares the keyword with the listing name using compareTo
      */
-    fun meetsKeywordRequirements(keyword: String, listing: Listing): Boolean{
+    internal fun meetsKeywordRequirements(keyword: String, listing: Listing): Boolean{
         if(keyword.isEmpty())
             return true
 
@@ -84,12 +84,17 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
                 && listing.name.compareTo(keyword + '\uffff', ignoreCase = true) < 0) //keyword + large character is larger
     }
 
-    fun meetsLocationRequirements(location: String, listing: Listing): Boolean{
+    internal fun meetsLocationRequirements(location: String, listing: Listing): Boolean{
         if(location.isEmpty())
             return true
         return (location.compareTo(listing.address, ignoreCase = true) == 0)
     }
 
+    /**
+     * Adds or removes a date from _selected dates
+     *
+     * @param [date] is a date that should be toggled. If it's already in _selectedDates, it should be removed and vice versa
+     */
     fun toggleDate(date: Date){
         if(date in _selectedDates){
             _selectedDates.remove(date)
@@ -98,7 +103,7 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
         }
     }
 
-    fun get365Dates(): Set<Date>{
+    internal fun get365Dates(): Set<Date>{
         val strictDates = mutableSetOf<Date>()
         val calendar = Calendar.getInstance() // Starts at today
 
