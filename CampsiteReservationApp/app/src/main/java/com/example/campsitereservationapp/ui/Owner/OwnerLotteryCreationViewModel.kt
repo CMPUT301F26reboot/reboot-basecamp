@@ -24,12 +24,10 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
         campsiteIDs: List<String>,
         ownerID: String
     ){
-
-        //create ID and add to database
+        //create and add lottery to database
         val lottery = Lottery(dates,start,end,campsiteIDs)
         lottery.id = ownerID
         addLottery(lottery)
-
     }
 
 
