@@ -1,5 +1,12 @@
 package com.example.campsitereservationapp.Map
 
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Icon
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -12,6 +19,9 @@ import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.tan
 import ovh.plrapps.mapcompose.api.addLayer
+import ovh.plrapps.mapcompose.api.addMarker
+import ovh.plrapps.mapcompose.api.hasMarker
+import ovh.plrapps.mapcompose.api.moveMarker
 import ovh.plrapps.mapcompose.api.scale
 import ovh.plrapps.mapcompose.api.scrollTo
 import ovh.plrapps.mapcompose.core.TileStreamProvider
@@ -22,7 +32,11 @@ import ovh.plrapps.mapcompose.ui.state.MapState
  *
  */
 class MapViewModel : ViewModel() {
-
+    companion object {
+        //Marker nametag (MapCompose find markers by string), (used when handling multiple markers)
+        private const val LOCATION_MARKER_ID = "location"
+    }
+    private val initialZoomLVL = 12// initial zoom level, range: (4-13) (Global-Neighborhood)
     private val tileStreamProvider = makeTileStreamProvider() //gets tiles from
     private val tileSize = 256 //needed for mapSize calculation
     private val maxLevel = 16 //max zoom out lvl
@@ -38,13 +52,14 @@ class MapViewModel : ViewModel() {
         workerCount = 16
     ) {
         scroll(x, y)
-        scale(1 / 2.0.pow(maxLevel - 7))
+        scale(1 / 2.0.pow(maxLevel - initialZoomLVL))
     }.apply {
         addLayer(tileStreamProvider)
     }
-    //moves map center to new location
+    //moves map center to new location and pins a marker there
     fun moveTo(latitude: Double, longitude: Double) {
         val loc = latLonToNormalized(latitude, longitude)
+        placeMarker(loc.first, loc.second)
         viewModelScope.launch { //Background Coroutine,
             state.scrollTo(
                 loc.first, //sets x position
@@ -53,6 +68,21 @@ class MapViewModel : ViewModel() {
         }
     }
 
+    //adds the marker the first time, then moves it on later calls
+    private fun placeMarker(x: Double, y: Double) {
+        if (state.hasMarker(LOCATION_MARKER_ID)) {
+            state.moveMarker(LOCATION_MARKER_ID, x, y)
+        } else {
+            state.addMarker(LOCATION_MARKER_ID, x, y) {
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = "Campsite location",
+                    modifier = Modifier.size(48.dp),
+                    tint = Color(0xFFD32F2F)
+                )
+            }
+        }
+    }
 //    //zoom in/out buttons
 //    fun zoomIn() {
 //        viewModelScope.launch {
@@ -66,6 +96,7 @@ class MapViewModel : ViewModel() {
 //        }
 //    }
 }
+
 
 /** Connects to https://www.openstreetmap.org/ and returns specified tiles needed for map
  *
