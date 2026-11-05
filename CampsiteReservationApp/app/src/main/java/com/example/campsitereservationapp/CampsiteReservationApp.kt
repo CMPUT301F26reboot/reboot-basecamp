@@ -3,9 +3,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.campsitereservationapp.ui.entrant.TempNavigationScreen
+import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.UserCampsiteDetailsScreen
+import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
 import com.example.campsitereservationapp.ui.entrant.parseRouteDate
+import com.example.campsitereservationapp.ui.owner.campsitedetails.OwnerHomeScreen
 
 //private const val CAMPSITE_DETAILS_ROUTE = "campsiteDetails/{listingId}?start={start}&end={end}"
 
@@ -20,10 +22,64 @@ fun CampsiteReservationApp() {
             TempNavigationScreen(
                 profileId = "123",
                 onUser = {
-                    navController.navigate("campsiteDetails/c2uPtt3WNrF2XfJZggYi?start=2027-05-01&end=2027-05-10")
+                    navController.navigate("userHome")
                 },
                 onOwner = {
-                    //empty for now
+                    navController.navigate("ownerHome")
+                }
+            )
+        }
+
+        composable(
+            route = "userHome"
+        ){
+            UserHomeScreen(
+                profileId = "123",
+                onSearchCampsites = {
+                    // actual:
+                    // navController.navigate("userSearchCampsites")
+
+                    // test with a current screen:
+                    navController.navigate("campsiteDetails/c2uPtt3WNrF2XfJZggYi?start=2027-05-01&end=2027-05-10")
+                },
+                onMyLotteries = {
+                    //navController.navigate("userLotteries")
+                },
+                onMyReservations = {
+                    //navController.navigate("userReservations")
+                },
+                onNotifications = {
+                    //navController.navigate("userNotifications")
+                },
+                onProfile = {
+                    //navController.navigate("userProfile")
+                }
+            )
+        }
+
+        composable(
+            route = "ownerHome"
+        ){
+            OwnerHomeScreen(
+                profileId = "321",
+                onManageLotteries = {
+                    navController.navigate("ownerManageLotteries")
+                },
+                onMyCampsites = {
+                    //Actual:
+                    // navController.navigate("ownerCampsites")
+
+                    // Test with a current screen:
+                    //navController.navigate("ownerCampDetails")
+                },
+                onAddCampsite = {
+                    //navController.navigate("ownerAddCampsite")
+                },
+                onNotificationHistory = {
+                    //navController.navigate("ownerNotificationHistory")
+                },
+                onProfile = {
+                    //navController.navigate("ownerProfile")
                 }
             )
         }
