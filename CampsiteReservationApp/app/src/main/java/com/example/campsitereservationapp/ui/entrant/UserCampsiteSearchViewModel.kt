@@ -109,7 +109,7 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
 
         val dates = mutableStateListOf<Date>()
         for (date in strictDates){
-            dates.add(dateOf(date.year + 1900, date.month, date.date))
+            dates.add(dateOf(date.year + 1900, date.month + 1, date.date))
         }
         return dates.toSet()
     }
