@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp.ui.entrant
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,15 +13,16 @@ import java.util.Calendar
 import java.util.Date
 
 /**
- * ViewModel backing [UserWonBookingScreen] (US 01.04.01, 01.04.03).
- * Extends [ListingViewModel] to reuse its live Firestore-backed listing/lottery/reservation
- * lists; this class only adds the state specific to this screen (which dates are picked, and
- * the book/decline write operations).
+ * UserWonBookingViewModel.kt
+ *
+ * Holds the state for [UserWonBookingScreen]: which campsite and lottery are being shown, which
+ * date the entrant picked, and whether they've accepted the rules. Also does the Firestore write
+ * for declining an offer.
+ *
  *
  * Outstanding issues:
- *  - [onBookClicked] does not create a Reservation yet, so US 01.05.01 is not fully implemented.
+ *  - reservedDays() does not check a reservation's status, so a cancelled reservation would still block that date.
  */
-
 class UserWonBookingViewModel : ListingViewModel() {
 
     private var lotteryId by mutableStateOf<String?>(null)
@@ -28,6 +30,10 @@ class UserWonBookingViewModel : ListingViewModel() {
 
     /** Dates the user has tapped in the calendar, before intersecting with [bookableDays]. */
     private var picked by mutableStateOf<Set<Date>>(emptySet())
+
+    /** Whether the entrant has checked "Accept rules & policies". */
+    var rulesAccepted by mutableStateOf(false)
+        private set
 
     /** True while the decline write to Firestore is in flight. */
     var isDeclining by mutableStateOf(false)
@@ -73,9 +79,12 @@ class UserWonBookingViewModel : ListingViewModel() {
     val noDatesAvailable: Boolean
         get() = !isLoading && bookableDays.isEmpty()
 
-    /** True when the current selection is valid enough to enable the Book button. */
+    /**
+     * True when the Book button should be enabled: a date must be picked, and if the campsite
+     * requires it, the rules checkbox must be checked too.
+     */
     val canBook: Boolean
-        get() = isValidSelection(selectedDays)
+        get() = isValidSelection(selectedDays) && (findCampsite()?.rulesAcceptanceRequired != true || rulesAccepted)
 
     /** Call once from the screen with the ids passed through navigation. Safe to call repeatedly. */
     fun start(lotteryId: String, campsiteName: String) {
@@ -83,6 +92,7 @@ class UserWonBookingViewModel : ListingViewModel() {
         this.lotteryId = lotteryId
         this.campsiteName = campsiteName
         picked = emptySet()
+        rulesAccepted = false
         isFinished = false
         errorMessage = null
     }
@@ -93,12 +103,12 @@ class UserWonBookingViewModel : ListingViewModel() {
         picked = if (day in picked) picked - day else picked + day
     }
 
-    /**
-     * Called when the user confirms the Book dialog.
-     *
-     * Outstanding: does not yet create a Reservation document or mark the lottery slot as
-     * claimed (US 01.05.01). Currently, a no-op.
-     */
+    /** Sets whether the entrant has accepted the campsite's rules & policies. */
+    fun onRulesAcceptedChanged(accepted: Boolean) {
+        rulesAccepted = accepted
+    }
+
+    /** Called when the user confirms the Book dialog. Doesn't save anything yet (see Outstanding issues above). */
     fun onBookClicked() {
     }
 
@@ -130,24 +140,19 @@ class UserWonBookingViewModel : ListingViewModel() {
         errorMessage = null
     }
 
-    /** Looks up the won lottery by its Firestore document id (see [Lottery.id]). */
+    /** Finds the lottery the entrant won, using its id. */
     private fun findLottery(): Lottery? {
         val id = lotteryId ?: return null
         return _lotteries.firstOrNull { it.id == id }
     }
 
-    /** Looks up the campsite by name, as in [ListingViewModel.getAvailability]. */
+    /** Finds the campsite by name among the live listings. */
     private fun findCampsite(): Listing? {
         val name = campsiteName ?: return null
         return _listings.firstOrNull { it.name == name }
     }
 
-    /**
-     * Days already reserved at the campsite with id [campsiteId].
-     *
-     * Outstanding: cancelled reservations are not excluded here, since [Reservation] has no
-     * status field yet to filter on.
-     */
+    /** Days already booked at the campsite with id [campsiteId]. */
     private fun reservedDays(campsiteId: String): Set<Date> =
         _reservations
             .filter { it.campsiteID == campsiteId }
