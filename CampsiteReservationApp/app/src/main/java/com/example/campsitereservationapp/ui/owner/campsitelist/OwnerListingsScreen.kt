@@ -32,6 +32,15 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
 
 
+/**
+ * Shows the owner's campsites. Filters ListingViewModel's listings down to this owner.
+ *
+ * Outstanding issues:
+ *  - No edit icon to edit a listing yet.
+ *  - No QR code icon yet.
+ *  - Ratings aren't collected by the app yet; the number shown is just existing data hardcoded in to firebase.
+ *  - Tapping Details doesn't open a campsite details view yet.
+ */
 @Composable
 fun OwnerListingsScreen(
     ownerId: String,
@@ -111,6 +120,7 @@ fun OwnerListingsContent(
     }
 }
 
+/** Black button at the bottom that starts registering a new campsite. */
 @Composable
 private fun RegisterNewCampsiteButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
