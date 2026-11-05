@@ -34,7 +34,11 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.Listin
 
 /**
  * Shows the owner's campsites. Filters ListingViewModel's listings down to this owner.
- *
+ * @param ownerId - String ID of owner from fb
+ * @param onBack - event -> navigate to previous screen
+ * @param onRegisterNew - event -> navigate to Campsite Creation
+ * @param onDetails -> event -> navigate to details of selected campsite
+ * @param modifier [Modifier] to be applied to the root composable of the screen layout.
  * Outstanding issues:
  *  - No edit icon to edit a listing yet.
  *  - No QR code icon yet.
