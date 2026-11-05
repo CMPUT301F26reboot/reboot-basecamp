@@ -37,9 +37,21 @@ import kotlin.collections.emptySet
 
 
 @Composable
+        /**
+         * Displays user campsite search screen
+         *
+         * Displays a search ui allowing the user to search for campsites by name, location, occupancy, and dates available
+         *
+         * @param [vm] is the associated viewmodel
+         * @param [modifier] is optional modifier to the main Column
+         * @param [onBack] is a lambda to return to previous screen
+         * @param [onToDetails] is a lambda to go to campsite details screen with a provided listing ID
+         */
 fun UserCampsiteSearchScreen(
     vm: UserCampsiteSearchViewModel = viewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    onToDetails: (String) -> Unit
 ){
     val scope = rememberCoroutineScope()
     var keyword by remember{mutableStateOf("")}
@@ -60,8 +72,10 @@ fun UserCampsiteSearchScreen(
 
     Spacer(modifier = Modifier.padding(8.dp))
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)){
-        LaunchedEffect(1) {
-            vm.start()
+        Button(
+            onClick = onBack
+        ){
+            Text("Back")
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -114,7 +128,7 @@ fun UserCampsiteSearchScreen(
 
         if(showCalendar){
             AvailabilityCalendar(
-                vm.get100Dates(), vm._selectedDates, {vm.toggleDate(it)},
+                vm.get365Dates(), vm._selectedDates, vm::toggleDate,
                 initialMonth = YearMonth.now())
         }
 
@@ -123,7 +137,7 @@ fun UserCampsiteSearchScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(vm._searchResults){ listing ->
-                UserSearchCampsiteCard(listing = listing)
+                UserSearchCampsiteCard(listing = listing, onSelect = {onToDetails(listing.id)})
             }
         }
     }
