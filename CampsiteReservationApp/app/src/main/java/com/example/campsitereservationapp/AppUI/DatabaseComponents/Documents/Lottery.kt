@@ -12,7 +12,9 @@ class Lottery(var dates: List<Date> = emptyList(),
     @DocumentId
     var id: String = ""
 
+    var title: String = ""
     var waitlist = emptyList<String>()
+    var waitlistCapacity: Int? = null
 
     /** Adds [entrant] to this lottery's waitlist.
      *
