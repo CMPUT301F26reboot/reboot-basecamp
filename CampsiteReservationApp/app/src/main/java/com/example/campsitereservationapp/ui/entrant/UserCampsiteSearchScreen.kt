@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
@@ -71,11 +72,13 @@ fun UserCampsiteSearchScreen(
         occupancy = occupancyInput.toInt()
 
     Spacer(modifier = Modifier.padding(8.dp))
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)){
-        Button(
-            onClick = onBack
-        ){
-            Text("Back")
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)){
+        FilledTonalIconButton(
+            onClick = onBack,
+            modifier = Modifier.padding(start = 16.dp, top = 8.dp)
+        ) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -85,12 +88,17 @@ fun UserCampsiteSearchScreen(
                 modifier = Modifier.fillMaxWidth(fraction = 0.7f),
                 value = keyword,
                 onValueChange = { keyword = it },
-                label = { Text("Search Bar") })
+                label = { Text("Search Bar") },
+            )
 
             Button(
-                onClick = {
-                    scope.launch{vm.doSearch(keyword, location, occupancy)}
-                }
+                onClick = { vm.doSearch(keyword, location, occupancy) },
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(vertical = 14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black,
+                    contentColor = Color.White
+                )
             ){
                 Text("Search")
             }
@@ -116,12 +124,20 @@ fun UserCampsiteSearchScreen(
         }
 
 
-        Button(onClick = {
+        Button(
+            onClick = {
             showCalendar = !showCalendar
             if(showCalText == "Show Date Selection")
                 showCalText = "Close Date Selection"
             else
-                showCalText = "Show Date Selection"})
+                showCalText = "Show Date Selection"
+                      },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = PaddingValues(vertical = 18.dp),
+            border = BorderStroke(1.dp, Color.Black),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
+        )
         {
             Text(showCalText)
         }
@@ -259,19 +275,6 @@ fun UserSearchCampsiteCard(
                             color = Color(0xFF111827),
                             fontWeight = FontWeight.SemiBold
                         )
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            modifier = Modifier.size(13.dp),
-                            tint = Color(0xFF6B7280)
-                        )
-
                     }
                 }
             }
