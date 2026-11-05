@@ -1,6 +1,7 @@
 package com.example.campsitereservationapp.ui.entrant
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -21,14 +23,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -48,30 +53,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
-import com.example.campsitereservationapp.ui.components.dateOf
 import java.time.YearMonth
 import java.util.Date
 
 /**
- * Screen shown after an entrant wins a campsite lottery slot.
- * Covers US 01.04.01 (view reservable dates), US 01.04.03 (decline offer), and the
- * confirmation-popup UI for US 01.05.01 (book a reservation).
+ * UserWonBookingScreen.kt
  *
- * this function is stateful and talks to
- * [UserWonBookingViewModel], while [UserWonBookingContent] is stateless UI that can be
- * exercised from the `@Preview` functions at the bottom without a database.
+ * Lets them look at the campsite, read and accept the rules, pick a date on the calendar,
+ * and either book or decline the offer.
+ * Covers US 01.04.01 (view reservable dates) and US 01.04.03 (decline offer).
+ *
+ * Uses the Screen/Content pattern: [UserWonBookingScreen] is stateful and talks to
+ * [UserWonBookingViewModel], while [UserWonBookingContent] is a plain stateless Composable that
+ * only takes values and callbacks as parameters, so it's easy to read and test on its own.
+ *
+ * Outstanding issues:
+ *  - Booking is not finished yet: it does not save a reservation (US 01.05.01).
  *
  * @param lotteryId the lottery the user won, passed through navigation.
  * @param campsiteName the campsite they chose (campsites are matched by name for now).
  * @param profileId the current user. Comes from device identification once that exists.
  * @param onBack called when the back button is tapped.
  * @param onFinished called after a successful decline so the caller can navigate away.
- * @param viewModel injected for testability; defaults to the real Compose [viewModel].
+ * @param viewModel defaults to the real Compose [viewModel], can be swapped out for testing.
  */
 @Composable
 fun UserWonBookingScreen(
@@ -106,11 +114,16 @@ fun UserWonBookingScreen(
         isLoading = viewModel.isLoading,
         name = campsite?.name.orEmpty(),
         address = campsite?.address.orEmpty(),
+        rating = campsite?.rating ?: 0.0,
+        reviewNum = campsite?.numOfReviews ?: 0,
         maxOccupancy = campsite?.maxOccupancy ?: 0,
-        ownerName = campsite?.ownerID.orEmpty(),
+        ownerName = campsite?.ownerName.orEmpty(),
         description = campsite?.description.orEmpty(),
         tags = campsite?.tags.orEmpty(),
         photoUrls = campsite?.photoUrls.orEmpty(),
+        rules = campsite?.rules.orEmpty(),
+        rulesAccepted = viewModel.rulesAccepted,
+        onRulesAcceptedChange = viewModel::onRulesAcceptedChanged,
         bookableDays = viewModel.bookableDays,
         selectedDays = viewModel.selectedDays,
         initialMonth = viewModel.initialMonth,
@@ -126,19 +139,24 @@ fun UserWonBookingScreen(
 }
 
 /**
- * Stateless presentation layer for the won-booking screen: campsite summary, availability
- * calendar, and the Book/Decline actions with their confirmation dialogs.
+ * The UI for this screen: campsite info, the rules & policies section, the availability
+ * calendar, and the Book/Decline buttons with their confirmation pop-ups.
  */
 @Composable
 internal fun UserWonBookingContent(
     isLoading: Boolean,
     name: String,
     address: String,
+    rating: Double,
+    reviewNum: Int,
     maxOccupancy: Int,
     ownerName: String,
     description: String,
     tags: List<String>,
     photoUrls: List<String>,
+    rules: String,
+    rulesAccepted: Boolean,
+    onRulesAcceptedChange: (Boolean) -> Unit,
     bookableDays: Set<Date>,
     selectedDays: Set<Date>,
     initialMonth: YearMonth?,
@@ -205,6 +223,20 @@ internal fun UserWonBookingContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFF9800),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "$rating ($reviewNum reviews)",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
                     InfoRow(label = "Maximum Occupancy", value = "$maxOccupancy guests")
                     InfoRow(label = "Owner", value = ownerName)
 
@@ -238,6 +270,14 @@ internal fun UserWonBookingContent(
                                 )
                             }
                         }
+                    }
+
+                    if (rules.isNotBlank()) {
+                        RulesPoliciesSection(
+                            rules = rules,
+                            accepted = rulesAccepted,
+                            onAcceptedChange = onRulesAcceptedChange
+                        )
                     }
 
                     AvailabilityCalendar(
@@ -373,7 +413,45 @@ private fun SectionTitle(text: String) {
     )
 }
 
-/** Rounded pill showing one campsite tag, e.g. "Fire Pit". */
+/**
+ * Shows the campsite's rules as a bullet list, with a checkbox the entrant must check before
+ * they can book. Covers US 02.11.01.
+ */
+@Composable
+private fun RulesPoliciesSection(
+    rules: String,
+    accepted: Boolean,
+    onAcceptedChange: (Boolean) -> Unit
+) {
+    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            SectionTitle("Rules & Policies")
+            Spacer(Modifier.height(8.dp))
+            rules.lineSequence().filter { it.isNotBlank() }.forEach { line ->
+                Row(modifier = Modifier.padding(vertical = 2.dp)) {
+                    Text("•  ", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = line.trim(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onAcceptedChange(!accepted) }
+            ) {
+                Checkbox(checked = accepted, onCheckedChange = onAcceptedChange)
+                Text("Accept rules & policies", style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
+}
+
+/** Small rounded label for one campsite tag. */
 @Composable
 private fun TagChip(text: String) {
     Surface(
@@ -389,67 +467,3 @@ private fun TagChip(text: String) {
     }
 }
 
-/**
- * Preview: populated screen matching the won-booking mockup. Date selection, Book, and Decline
- * are all interactive here (via local [remember] state), so Android Studio's Interactive Preview
- * mode can exercise them without a ViewModel or database.
- */
-@Preview(showBackground = true, heightDp = 900)
-@Composable
-private fun UserWonBookingPreview() {
-    val march5 = dateOf(2027, 3, 5)
-    val march6 = dateOf(2027, 3, 6)
-    val bookable = setOf(march5, march6, dateOf(2027, 3, 12), dateOf(2027, 3, 13))
-    var selected by remember { mutableStateOf(setOf(march5, march6)) }
-    MaterialTheme {
-        UserWonBookingContent(
-            isLoading = false,
-            name = "Pine Valley Retreat",
-            address = "1284 Pine Valley Road, Yosemite, CA 95389",
-            maxOccupancy = 4,
-            ownerName = "Sarah J.",
-            description = "Welcome to Pine Valley! Bring your family and friends and splash in " +
-                    "the river lake, hike through the forest, and enjoy the beautiful scenery!",
-            tags = listOf("Fire Pit", "Swimming", "Hiking", "Picnic Table", "RVs"),
-            photoUrls = emptyList(),
-            bookableDays = bookable,
-            selectedDays = selected,
-            initialMonth = YearMonth.of(2027, 3),
-            noDatesAvailable = false,
-            canBook = selected.isNotEmpty(),
-            isDeclining = false,
-            snackbarHostState = remember { SnackbarHostState() },
-            onBack = {},
-            onDayClick = { day ->
-                if (day in bookable) {
-                    selected = if (day in selected) selected - day else selected + day
-                }
-            },
-            onBook = {},
-            onDecline = {}
-        )
-    }
-}
-
-/** Preview: the campsite has no bookable dates left in its lottery window. */
-@Preview(showBackground = true, heightDp = 900)
-@Composable
-private fun UserWonBookingNoDatesPreview() {
-    MaterialTheme {
-        UserWonBookingContent(
-            isLoading = false,
-            name = "Pine Valley Retreat",
-            address = "1284 Pine Valley Road, Yosemite, CA 95389",
-            maxOccupancy = 4,
-            ownerName = "Sarah J.",
-            description = "Welcome to Pine Valley!",
-            tags = listOf("Fire Pit"),
-            photoUrls = emptyList(),
-            bookableDays = emptySet(), selectedDays = emptySet(),
-            initialMonth = YearMonth.of(2027, 3),
-            noDatesAvailable = true, canBook = false, isDeclining = false,
-            snackbarHostState = remember { SnackbarHostState() },
-            onBack = {}, onDayClick = {}, onBook = {}, onDecline = {}
-        )
-    }
-}
