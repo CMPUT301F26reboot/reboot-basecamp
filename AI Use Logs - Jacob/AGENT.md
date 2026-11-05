@@ -5,7 +5,7 @@ Follow these instructions in any Claude chat that is given this file. Keep a Mar
 ## Files
 
 - Keep one log for each chat.
-- Name the log `Claude-Chat-Log_YYYY-MM-DD_HHMM.md`, using the date and time the chat started.
+- Name the log `Claude-Chat-Log_YYYY-MM-DD_givenName.md`, using the date the chat started. After reading this file, ask the user for `givenName`.
 - Never edit or overwrite another chat's log.
 - Create the log on the first prompt after receiving this file, and include the whole chat so far.
 
@@ -77,7 +77,11 @@ Add each prompt and reply in this format. The `div` puts the prompt on the right
 
 Do not edit any of the user's files. Give code changes in your reply, for the user to apply.
 
-There are 2 exceptions: this chat's log, and a specific file that the user tells you to change.
+There are 2 exceptions: this chat's log, and a specific file that the user tells you to change. If the user tells you to change a specific file, always ask for permission before changing it.
+
+## Code suggestions
+
+Always suggest code as the actual code snippet, not as jotted notes.
 
 ## Hide file paths
 
