@@ -55,18 +55,18 @@ class MapViewModel : ViewModel() {
         }
     }
 
-    //zoom in/out buttons
-    fun zoomIn() {
-        viewModelScope.launch {
-            state.scrollTo(state.centroidX, state.centroidY, state.scale * 2.0)
-        }
-    }
-
-    fun zoomOut() {
-        viewModelScope.launch {
-            state.scrollTo(state.centroidX, state.centroidY, state.scale / 2.0)
-        }
-    }
+//    //zoom in/out buttons
+//    fun zoomIn() {
+//        viewModelScope.launch {
+//            state.scrollTo(state.centroidX, state.centroidY, state.scale * 2.0)
+//        }
+//    }
+//
+//    fun zoomOut() {
+//        viewModelScope.launch {
+//            state.scrollTo(state.centroidX, state.centroidY, state.scale / 2.0)
+//        }
+//    }
 }
 
 /** Connects to https://www.openstreetmap.org/ and returns specified tiles needed for map

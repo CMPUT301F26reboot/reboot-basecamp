@@ -45,25 +45,25 @@ fun MapScreenComponent(
             modifier = Modifier.fillMaxSize(),
             state = viewModel.state
         )
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            FloatingActionButton(
-                onClick = { viewModel.zoomIn() },
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            }
-            FloatingActionButton(
-                onClick = { viewModel.zoomOut() },
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                Text("-", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            }
-        }
+        //optional zoom in + out buttons
+//        Column(
+//            modifier = Modifier
+//                .align(Alignment.BottomEnd)
+//                .padding(16.dp),
+//            verticalArrangement = Arrangement.spacedBy(8.dp)
+//        ) {
+//            FloatingActionButton(
+//                onClick = { viewModel.zoomIn() },
+//                containerColor = MaterialTheme.colorScheme.primaryContainer
+//            ) {
+//                Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+//            }
+//            FloatingActionButton(
+//                onClick = { viewModel.zoomOut() },
+//                containerColor = MaterialTheme.colorScheme.primaryContainer
+//            ) {
+//                Text("-", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+//            }
+//        }
     }
 }
