@@ -3,18 +3,33 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.campsitereservationapp.ui.entrant.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.UserCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.entrant.parseRouteDate
 
-private const val CAMPSITE_DETAILS_ROUTE = "campsiteDetails/{listingId}?start={start}&end={end}"
+//private const val CAMPSITE_DETAILS_ROUTE = "campsiteDetails/{listingId}?start={start}&end={end}"
 
 @Composable
 fun CampsiteReservationApp() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = CAMPSITE_DETAILS_ROUTE) {
+    NavHost(navController = navController, startDestination = "tempNav") {
         composable(
-            route = CAMPSITE_DETAILS_ROUTE,
+            route = "tempNav"
+        ) {
+            TempNavigationScreen(
+                profileId = "123",
+                onUser = {
+                    navController.navigate("campsiteDetails/c2uPtt3WNrF2XfJZggYi?start=2027-05-01&end=2027-05-10")
+                },
+                onOwner = {
+                    //empty for now
+                }
+            )
+        }
+
+        composable(
+            route = "campsiteDetails/{listingId}?start={start}&end={end}",
             arguments = listOf(
                 // TEMPORARY test defaults so the app opens on this listing.
                 // Remove once the Search screen navigates here.
