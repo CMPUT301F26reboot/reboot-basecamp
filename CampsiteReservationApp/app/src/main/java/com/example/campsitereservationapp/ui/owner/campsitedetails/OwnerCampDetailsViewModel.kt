@@ -1,15 +1,18 @@
 package com.example.campsitereservationapp.ui.owner.campsitedetails
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.Firebase
-import com.google.firebase.storage.storage
-import java.util.UUID
+import com.example.campsitereservationapp.utils.encodePhotoToBase64
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 class OwnerCampDetailsViewModel : DatabaseModel() {
 
     /** Locally picked photo URIs, in upload order. The first is the cover photo. */
@@ -72,36 +75,27 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
     fun clearError() {
         errorMessage = null
     }
-    fun publish(ownerId: String) {
+    fun publish(ownerId: String, context: Context) {
         if (!canPublish) return
         isPublishing = true
         errorMessage = null
 
-        if (photos.isEmpty()) {
-            saveListing(ownerId, emptyList())
-            return
-        }
-
-        val storageRoot = Firebase.storage.reference.child("listings").child(ownerId)
-        val uploadTasks = photos.map { uri ->
-            val photoRef = storageRoot.child(UUID.randomUUID().toString())
-            photoRef.putFile(uri).continueWithTask { uploadTask ->
-                if (!uploadTask.isSuccessful) {
-                    throw uploadTask.exception ?: IllegalStateException("Photo upload failed")
-                }
-                photoRef.downloadUrl
+        viewModelScope.launch {
+            val encodedPhotos = withContext(Dispatchers.IO) {
+                photos.mapNotNull { uri -> encodePhotoToBase64(context, uri) }
             }
-        }
 
-        Tasks.whenAllSuccess<Uri>(uploadTasks)
-            .addOnSuccessListener { downloadUrls -> saveListing(ownerId, downloadUrls.map { it.toString() }) }
-            .addOnFailureListener {
+            if (encodedPhotos.size != photos.size) {
                 isPublishing = false
-                errorMessage = "Couldn't upload photos. Please try again."
+                errorMessage = "Couldn't read one of the photos. Please try again."
+                return@launch
             }
+
+            saveListing(ownerId, encodedPhotos)
+        }
     }
 
-    private fun saveListing(ownerId: String, photoUrls: List<String>) {
+    private fun saveListing(ownerId: String, encodedPhotos: List<String>) {
         val listing = Listing(
             name = siteName.trim(),
             address = location.trim(),
@@ -109,7 +103,7 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
             description = overview.trim(),
             ownerID = ownerId,
             tags = tags,
-            photoUrls = photoUrls,
+            photoUrls = encodedPhotos,
             geoLocation = geoLocation,
             rules = rules.trim(),
             rulesAcceptanceRequired = rulesAcceptanceRequired
@@ -127,7 +121,7 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
     }
 
     private companion object {
-        const val MAX_PHOTOS = 6
+        const val MAX_PHOTOS = 4
         const val MIN_OCCUPANCY = 1
     }
 }

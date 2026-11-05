@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
+import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.time.YearMonth
 import java.util.Date
 
@@ -261,7 +262,7 @@ internal fun UserWonBookingContent(
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             items(photoUrls) { url ->
                                 AsyncImage(
-                                    model = url,
+                                    model = decodeBase64Image(url),
                                     contentDescription = "Photo of $name",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier

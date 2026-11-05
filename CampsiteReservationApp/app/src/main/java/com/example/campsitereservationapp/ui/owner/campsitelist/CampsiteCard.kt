@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.utils.decodeBase64Image
 
 /**
  * One row in the owner's campsite list: thumbnail, name, address, guests, rating, Details
@@ -117,7 +118,7 @@ fun CampsiteThumbnail(photoUrl: String?) {
     ) {
         if (photoUrl != null) {
             AsyncImage(
-                model = photoUrl,
+                model = decodeBase64Image(photoUrl),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

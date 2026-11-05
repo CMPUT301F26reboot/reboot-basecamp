@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,6 +47,7 @@ fun OwnerCampDetailsScreen(
     viewModel: OwnerCampDetailsViewModel = viewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel.isPublished) {
         if (viewModel.isPublished) onPublished()
@@ -80,7 +82,7 @@ fun OwnerCampDetailsScreen(
         onRemoveTag = viewModel::removeTag,
         canPublish = viewModel.canPublish,
         isPublishing = viewModel.isPublishing,
-        onPublish = { viewModel.publish(ownerId) },
+        onPublish = { viewModel.publish(ownerId, context) },
         onBack = onBack,
         snackbarHostState = snackbarHostState,
         modifier = modifier
