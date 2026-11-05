@@ -170,7 +170,7 @@ private fun makeTileStreamProvider() = TileStreamProvider { row, col, zoomLvl ->
         // production apps should use a unique User-Agent that identifies the application
         // (for example: "MapComposeTestApp/1.0 (contact@yourdomain.com)"
         //
-        connection.setRequestProperty("User-Agent", "MapComposeTestApp/1.0 (contact@yourdomain.com)")
+        connection.setRequestProperty("User-Agent", "MapComposeTestApp/1.0 (templado@ualberta.ca)")
         connection.doInput = true // flag to allow reading data from the server's response stream
         // 3. ACTUAL NETWORK REQUEST HAPPENS HERE (connects over socket to internet)
         connection.connect()
