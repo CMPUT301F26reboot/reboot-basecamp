@@ -26,19 +26,16 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
         campsiteIDs: List<String>,
         winnersToDraw: Int,
         waitlistCap: Int,
-        onSuccess: () -> Unit
-    ){
+    ) {
         val lottery = Lottery(dates, start, end, campsiteIDs)
-        val quotas = mapOf(
-            "winnersToDraw" to winnersToDraw,
-            "waitlistCap" to waitlistCap
-        )
+        lottery.waitlistCapacity = waitlistCap
+        lottery.lotteryWinners = winnersToDraw
+        addLottery(lottery)
 
-        val document = lotteriesRef.document()
-        db.batch()
-            .set(document, lottery)
-            .set(document, quotas, SetOptions.merge())
-            .commit()
-            .addOnSuccessListener { onSuccess() }
+
+
+
+
     }
+
 }

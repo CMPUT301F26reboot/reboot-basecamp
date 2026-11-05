@@ -50,6 +50,8 @@ import java.util.Locale
  * @param infoDescription OPTIONAL - description underneath input
  * @param dates the chosen days, shown in the input and on the calendar
  * @param onSelection called with each day the user taps. [nextDateRange] turns taps into a range.
+ * @param removedDates OPTIONAL - list of dates that aren't available for selection (default: dates before
+ * current aren't available)
  */
 
 @Composable
@@ -58,6 +60,7 @@ fun InputDateScreenComponent(
     subheader: String? = null,
     infoDescription: String? = null,
     dates: List<Date>,
+    removedDates: List<Date>? = null,
     onSelection: (Date) -> Unit,
     modifier: Modifier,
 
@@ -150,7 +153,8 @@ fun InputDateScreenComponent(
             dates = dates,
             onSelection = onSelection,
             onDismiss = { showCalendar = false },
-            title = title
+            title = title,
+            removedDates = removedDates
         )
     }
 }
@@ -206,9 +210,10 @@ internal fun DateRangeCalendarDialog(
     dates: List<Date>,
     onSelection: (Date) -> Unit,
     onDismiss: () -> Unit,
-    title: String? = null
-) {
-    val availableDays = remember { selectableDays() }
+    title: String? = null,
+    removedDates: List<Date>? = null,
+    ) {
+    val availableDays = remember(removedDates) { selectableDays(removedDates) }
 
     Dialog(onDismissRequest = onDismiss) {
         Column {
@@ -267,11 +272,13 @@ internal fun formatDateRange(dates: List<Date>): String {
     return "${formatDate(first)} – ${formatDate(last)}"
 }
 
-/** Every day from today to [MAX_DAYS_AHEAD] days ahead. */
-private fun selectableDays(): Set<Date> {
+/** Every day from today to [MAX_DAYS_AHEAD] days ahead, minus [removedDates]. */
+private fun selectableDays(removedDates: List<Date>? = null): Set<Date> {
     val calendar = Calendar.getInstance()
     calendar.add(Calendar.DAY_OF_MONTH, MAX_DAYS_AHEAD)
-    return datesBetween(Date(), calendar.time).toSet()
+    val allDays = datesBetween(Date(), calendar.time)
+    val unavailable = removedDates?.map { it.toDayOnly() }?.toSet().orEmpty()
+    return allDays.filterNot { it in unavailable }.toSet()
 }
 
 /** Formats a date like "May 1, 2027". */

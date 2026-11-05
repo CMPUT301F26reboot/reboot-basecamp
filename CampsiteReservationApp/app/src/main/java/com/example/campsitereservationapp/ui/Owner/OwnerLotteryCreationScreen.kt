@@ -131,6 +131,7 @@ fun OwnerLotteryCreationScreen(
             InputDateScreenComponent(
                 title = "Availability for all campsites",
                 dates = dates,
+                removedDates = lotteryDates,
                 onSelection = { day ->
                     val newDates = nextDateRange(dates, day)
                     dates.clear()
@@ -181,8 +182,8 @@ fun OwnerLotteryCreationScreen(
                         campsiteIDs = selectedListingIDs,
                         winnersToDraw = winnersToDraw,
                         waitlistCap = waitlistCap,
-                        onSuccess = { showCreatedDialog = true }
                     )
+                    showCreatedDialog = true
                 },
                 enabled = canCreate,
                 shape = RoundedCornerShape(50),
@@ -532,4 +533,5 @@ fun ListingDropDownSelectionPreview(){
         modifier = Modifier
     )
 }
+
 

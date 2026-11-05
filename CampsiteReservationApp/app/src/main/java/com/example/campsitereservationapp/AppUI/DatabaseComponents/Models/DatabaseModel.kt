@@ -131,7 +131,6 @@ open class DatabaseModel :ViewModel() {
         lotteriesRef.add(lottery)
     }
 
-    //creates an ID, used in OwnerLotteryCreation
 
 
 
