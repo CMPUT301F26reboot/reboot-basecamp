@@ -77,7 +77,7 @@ class UserCampsiteDetailsViewModelTest {
 
     @Test
     fun lotteryCards_shouldOnlyShowOpenLotteriesForThisCampsite() {
-        viewModel.start("listing-two-jack", searchStart = null, searchEnd = null)
+        viewModel.start("listing-two-jack", profileId = "entrant-device-a81c4e07", searchStart = null, searchEnd = null)
 
         val cards = viewModel.lotteryCards
 
@@ -87,14 +87,14 @@ class UserCampsiteDetailsViewModelTest {
 
     @Test
     fun lotteryCards_searchRangeWithoutLotteryDays_shouldShowNothing() {
-        viewModel.start("listing-two-jack", searchStart = daysFromNow(60), searchEnd = daysFromNow(65))
+        viewModel.start("listing-two-jack", profileId = "entrant-device-a81c4e07", searchStart = daysFromNow(60), searchEnd = daysFromNow(65))
 
         assertTrue(viewModel.lotteryCards.isEmpty())
     }
 
     @Test
     fun hasCapacity_waitlistNotFull_shouldBeTrue() {
-        viewModel.start("listing-two-jack", searchStart = null, searchEnd = null)
+        viewModel.start("listing-two-jack", profileId = "entrant-device-a81c4e07", searchStart = null, searchEnd = null)
 
         viewModel.selectLottery("lottery-open")
 
@@ -104,7 +104,7 @@ class UserCampsiteDetailsViewModelTest {
     @Test
     fun hasCapacity_waitlistFull_shouldBeFalse() {
         openLottery.waitlistCapacity = 2
-        viewModel.start("listing-two-jack", searchStart = null, searchEnd = null)
+        viewModel.start("listing-two-jack", profileId = "entrant-device-a81c4e07", searchStart = null, searchEnd = null)
 
         viewModel.selectLottery("lottery-open")
 
@@ -113,10 +113,10 @@ class UserCampsiteDetailsViewModelTest {
 
     @Test
     fun start_differentCampsite_shouldClearSelectedLottery() {
-        viewModel.start("listing-two-jack", searchStart = null, searchEnd = null)
+        viewModel.start("listing-two-jack", profileId = "entrant-device-a81c4e07", searchStart = null, searchEnd = null)
         viewModel.selectLottery("lottery-open")
 
-        viewModel.start("listing-tunnel-mtn", searchStart = null, searchEnd = null)
+        viewModel.start("listing-tunnel-mtn", profileId = "entrant-device-a81c4e07", searchStart = null, searchEnd = null)
 
         assertEquals(null, viewModel.selectedLotteryId)
     }
@@ -126,7 +126,7 @@ class UserCampsiteDetailsViewModelTest {
         val lotteryDoc = mockk<DocumentReference>(relaxed = true)
         every { firestore.collection("Lotteries").document("lottery-open") } returns lotteryDoc
 
-        viewModel.joinLottery("lottery-open", "entrant-device-a81c4e07")
+        viewModel.joinLottery("lottery-open", "entrant-device-a81c4e07", onResult = {})
 
         verify { lotteryDoc.update("waitlist", any()) }
     }
