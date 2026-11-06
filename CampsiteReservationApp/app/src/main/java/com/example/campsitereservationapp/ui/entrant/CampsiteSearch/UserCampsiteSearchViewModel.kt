@@ -4,17 +4,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateSetOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
 import com.example.campsitereservationapp.utils.DateFormatter
 import java.util.Calendar
 import java.util.Date
 
-class UserCampsiteSearchViewModel: DatabaseModel() {
+class UserCampsiteSearchViewModel: ListingViewModel() {
      var _searchResults = mutableStateListOf<Listing>()
      var _selectedDates = mutableStateSetOf<Date>()
 
-
-
-    val listings: List<Listing> get() = _searchResults
 
     init {
         for(listing in _listings){
@@ -52,15 +50,7 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
         if(selectedDates.isEmpty()){
             return true
         }
-        var availableDates = mutableSetOf<Date>()
-        for(lottery in _lotteries){
-            if(listing.id in lottery.campsiteIDs){
-                for(date in lottery.dates){
-                    availableDates.add(date)
-                }
-            }
-        }
-        return (selectedDates - availableDates).isEmpty() //if all selected dates are in available dates then requirement satisfied
+        return (selectedDates - getAvailability(listing)).isEmpty() //if all selected dates are in available dates then requirement satisfied
     }
 
     /**
@@ -87,7 +77,9 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
      *
      * @param [date] is a date that should be toggled. If it's already in _selectedDates, it should be removed and vice versa
      */
-    fun toggleDate(date: Date){
+    fun toggleDate(rawdate: Date){
+        val formatter = DateFormatter()
+        val date = formatter.formatDate(rawdate)
         if(date in _selectedDates){
             _selectedDates.remove(date)
         }else{
