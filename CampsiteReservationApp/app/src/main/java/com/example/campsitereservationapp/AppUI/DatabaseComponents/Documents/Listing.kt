@@ -21,5 +21,5 @@ class Listing(
     var rulesAcceptanceRequired: Boolean = true
 ){
     @DocumentId
-    val id: String = ""
+    var id: String = ""
 }

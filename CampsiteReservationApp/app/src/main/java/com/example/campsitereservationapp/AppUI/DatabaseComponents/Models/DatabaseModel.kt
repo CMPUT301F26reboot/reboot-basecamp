@@ -127,6 +127,11 @@ open class DatabaseModel :ViewModel() {
         listingsRef.add(listing)
     }
 
+    fun addLottery(lottery: Lottery){
+        lotteriesRef.add(lottery)
+    }
+
+
 
 
 
