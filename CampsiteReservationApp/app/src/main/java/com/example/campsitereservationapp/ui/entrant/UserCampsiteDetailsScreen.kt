@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.R
+import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import java.time.YearMonth
 import java.util.Date
@@ -359,7 +360,7 @@ internal fun UserCampsiteDetailsContent(
                         ) {
                             items(photoUrls) { url ->
                                 AsyncImage(
-                                    model = url,
+                                    model = decodeBase64Image(url),
                                     placeholder = painterResource(R.drawable.sample_campsite),
                                     error = painterResource(R.drawable.sample_campsite),
                                     contentDescription = "Photo of $name",
@@ -467,7 +468,7 @@ private fun LotteryCard(
         Column(modifier = Modifier.padding(12.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 AsyncImage(
-                    model = lottery.imageUrl,
+                    model = lottery.imageUrl?.let { decodeBase64Image(it) },
                     placeholder = painterResource(R.drawable.sample_campsite),
                     error = painterResource(R.drawable.sample_campsite),
                     contentDescription = null,

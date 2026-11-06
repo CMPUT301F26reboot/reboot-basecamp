@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,6 +47,7 @@ fun OwnerCampDetailsScreen(
     viewModel: OwnerCampDetailsViewModel = viewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel.isPublished) {
         if (viewModel.isPublished) onPublished()
@@ -78,9 +80,10 @@ fun OwnerCampDetailsScreen(
         tags = viewModel.tags,
         onAddTag = viewModel::addTag,
         onRemoveTag = viewModel::removeTag,
+        onLocationPicked = viewModel::setLocation,
         canPublish = viewModel.canPublish,
         isPublishing = viewModel.isPublishing,
-        onPublish = { viewModel.publish(ownerId) },
+        onPublish = { viewModel.publish(ownerId, context) },
         onBack = onBack,
         snackbarHostState = snackbarHostState,
         modifier = modifier
@@ -113,6 +116,7 @@ fun OwnerCampDetailsContent(
     tags: List<String>,
     onAddTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
+    onLocationPicked: (latitude: Double, longitude: Double) -> Unit,
     canPublish: Boolean,
     isPublishing: Boolean,
     onPublish: () -> Unit,
@@ -151,7 +155,7 @@ fun OwnerCampDetailsContent(
                 onAcceptanceRequiredChange = onRulesAcceptanceRequiredChange
             )
             TagsSection(tags = tags, onAddTag = onAddTag, onRemoveTag = onRemoveTag)
-            MapPlaceholderSection()
+            MapSection(onLocationPicked = onLocationPicked)
             PublishButton(enabled = canPublish && !isPublishing, isPublishing = isPublishing, onClick = onPublish)
         }
     }
