@@ -170,13 +170,12 @@ class UserWonBookingViewModel : ListingViewModel() {
         _reservations
             .filter { it.campsiteID == campsiteId }
             .flatMap { it.dates }
-            .map { it.toDayOnly() }
             .toSet()
 
     /** Days [lottery] offers for [campsite], minus days already reserved there. */
     private fun bookableDays(lottery: Lottery, campsite: Listing): Set<Date> {
         if (campsite.id !in lottery.campsiteIDs) return emptySet()
-        val lotteryDays = lottery.dates.map { it.toDayOnly() }.toSet()
+        val lotteryDays = lottery.dates.toSet()
         return computeBookableDays(lotteryDays, reservedDays(campsite.id))
     }
 
