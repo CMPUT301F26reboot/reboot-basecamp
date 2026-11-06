@@ -9,13 +9,18 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lot
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.google.firebase.firestore.FieldValue
 
+/**
+ * Provieds data and functionality to UserCurrentLotteriesScreen
+ *
+ * Manages a list of ongoing and won lotteries.
+ * Also provides functions to get an image for a lottery and to leave a lottery
+ *
+ */
 class UserCurrentLotteriesViewModel: DatabaseModel() {
 
     var ongoingLotteries = mutableStateListOf<Lottery>()
     var wonLotteries = mutableStateListOf<Lottery>()
 
-    val lotteries: List<Lottery> get() = _lotteries
-    val listings: List<Listing> get() = _listings
 
     /**
      * Initializes lottrer lists
@@ -47,6 +52,14 @@ class UserCurrentLotteriesViewModel: DatabaseModel() {
         }
     }
 
+    /**
+     * Gets an image for the lottery
+     *
+     * Gets the first image from the first listing encountered in the db
+     * that is also within the lottery
+     *
+     * @param [lottery] is the lottery to get an image for
+     */
     fun getLotteryImage(lottery: Lottery): String{
         var listingImg = ""
         for(listing in _listings){
@@ -59,6 +72,15 @@ class UserCurrentLotteriesViewModel: DatabaseModel() {
         return listingImg
     }
 
+    /**
+     * Leaves the waitlist of a lottery
+     *
+     * Accesses the lottery document in the db and removes the entrant's
+     * profileID from the waitlist
+     *
+     * @param [lottery] is the lottery to leave
+     * @param [profileID] is the document id of the entrant's profile (not deviceID)
+     */
     fun leaveLottery(lottery: Lottery, profileID: String){
         lotteriesRef.document(lottery.id).update(
             "waitlist", FieldValue.arrayRemove(profileID)

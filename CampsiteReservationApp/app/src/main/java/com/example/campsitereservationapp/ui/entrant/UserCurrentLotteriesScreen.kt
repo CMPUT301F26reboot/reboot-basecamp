@@ -29,11 +29,24 @@ import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 
+/**
+ * Displays the current lotteries of the entrant
+ *
+ * Gives the user a list of either their ongoing lotteries or won lotteries
+ * They can pick which using a button
+ * Won lotteries can be claimed and ongoing lotteries can be left
+ *
+ * @param [modifier] is optional modifier
+ * @param [vm] is optional viewmodel
+ * @param [profileID] is the document id of the entrant's profile
+ * @param [onBack] is lambda for going back
+ * @param [onToBooking] is lambda called to go to booking screen
+ */
 @Composable
 fun UserCurrentLotteriesScreen(
     modifier: Modifier = Modifier,
     vm: UserCurrentLotteriesViewModel = viewModel(),
-    profileID: String = "12341234",
+    profileID: String,
     onBack: () -> Unit,
     onToBooking: () -> Unit
 ){
@@ -116,6 +129,17 @@ fun UserCurrentLotteriesScreen(
     }
 }
 
+/**
+ * Card for a won lottery
+ *
+ * Shows image, title, and a claim button which takes user to booking screen
+ *
+ * @param [lottery] is the lottery being displayed
+ * @param [imageURL] is the image for that lottery
+ * @param [profileID] is document id of the entrant's profile.
+ * Not used right now but will be passed on to the onToBooking lambda when it's finished
+ * @param [onToBooking] lambda to go to booking screen
+ */
 @Composable
 fun WonLotteryCard(
     lottery: Lottery,
@@ -192,6 +216,16 @@ fun WonLotteryCard(
     }
 }
 
+/**
+ * Card for an ongoing lottery
+ *
+ * Shows image, title, and a claim button which takes user to booking screen
+ *
+ * @param [lottery] is the lottery being displayed
+ * @param [imageURL] is the image for that lottery
+ * @param [profileID] is document id of the entrant's profile.
+ * @param [onToLeave] lambda to go leave lottery (vm::leaveLottery)
+ */
 @Composable
 fun OngoingLotteryCard(
     lottery: Lottery,
