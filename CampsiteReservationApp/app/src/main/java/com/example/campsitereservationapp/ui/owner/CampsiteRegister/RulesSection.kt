@@ -1,3 +1,7 @@
+/*
+ * AI use:
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import androidx.compose.foundation.layout.Column

@@ -1,3 +1,17 @@
+/*
+ * AI use:
+ * - Q: How do I keep Publish disabled until the form is valid?
+ *   A: A computed canPublish (name and address filled, not already publishing) bound to enabled.
+ * - Q: Firebase Storage or keep photos in the document?
+ *   A: Storage is standard. Base64 in the document works only if images are compressed and few,
+ *      because of the 1 MiB document limit.
+ * - Q: Should screens connect to Firebase directly, or use getters and setters? I was worried my
+ *      changes might crash Firebase (it hasn't happened).
+ *   A: Go through the ViewModel. Screens read its state (getters) and call its functions, and only
+ *      the ViewModel/DatabaseModel touches Firestore. Keep default values on every model field so
+ *      Firestore can rebuild the objects.
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import android.content.Context
