@@ -50,15 +50,7 @@ class UserCampsiteSearchViewModel: ListingViewModel() {
         if(selectedDates.isEmpty()){
             return true
         }
-        var availableDates = mutableSetOf<Date>()
-        for(lottery in _lotteries){
-            if(listing.id in lottery.campsiteIDs){
-                for(date in lottery.dates){
-                    availableDates.add(date)
-                }
-            }
-        }
-        return (selectedDates - availableDates).isEmpty() //if all selected dates are in available dates then requirement satisfied
+        return (selectedDates - getAvailability(listing)).isEmpty() //if all selected dates are in available dates then requirement satisfied
     }
 
     /**
@@ -85,7 +77,9 @@ class UserCampsiteSearchViewModel: ListingViewModel() {
      *
      * @param [date] is a date that should be toggled. If it's already in _selectedDates, it should be removed and vice versa
      */
-    fun toggleDate(date: Date){
+    fun toggleDate(rawdate: Date){
+        val formatter = DateFormatter()
+        val date = formatter.formatDate(rawdate)
         if(date in _selectedDates){
             _selectedDates.remove(date)
         }else{
