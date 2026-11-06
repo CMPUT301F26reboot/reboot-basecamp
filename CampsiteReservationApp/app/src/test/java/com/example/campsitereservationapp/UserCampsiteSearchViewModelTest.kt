@@ -56,28 +56,28 @@ class UserCampsiteSearchViewModelTest {
     fun doSearch_noCriteria_shouldReturnEveryCampsite() {
         viewModel.doSearch(keyword = "", location = "", capacity = 0)
 
-        assertEquals(listOf(twoJack, tunnelMountain), viewModel.listings)
+        assertEquals(listOf(twoJack, tunnelMountain), viewModel._searchResults)
     }
 
     @Test
     fun doSearch_keyword_shouldMatchStartOfNameIgnoringCase() {
         viewModel.doSearch(keyword = "two j", location = "", capacity = 0)
 
-        assertEquals(listOf(twoJack), viewModel.listings)
+        assertEquals(listOf(twoJack), viewModel._searchResults)
     }
 
     @Test
     fun doSearch_location_shouldMatchAddressIgnoringCase() {
         viewModel.doSearch(keyword = "", location = "tunnel mountain rd, banff, ab t1l 1b3", capacity = 0)
 
-        assertEquals(listOf(tunnelMountain), viewModel.listings)
+        assertEquals(listOf(tunnelMountain), viewModel._searchResults)
     }
 
     @Test
     fun doSearch_capacity_shouldHideCampsitesThatAreTooSmall() {
         viewModel.doSearch(keyword = "", location = "", capacity = 5)
 
-        assertEquals(listOf(twoJack), viewModel.listings) // Tunnel Mountain only fits 4
+        assertEquals(listOf(twoJack), viewModel._searchResults) // Tunnel Mountain only fits 4
     }
 
     @Test
@@ -87,7 +87,7 @@ class UserCampsiteSearchViewModelTest {
 
         viewModel.doSearch(keyword = "", location = "", capacity = 0)
 
-        assertEquals(listOf(twoJack), viewModel.listings)
+        assertEquals(listOf(twoJack), viewModel._searchResults)
     }
 
     @Test
@@ -97,6 +97,6 @@ class UserCampsiteSearchViewModelTest {
 
         viewModel.doSearch(keyword = "", location = "", capacity = 0)
 
-        assertEquals(listOf(twoJack, tunnelMountain), viewModel.listings) // no date filter left
+        assertEquals(listOf(twoJack, tunnelMountain), viewModel._searchResults) // no date filter left
     }
 }
