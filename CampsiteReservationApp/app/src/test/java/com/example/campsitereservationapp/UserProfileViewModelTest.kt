@@ -101,7 +101,6 @@ class UserProfileViewModelTest {
     /** Loads a saved profile into the ViewModel. */
     private fun loadProfile() {
         val profile = Profile(name = "Alex Tremblay", deviceId = profileId)
-        profile.username = "alextremblay"
         profile.email = "alex@example.com"
         profile.phoneNumber = "+1 (403) 555-0199"
         profile.notificationsEnabled = false
@@ -120,7 +119,6 @@ class UserProfileViewModelTest {
 
         assertFalse(viewModel.isLoading)
         assertEquals("Alex Tremblay", viewModel.name)
-        assertEquals("alextremblay", viewModel.username)
         assertEquals("alex@example.com", viewModel.email)
         assertEquals("+1 (403) 555-0199", viewModel.phoneNumber)
         assertFalse(viewModel.notificationsEnabled)
@@ -169,7 +167,6 @@ class UserProfileViewModelTest {
     fun saveEdit_everyField_writesToItsFirestoreKey() {
         loadProfile()
         val edits = mapOf(
-            ProfileField.USERNAME to ("username" to "janedough"),
             ProfileField.EMAIL to ("email" to "jane@example.com"),
             ProfileField.PHONE_NUMBER to ("phoneNumber" to "780-123-4567")
         )
@@ -190,7 +187,6 @@ class UserProfileViewModelTest {
         loadProfile()
         val invalid = mapOf(
             ProfileField.NAME to "  ",
-            ProfileField.USERNAME to "",
             ProfileField.EMAIL to "not an email",
             ProfileField.PHONE_NUMBER to "12345"
         )
