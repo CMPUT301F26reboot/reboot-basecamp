@@ -14,6 +14,7 @@ class Lottery(var dates: List<Date> = emptyList(),
 
     var title: String = ""
     var waitlist = emptyList<String>()
+    var selectedlist = emptyList<String>()
     var waitlistCapacity: Int? = null
 
     var lotteryWinners: Int? = null

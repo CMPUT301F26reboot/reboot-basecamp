@@ -6,8 +6,8 @@ import com.google.firebase.firestore.DocumentId
 class Profile(var name: String = "",
               val deviceId: String = "") {
     @DocumentId
-    protected var id = ""
-    protected var email = ""
-    protected var phoneNumber = 0
-    protected var profilePicture = "" //should be a URL
+    var id = ""
+    var email = ""
+    var phoneNumber = ""
+    var profilePicture = "" //should be a URL
 }
