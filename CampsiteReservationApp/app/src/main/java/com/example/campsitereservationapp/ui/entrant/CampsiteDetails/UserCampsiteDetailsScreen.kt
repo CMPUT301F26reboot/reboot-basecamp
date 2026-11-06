@@ -63,6 +63,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,6 +71,8 @@ import coil.compose.AsyncImage
 import com.example.campsitereservationapp.R
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
+import com.example.campsitereservationapp.ui.components.dateOf
+import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
 import java.time.YearMonth
 import java.util.Date
 
@@ -351,7 +354,7 @@ internal fun UserCampsiteDetailsContent(
                             }
                         }
                     }
-
+                    //shows campsite photos
                     if (photoUrls.isNotEmpty()) {
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -540,7 +543,7 @@ private fun IconText(
     }
 }
 
-/* // Preview used to display screen without running the program
+// Preview used to display screen without running the program
 @Preview(showBackground = true, heightDp = 1520)
 @Composable
 private fun UserCampsiteDetailsPreview() {
@@ -564,7 +567,7 @@ private fun UserCampsiteDetailsPreview() {
             initialMonth = YearMonth.of(2027, 3),
             lotteries = sampleLotteries,
             selectedLotteryId = null,
-            hasCapacity = True,
+            hasCapacity = true,
             onSelectLottery = { },
             onJoin = { },
             onBack = { }
@@ -587,4 +590,4 @@ private val sampleLotteries = listOf(
         imageUrl = "https://picsum.photos/id/1036/400/400"
     )
 )
-*/
+

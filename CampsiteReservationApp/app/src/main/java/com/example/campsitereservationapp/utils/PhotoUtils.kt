@@ -36,8 +36,12 @@ fun encodePhotoToBase64(context: Context, uri: Uri): String? {
 }
 
 /** Decodes a Base64 string back into raw image bytes, or null if [value] isn't valid Base64. */
-fun decodeBase64Image(value: String?): ByteArray? {
+fun decodeBase64Image(value: String?): Any? {
     if (value == null) return null
+    //QuickFix - handles both URL and Base 64 images
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+        return value // Return URL string directly so Coil loads it over HTTP
+    }
     return runCatching { Base64.decode(value, Base64.DEFAULT) }.getOrNull()
 }
 
