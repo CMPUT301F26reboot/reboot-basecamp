@@ -21,17 +21,22 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
      */
     fun createAndAddLottery(
         dates: List<Date>,
+        title: String,
         start: Date,
         end: Date,
         campsiteIDs: List<String>,
         winnersToDraw: Int,
         waitlistCap: Int,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
     ) {
         val lottery = Lottery(dates, start, end, campsiteIDs)
+        lottery.title = title
         lottery.waitlistCapacity = waitlistCap
         lottery.lotteryWinners = winnersToDraw
-        addLottery(lottery)
-
+        lotteriesRef.add(lottery)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure() }
 
 
 

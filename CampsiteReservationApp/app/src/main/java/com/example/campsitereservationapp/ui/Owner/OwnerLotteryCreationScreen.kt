@@ -57,6 +57,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -80,6 +81,8 @@ fun OwnerLotteryCreationScreen(
     var winnersToDraw by remember { mutableIntStateOf(0) }
     var waitlistCap by remember { mutableIntStateOf(0) }
     var showCreatedDialog by remember { mutableStateOf(false) }
+    var showFailedDialog by remember { mutableStateOf(false) }
+    var lotteryName by remember { mutableStateOf("") }
 
     val ownerListings = viewModel.getOwnerListings(ownerID)
     val selectedListings = ownerListings.filter { it.id in selectedListingIDs }
@@ -104,6 +107,18 @@ fun OwnerLotteryCreationScreen(
                 subHeader = "Choose your campsites and lottery dates.",
                 onBack = onBack
             )
+
+            // Input lottery title:
+            OutlinedTextField(
+                value = lotteryName,
+                onValueChange = { lotteryName = it },
+                placeholder = { Text("Lottery Title") },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+
 
             //lottery start and end dates
             InputDateScreenComponent(
@@ -176,14 +191,16 @@ fun OwnerLotteryCreationScreen(
             Button(
                 onClick = {
                     viewModel.createAndAddLottery(
+                        title = lotteryName,
                         dates = dates.toList(),
                         start = lotteryDates[0],
                         end = lotteryDates[lotteryDates.lastIndex],
                         campsiteIDs = selectedListingIDs,
                         winnersToDraw = winnersToDraw,
                         waitlistCap = waitlistCap,
+                        onSuccess = { showCreatedDialog = true},
+                        onFailure = { showFailedDialog = true}
                     )
-                    showCreatedDialog = true
                 },
                 enabled = canCreate,
                 shape = RoundedCornerShape(50),
@@ -202,6 +219,7 @@ fun OwnerLotteryCreationScreen(
         }
     }
 
+    //popup dialog on successful or failure on listing addition
     if (showCreatedDialog) {
         val names = selectedListings.joinToString(" and ") { it.name }
         val end = lotteryDates[lotteryDates.lastIndex]
@@ -213,6 +231,15 @@ fun OwnerLotteryCreationScreen(
             title = "Lottery created",
             description = "Your lottery for $names is live. " +
                     "Campers can enter until ${formatDateRange(listOf(end))}."
+        )
+    } else if (showFailedDialog)
+     {
+        CustomDialogScreenComponent(
+            onDismissRequest = {
+                showFailedDialog = false
+            },
+            title = "Lottery creation Failed",
+
         )
     }
 }
