@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.Map.GeocodingViewModel
 import com.example.campsitereservationapp.Map.MapScreenComponent
 import com.example.campsitereservationapp.Map.MapViewModel
+import com.example.campsitereservationapp.ui.owner.CampsiteRegister.SectionHeader
 
 private const val DEFAULT_LATITUDE = 51.1784
 private const val DEFAULT_LONGITUDE = -115.5708

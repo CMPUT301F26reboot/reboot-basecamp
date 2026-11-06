@@ -1,9 +1,8 @@
-package com.example.campsitereservationapp.ui.Owner
+package com.example.campsitereservationapp.ui.owner
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
-import com.google.firebase.firestore.SetOptions
 import java.util.Date
 import kotlin.collections.List
 

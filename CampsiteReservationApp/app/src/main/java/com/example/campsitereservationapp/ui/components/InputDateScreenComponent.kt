@@ -33,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.campsitereservationapp.ui.entrant.toDayOnly
+import com.example.campsitereservationapp.ui.entrant.WonBooking.toDayOnly
 import java.text.SimpleDateFormat
 import java.time.YearMonth
 import java.util.Calendar

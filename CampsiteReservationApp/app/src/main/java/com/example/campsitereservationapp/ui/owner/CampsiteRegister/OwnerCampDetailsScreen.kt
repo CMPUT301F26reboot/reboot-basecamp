@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.ui.owner.campsitedetails.MapSection
 
 /**
  * Lets an owner register a new campsite listing (US 02.01.01). Stateful wrapper that wires

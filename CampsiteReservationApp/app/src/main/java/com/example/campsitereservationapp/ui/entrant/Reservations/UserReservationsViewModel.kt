@@ -1,10 +1,12 @@
-package com.example.campsitereservationapp.ui.entrant
+package com.example.campsitereservationapp.ui.entrant.Reservations
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
+import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationFilter
+import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationsViewModel
 import java.util.Date
 import kotlin.math.round
 

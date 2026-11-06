@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.entrant
+package com.example.campsitereservationapp.ui.entrant.ReservationDetails
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
