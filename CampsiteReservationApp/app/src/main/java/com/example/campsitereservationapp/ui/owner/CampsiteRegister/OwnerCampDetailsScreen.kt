@@ -1,3 +1,12 @@
+/*
+ * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
+ * - Q: Should screens connect to Firebase directly, or use getters and setters? I was worried my
+ *      changes might crash Firebase (it hasn't happened).
+ *   A: Go through the ViewModel. Screens read its state (getters) and call its functions, and only
+ *      the ViewModel/DatabaseModel touches Firestore. Keep default values on every model field so
+ *      Firestore can rebuild the objects.
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import android.net.Uri

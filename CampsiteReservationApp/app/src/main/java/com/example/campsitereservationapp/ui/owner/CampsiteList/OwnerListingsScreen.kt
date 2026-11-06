@@ -1,3 +1,11 @@
+/*
+ * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
+ * - Q: How do I find only this owner's campsites?
+ *   A: Filter by ownerID, or query Firestore with whereEqualTo("ownerID", id).
+ * - Q: What's the easiest way to show the cards?
+ *   A: A LazyColumn with items(listings, key = { it.id }).
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.CampsiteList
 
 import androidx.compose.foundation.layout.Arrangement

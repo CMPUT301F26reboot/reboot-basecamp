@@ -1,3 +1,12 @@
+/*
+ * AI use:
+ * - Q: What do I need from the Map folder to add the map to the register screen?
+ *   A: Three things: GeocodingViewModel for the address search (onQueryChange, onAddressSelected,
+ *      plus the suggestions and coordinates flows), MapViewModel for the dropped pin (droppedPin),
+ *      and MapScreenComponent(latitude, longitude, viewModel) to draw the map. Send the coordinates
+ *      back to the screen with an onLocationPicked callback.
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.campsitedetails
 
 import androidx.compose.foundation.layout.Box
