@@ -49,8 +49,8 @@ import kotlin.collections.emptySet
          * @param [onToDetails] is a lambda to go to campsite details screen with a provided listing ID
          */
 fun UserCampsiteSearchScreen(
-    vm: UserCampsiteSearchViewModel = viewModel(),
     modifier: Modifier = Modifier,
+    vm: UserCampsiteSearchViewModel = viewModel(),
     onBack: () -> Unit,
     onToDetails: (String) -> Unit
 ){
@@ -146,7 +146,6 @@ fun UserCampsiteSearchScreen(
                 vm.get365Dates(), vm._selectedDates, vm::toggleDate,
                 initialMonth = YearMonth.now())
         }
-
         LazyColumn(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally

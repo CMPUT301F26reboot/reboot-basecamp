@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.example.campsitereservationapp.ui.components.dateOf
+import com.example.campsitereservationapp.utils.DateFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -104,18 +105,15 @@ class UserCampsiteSearchViewModel: DatabaseModel() {
     }
 
     internal fun get365Dates(): Set<Date>{
-        val strictDates = mutableSetOf<Date>()
+        val formatter = DateFormatter()
         val calendar = Calendar.getInstance() // Starts at today
+        val dates = mutableStateListOf<Date>()
 
         for (i in 1..365) {
-            strictDates.add(calendar.time)
+            dates.add(formatter.formatDate(calendar.time))
             calendar.add(Calendar.DAY_OF_YEAR, 1) // Move to the next day
         }
 
-        val dates = mutableStateListOf<Date>()
-        for (date in strictDates){
-            dates.add(dateOf(date.year + 1900, date.month + 1, date.date))
-        }
         return dates.toSet()
     }
 }
