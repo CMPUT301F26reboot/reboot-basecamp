@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
@@ -24,15 +25,15 @@ open class DatabaseModel :ViewModel() {
     protected var chatsRef = db.collection("Chats")
 
     //Every local copy of each collection
-    protected var _listings = ArrayList<Listing>()
-    protected var _lotteries = ArrayList<Lottery>()
-    protected var _profiles = ArrayList<Profile>()
-    protected var _reservations = ArrayList<Reservation>()
-    protected var _logentries = ArrayList<LogEntry>()
-    protected var _chats = ArrayList<Chat>()
+    protected var _listings = mutableStateListOf<Listing>()
+    protected var _lotteries = mutableStateListOf<Lottery>()
+    protected var _profiles = mutableStateListOf<Profile>()
+    protected var _reservations = mutableStateListOf<Reservation>()
+    protected var _logentries = mutableStateListOf<LogEntry>()
+    protected var _chats = mutableStateListOf<Chat>()
 
 
-    open val listings: List<Listing> get() = _listings //added
+
 
     open val reservations: List<Reservation> get() = _reservations
 
@@ -123,10 +124,15 @@ open class DatabaseModel :ViewModel() {
         }
     }
 
-    //add delete methods
+    //add to collection functions
     fun addListing(listing: Listing){
-        listingsRef.document(listing.name).set(listing)
+        listingsRef.add(listing)
     }
+
+    fun addLottery(lottery: Lottery){
+        lotteriesRef.add(lottery)
+    }
+
 
 
 
