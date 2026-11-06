@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,13 +46,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.UserReservationsViewModel
-import java.time.LocalDate
+import java.util.Date
 
 private val buttonRed = Color(0xFFfef2f2)
 private val textRed = Color(0xFFb91c1c)
@@ -61,13 +63,24 @@ private val textGreen = Color(0xFF166534)
 private val buttonGrey = Color(0xFFEAEAEA)
 
 /**
- * User Reservations screen - US 01.06.01 (view active), US 01.06.02 (view past + rate),
+ * User Reservations screen — US 01.06.01 (view active), US 01.06.02 (view past + rate),
  * US 01.07.01 (cancel active).
  *
+ * The entrant's Reservations screen.
+ *
+ * Split into two parts: [UserReservationsScreen] is the version that talks to
+ * the ViewModel, and [UserReservationContent] is the UI version that just takes
+ * values and callbacks.
+ *
  * Outstanding issues:
- *  So far this is just a skeleton for the layout.
- *  Have not implemented reviews or cancelling a reservation
- */
+ * - The "Lotteries" tab doesn't do anything when you tap it.
+ *
+ * @param profileId the current user's Firestore document ID. Used to filter reservations by `entrantID`.
+ * @param onBack called when the back button is tapped.
+ * @param onOpenReservation called with a reservation id when the user taps "View".
+ * @param viewModel defaults to the real Compose [viewModel], can be swapped out for testing.
+*/
+
 @Composable
 fun UserReservationsScreen(
     profileId: String,
@@ -83,30 +96,53 @@ fun UserReservationsScreen(
         rows = rows,
         isCancelling = viewModel.isCancelling,
         pendingCancelId = viewModel.pendingCancelId,
+        reviewingReservationId = viewModel.reviewingReservationId,
+        reviewRating = viewModel.reviewRating,
         onFilterChange = viewModel::onFilterSelected,
         onBack = onBack,
         onOpen = onOpenReservation,
         onCancel = viewModel::onCancelClicked, //  Opens dialog
         onDismissCancel = viewModel::dismissCancelDialog, // Closes dialog
-        onConfirmCancel = viewModel::confirmCancel
-        //onLeaveReview = true
+        onConfirmCancel = viewModel::confirmCancel,
+        onLeaveReview = viewModel::onLeaveReviewClicked,
+        onDismissReview = viewModel::dismissReviewSheet,
+        onRatingChanged = viewModel::onRatingChanged,
+        onSubmitReview = viewModel::submitReview
+
 
     )
 }
 
+/**
+ * Stateless version of the screen. Everything it shows comes from parameters, and every
+ * tap goes back out through a callback.
+ *
+ * @param rows the reservations, already paired with their Listing. Listing can be null if
+ *   the listing was deleted.
+ * @param pendingCancelId which reservation we're asking the user to confirm cancelling,
+ *   or null if the dialog is closed.
+ * @param reviewingReservationId which reservation the review dialog is for, or null if
+ *   the dialog is closed.
+ * @param reviewRating how many stars are currently selected (0 means nothing picked).
+*/
 @Composable
 fun UserReservationContent(
     filter: ReservationFilter,
     rows: List<Pair<Reservation, Listing?>>,
     isCancelling: Boolean,
     pendingCancelId: String?,
+    reviewingReservationId: String?,
+    reviewRating: Int,
     onFilterChange: (ReservationFilter) -> Unit,
     onBack: () -> Unit,
     onOpen: (String) -> Unit,
     onCancel: (String) -> Unit,
     onDismissCancel: () -> Unit,
-    onConfirmCancel: () -> Unit/**,
-    onLeaveReview: () -> Unit*/) {
+    onConfirmCancel: () -> Unit,
+    onLeaveReview: (String) -> Unit,
+    onDismissReview: () -> Unit,
+    onRatingChanged: (Int) -> Unit,
+    onSubmitReview: (Int) -> Unit    ) {
     Column(Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -271,8 +307,8 @@ fun UserReservationContent(
                         isPast = past,
                         isCancelling = isCancelling,
                         onOpen = { onOpen(reservation.id) },
-                        onCancel = { onCancel(reservation.id) }/**,
-                        onLeaveReview = { onOpenReview(reservation.id) }*/
+                        onCancel = { onCancel(reservation.id) },
+                        onLeaveReview = { onLeaveReview(reservation.id) }
                     )
                 }
             }
@@ -296,8 +332,45 @@ fun UserReservationContent(
             }
         )
     }
+    // --- review sheet thing ---
+    if (reviewingReservationId != null) {
+        Dialog(
+            onDismissRequest = onDismissReview
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    //.background(Color.Black.copy(alpha = 0.5f)) // Dim background
+                    .clickable { onDismissReview() }, // Click outside to close
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(enabled = false) {}, // Prevent clicks passing through
+                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                    color = Color.White
+                ) {
+                    val reservation = rows.firstOrNull { it.first.id == reviewingReservationId }
+                    val campsiteName = reservation?.second?.name ?: "this campsite"
+
+                    ReviewSheetContent(
+                        campsiteName = campsiteName,
+                        rating = reviewRating,
+                        onRatingChange = onRatingChanged,
+                        onSubmit = onSubmitReview
+                    )
+                }
+            }
+        }
+    }
 }
 
+
+/**
+ * One reservation card: image, campsite name, rating, occupancy, status, and the
+ * action buttons for whichever state it's in. (past or reserved)
+ */
 @Composable
 private fun ReservationCard(
     reservation: Reservation,
@@ -305,8 +378,8 @@ private fun ReservationCard(
     isPast: Boolean,
     isCancelling: Boolean,
     onOpen: () -> Unit,
-    onCancel: () -> Unit/**,
-    onLeaveReview: () -> Unit*/
+    onCancel: () -> Unit,
+    onLeaveReview: () -> Unit
 ) {
     Surface(
         color = if(isPast){ Color.LightGray} else{Color.White},
@@ -425,15 +498,17 @@ private fun ReservationCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Button(
-                        onClick = {}, //{onLeaveReview(reservation.id) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black,
-                            contentColor = Color.White
-                        ),
-                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
-                    ) {
-                        Text("Leave a review!", fontWeight = FontWeight.SemiBold)
+                    if(!reservation.rated) {
+                        Button(
+                            onClick = onLeaveReview,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Black,
+                                contentColor = Color.White
+                            ),
+                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+                        ) {
+                            Text("Leave a review!", fontWeight = FontWeight.SemiBold)
+                        }
                     }
                 }
             }
@@ -441,14 +516,74 @@ private fun ReservationCard(
     }
 }
 
+/** True if the reservation's last booked date is before today. */
 private fun isPast(r: Reservation): Boolean {
     val last = r.dates.maxOrNull() ?: return false
-    return last.isBefore(LocalDate.now())
+    return last.before(Date())
+}
+
+/**
+ * The rating dialog body: a 1–5 star picker and a Submit button.
+ * Doesn't own the rating itself — it reads it from [rating] and reports taps up.
+ */
+@Composable
+private fun ReviewSheetContent(
+    campsiteName: String,
+    rating: Int,
+    onRatingChange: (Int) -> Unit,
+    onSubmit: (Int) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Rate your experience",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.height(4.dp))
+
+        // Star Picker
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            for (i in 1..5) {
+                Icon(
+                    imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
+                    contentDescription = "Rate $i",
+                    tint = if (i <= rating) Color.Black else Color.Gray,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable { onRatingChange(i) }
+                )
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = if (rating == 0) "Tap a star to rate" else "$rating out of 5 stars",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
+
+        Spacer(Modifier.height(32.dp))
+        // submit button
+        Button(
+            onClick = { onSubmit(rating) },
+            enabled = rating > 0,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text("Submit", fontWeight = FontWeight.Bold)
+        }
+    }
 }
 
 
-
-
+/**
 // ---------- previews ----------
 
 private fun sampleListing(
@@ -464,6 +599,8 @@ private fun sampleListing(
 private fun UserReservationAllPreview() {
     var clickedReservationId by remember { mutableStateOf<String?>(null) }
     var currentFilter by remember { mutableStateOf(ReservationFilter.All) }
+    var reviewingReservationId by remember { mutableStateOf<String?>(null)}
+    var reviewRating by remember { mutableIntStateOf(0) }
 
     var pendingCancelId by remember { mutableStateOf<String?>(null) }
     var isCancelling by remember { mutableStateOf(false) }
@@ -502,13 +639,24 @@ private fun UserReservationAllPreview() {
                 rows = filteredRows,
                 isCancelling = isCancelling,
                 pendingCancelId = pendingCancelId,
+                reviewingReservationId = reviewingReservationId,
+                reviewRating = reviewRating,
                 onFilterChange = { newFilter ->
                     currentFilter = newFilter
                 }, onBack = {}, onOpen = { clickedReservationId = it },
                 onCancel = { id -> pendingCancelId = id }, onDismissCancel ={pendingCancelId = null },
                 onConfirmCancel = {isCancelling = true
                     pendingCancelId = null
-                    isCancelling = false }
+                    isCancelling = false },
+                onLeaveReview = {reviewingReservationId = it } ,
+                onDismissReview = { reviewingReservationId = null
+                    reviewRating = 0},
+                onRatingChanged = { reviewRating = it },
+                onSubmitReview = {rating ->
+                    println("Submitted $rating stars")
+                    reviewingReservationId = null
+                    reviewRating = 0
+                }
 
             )
         }
@@ -524,11 +672,17 @@ private fun UserReservationEmptyPreview() {
         UserReservationContent(
             filter = ReservationFilter.All,
             rows = emptyList(),
+            reviewingReservationId = null,
+            reviewRating = 0,
             isCancelling = false,
             pendingCancelId = null,
             onFilterChange = {}, onBack = {}, onOpen = {},
-            onCancel = {}, onDismissCancel ={}, onConfirmCancel = {}
+            onCancel = {}, onDismissCancel ={}, onConfirmCancel = {},
+            onLeaveReview = {} ,
+            onDismissReview = { },
+            onRatingChanged = {},
+            onSubmitReview = {}
 
         )
     }
-}
+}*/
