@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateSetOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
 import com.example.campsitereservationapp.utils.DateFormatter
 import java.util.Calendar
 import java.util.Date
@@ -12,9 +13,6 @@ class UserCampsiteSearchViewModel: ListingViewModel() {
      var _searchResults = mutableStateListOf<Listing>()
      var _selectedDates = mutableStateSetOf<Date>()
 
-
-
-    val listings: List<Listing> get() = _searchResults
 
     init {
         for(listing in _listings){
