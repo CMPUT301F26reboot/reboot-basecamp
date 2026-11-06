@@ -72,7 +72,7 @@ internal fun TempNavigationContent(
             contentPadding = PaddingValues(vertical = 16.dp),
             modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 32.dp)
         ) {
-            Text("User Home Screen", fontWeight = FontWeight.Bold)
+            Text("User Sign Up", fontWeight = FontWeight.Bold)
         }
 
         Button(

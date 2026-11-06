@@ -10,6 +10,8 @@ import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
+import com.example.campsitereservationapp.ui.entrant.SignUp.PoliciesScreen
+import com.example.campsitereservationapp.ui.entrant.SignUp.UserSignUpScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.parseRouteDate
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchScreen
 import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationDetailScreen
@@ -36,10 +38,38 @@ fun CampsiteReservationApp() {
             TempNavigationScreen(
                 profileId = "123",
                 onUser = {
-                    navController.navigate("userHome")
+                    navController.navigate("userSignUp")
                 },
                 onOwner = {
                     navController.navigate("ownerHome")
+                }
+            )
+        }
+
+        composable(
+            route = "userSignUp"
+        ){
+            UserSignUpScreen(
+                onSignedUp = {
+                    navController.navigate("userHome") {
+                        popUpTo("userSignUp") { inclusive = true }
+                    }
+                },
+                onOwnerSignUp = {
+                    //navController.navigate("ownerSignUp")
+                },
+                onPolicies = {
+                    navController.navigate("policies")
+                }
+            )
+        }
+
+        composable(
+            route = "policies"
+        ){
+            PoliciesScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

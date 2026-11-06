@@ -9,7 +9,7 @@ android {
     compileSdk {
         version = release(37)
     }
-
+    
     defaultConfig {
         applicationId = "com.example.campsitereservationapp"
         minSdk = 24
