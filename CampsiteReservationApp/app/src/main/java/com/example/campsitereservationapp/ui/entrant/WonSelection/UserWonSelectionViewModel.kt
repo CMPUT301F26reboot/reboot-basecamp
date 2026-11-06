@@ -1,10 +1,9 @@
-package com.example.campsitereservationapp.ui.entrant
+package com.example.campsitereservationapp.ui.entrant.WonSelection
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import java.text.SimpleDateFormat
-import java.time.Month
 import java.util.Locale
 
 

@@ -4,15 +4,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.campsitereservationapp.ui.TempNavigationScreen
-import com.example.campsitereservationapp.ui.entrant.UserCampsiteDetailsScreen
+import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
-import com.example.campsitereservationapp.ui.entrant.parseRouteDate
-import com.example.campsitereservationapp.ui.owner.campsitedetails.OwnerCampDetailsScreen
+import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.parseRouteDate
+import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
-import com.example.campsitereservationapp.ui.owner.campsitelist.OwnerListingsScreen
+import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
 
 //private const val CAMPSITE_DETAILS_ROUTE = "campsiteDetails/{listingId}?start={start}&end={end}"
 
+// We do not have Compasables for the navController.navigate's that are in comments
+// They are just commented there as placeholders, the route name may change depending on
+// what the respective composable route name is.
 @Composable
 fun CampsiteReservationApp() {
     val navController = rememberNavController()
@@ -94,10 +97,10 @@ fun CampsiteReservationApp() {
                     navController.navigate("ownerHome")
                 },
                 onRegisterNew = {
-                    //navController.navigate("ownerRegister")
+                    navController.navigate("ownerCampDetails")
                 },
                 onDetails = {
-                    navController.navigate("ownerCampDetails")
+                    //navController.navigate("ownerCampUpdate")
                 }
             )
         }

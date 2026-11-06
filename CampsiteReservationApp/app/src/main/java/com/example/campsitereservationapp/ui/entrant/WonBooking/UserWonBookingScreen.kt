@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.entrant
+package com.example.campsitereservationapp.ui.entrant.WonBooking
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

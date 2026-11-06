@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.owner.campsitelist
+package com.example.campsitereservationapp.ui.owner.CampsiteList
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

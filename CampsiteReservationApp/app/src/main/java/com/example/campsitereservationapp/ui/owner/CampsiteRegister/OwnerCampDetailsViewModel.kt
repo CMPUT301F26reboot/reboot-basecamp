@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.owner.campsitedetails
+package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import android.content.Context
 import android.net.Uri

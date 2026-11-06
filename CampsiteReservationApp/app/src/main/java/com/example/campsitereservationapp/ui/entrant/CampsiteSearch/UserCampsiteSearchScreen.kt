@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.entrant
+package com.example.campsitereservationapp.ui.entrant.CampsiteSearch
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,14 +23,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.*
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
-import com.example.campsitereservationapp.ui.entrant.UserCampsiteSearchViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import java.time.YearMonth
 import java.util.Date
 import kotlin.collections.emptySet

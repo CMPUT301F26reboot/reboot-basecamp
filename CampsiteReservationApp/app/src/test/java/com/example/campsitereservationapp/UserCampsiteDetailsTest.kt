@@ -1,7 +1,7 @@
 package com.example.campsitereservationapp
 
-import com.example.campsitereservationapp.ui.entrant.formatDateRange
-import com.example.campsitereservationapp.ui.entrant.parseRouteDate
+import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.formatDateRange
+import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.parseRouteDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

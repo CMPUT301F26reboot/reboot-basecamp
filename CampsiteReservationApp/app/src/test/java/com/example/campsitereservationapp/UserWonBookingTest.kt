@@ -1,7 +1,7 @@
 package com.example.campsitereservationapp
 
-import com.example.campsitereservationapp.ui.entrant.computeBookableDays
-import com.example.campsitereservationapp.ui.entrant.toDayOnly
+import com.example.campsitereservationapp.ui.entrant.WonBooking.computeBookableDays
+import com.example.campsitereservationapp.ui.entrant.WonBooking.toDayOnly
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

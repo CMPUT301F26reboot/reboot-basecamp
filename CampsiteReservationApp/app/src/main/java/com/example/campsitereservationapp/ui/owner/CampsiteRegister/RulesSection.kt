@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.owner.campsitedetails
+package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

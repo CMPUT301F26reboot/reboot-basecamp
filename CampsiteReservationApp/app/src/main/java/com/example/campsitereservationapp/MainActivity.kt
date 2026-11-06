@@ -5,22 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.campsitereservationapp.Map.MapImplementationExample
-import com.example.campsitereservationapp.Map.MapScreenComponent
-import com.example.campsitereservationapp.ui.entrant.UserWonSelectionScreen
-import com.example.campsitereservationapp.ui.entrant.UserWonBookingScreen
-import com.example.campsitereservationapp.ui.entrant.UserWonSelectionViewModel
-import com.example.campsitereservationapp.ui.owner.campsitelist.OwnerListingsScreen
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
-import com.google.firebase.firestore.auth.User
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

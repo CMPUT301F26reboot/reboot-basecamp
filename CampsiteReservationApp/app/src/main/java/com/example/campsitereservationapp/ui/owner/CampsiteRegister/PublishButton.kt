@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.owner.campsitedetails
+package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
