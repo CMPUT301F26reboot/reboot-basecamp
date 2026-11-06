@@ -65,6 +65,7 @@ import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScree
 import com.example.campsitereservationapp.ui.components.CustomDialogScreenComponent
 import com.example.campsitereservationapp.ui.components.InputDateScreenComponent
 import com.example.campsitereservationapp.ui.components.IntInputScreenComponent
+import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.util.Date
 @Composable
 fun OwnerLotteryCreationScreen(
@@ -335,7 +336,7 @@ fun ListingCard(
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(8.dp)) {
             AsyncImage(
-                model = listing.photoUrls.firstOrNull(),
+                model = decodeBase64Image(listing.photoUrls.firstOrNull()),
                 contentDescription = "Photo of ${listing.name}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

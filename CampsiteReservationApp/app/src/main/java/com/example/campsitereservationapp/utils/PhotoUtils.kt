@@ -28,8 +28,10 @@ fun encodePhotoToBase64(context: Context, uri: Uri): String? {
 }
 
 /** Decodes a Base64 string back into raw image bytes, or null if [value] isn't valid Base64. */
-fun decodeBase64Image(value: String): ByteArray? =
-    runCatching { Base64.decode(value, Base64.DEFAULT) }.getOrNull()
+fun decodeBase64Image(value: String?): ByteArray? {
+    if (value == null) return null
+    return runCatching { Base64.decode(value, Base64.DEFAULT) }.getOrNull()
+}
 
 /** Loads the image at [uri], downsampled so neither side is larger than [MAX_DIMENSION]. */
 private fun decodeScaledBitmap(context: Context, uri: Uri): Bitmap? = runCatching {
