@@ -35,6 +35,8 @@ open class DatabaseModel :ViewModel() {
 
 
 
+    open val reservations: List<Reservation> get() = _reservations
+
     //Adding a listener to each collection to update local copies
     init{
         listingsRef.addSnapshotListener{ snapshot, error ->
@@ -126,6 +128,11 @@ open class DatabaseModel :ViewModel() {
     fun addListing(listing: Listing){
         listingsRef.add(listing)
     }
+
+    fun addLottery(lottery: Lottery){
+        lotteriesRef.add(lottery)
+    }
+
 
 
 
