@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.entrant
+package com.example.campsitereservationapp.ui.entrant.CurrentLotteries
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -56,7 +56,8 @@ class UserCurrentLotteriesViewModel: DatabaseModel() {
      * Gets an image for the lottery
      *
      * Gets the first image from the first listing encountered in the db
-     * that is also within the lottery
+     * that is also within the lottery. Campsites without photos are skipped, and an empty string
+     * is returned if none of the lottery's campsites have a photo (photos are optional).
      *
      * @param [lottery] is the lottery to get an image for
      */
@@ -64,7 +65,7 @@ class UserCurrentLotteriesViewModel: DatabaseModel() {
         var listingImg = ""
         for(listing in _listings){
             if(listing.id in lottery.campsiteIDs){
-                listingImg = listing.photoUrls.first()
+                listingImg = listing.photoUrls.firstOrNull() ?: ""
                 if(listingImg.isNotEmpty())
                     break
             }

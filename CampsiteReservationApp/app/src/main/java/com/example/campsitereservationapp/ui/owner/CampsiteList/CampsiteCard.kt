@@ -1,3 +1,13 @@
+/*
+ * AI use:
+ * - Q: I can't find edit and QR code icons in the normal icons. Where are they?
+ *   A: The default set (material-icons-core) is small. Add material-icons-extended, which has
+ *      Icons.Filled.Edit, Icons.Filled.QrCode and Icons.Filled.GridView.
+ * - Q: Where do I find what makes a box slightly rounded or more square?
+ *   A: RoundedCornerShape(x.dp) from androidx.compose.foundation.shape. A smaller value is more
+ *      square, and CircleShape is fully round.
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.CampsiteList
 
 import androidx.compose.foundation.layout.Arrangement

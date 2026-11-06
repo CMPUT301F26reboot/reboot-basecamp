@@ -1,3 +1,9 @@
+/*
+ * AI use:
+ * - Q: What's the easiest way to let the owner pick photos?
+ *   A: The Photo Picker (PickMultipleVisualMedia); no storage permission needed.
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import android.net.Uri
