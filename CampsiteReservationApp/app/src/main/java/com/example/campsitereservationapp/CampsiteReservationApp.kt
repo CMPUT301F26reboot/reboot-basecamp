@@ -1,8 +1,9 @@
 package com.example.campsitereservationapp
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -14,11 +15,10 @@ import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
 import com.example.campsitereservationapp.ui.entrant.SignUp.PoliciesScreen
 import com.example.campsitereservationapp.ui.entrant.SignUp.UserSignUpScreen
 import com.example.campsitereservationapp.ui.entrant.UserProfile.UserProfileScreen
-import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.parseRouteDate
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchScreen
+import com.example.campsitereservationapp.ui.entrant.CurrentLotteries.UserCurrentLotteriesScreen
 import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationDetailScreen
 import com.example.campsitereservationapp.ui.entrant.Reservations.UserReservationsScreen
-import com.example.campsitereservationapp.ui.entrant.TempMyLotteriesScreen
 import com.example.campsitereservationapp.ui.entrant.WonBooking.UserWonBookingScreen
 import com.example.campsitereservationapp.ui.entrant.WonSelection.UserWonSelectionScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDetailsScreen
@@ -26,20 +26,29 @@ import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
 import com.example.campsitereservationapp.ui.owner.TempOwnerLotteryListScreen
 import com.example.campsitereservationapp.utils.getDeviceId
+import java.util.Date
 
 // We do not have Compasables for the navController.navigate's that are in comments
 // They are just commented there as placeholders, the route name may change depending on
 // what the respective composable route name is.
+
+// OWNER_ID is hardcoded for now since no owner signup/device setup yet.
+private const val OWNER_ID = "test-owner"
+
 @Composable
 fun CampsiteReservationApp() {
     val navController = rememberNavController()
+
+    // get the users deviceID
+    val context = LocalContext.current
+    val deviceId = remember { getDeviceId(context) }
 
     NavHost(navController = navController, startDestination = "tempNav") {
         composable(
             route = "tempNav"
         ) {
             TempNavigationScreen(
-                profileId = "123",
+                profileId = deviceId,
                 onUser = {
                     navController.navigate("userSignUp")
                 },
@@ -48,6 +57,8 @@ fun CampsiteReservationApp() {
                 }
             )
         }
+
+        // ------------------------ User/Entrant ------------------------- ///
 
         composable(
             route = "userSignUp"
@@ -81,7 +92,7 @@ fun CampsiteReservationApp() {
             route = "userHome"
         ){
             UserHomeScreen(
-                profileId = "test-user",
+                profileId = deviceId,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -107,7 +118,7 @@ fun CampsiteReservationApp() {
             route = "userProfile"
         ){
             UserProfileScreen(
-                profileId = getDeviceId(LocalContext.current),
+                profileId = deviceId,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -129,9 +140,28 @@ fun CampsiteReservationApp() {
                 onBack = {
                     navController.popBackStack()
                 },
-                onToDetails = { listingId ->
-                    navController.navigate("campsiteDetails/$listingId")
+                onToDetails = { listingId, start, end ->
+                    val dates = if (start != null && end !=null)
+                            "?start=${start.time}&end=${end.time}" else ""
+                    navController.navigate("campsiteDetails/$listingId$dates")
                 }
+            )
+        }
+
+        composable(
+            route = "campsiteDetails/{listingId}?start={start}&end={end}",
+            arguments = listOf(
+                navArgument("listingId") { type = NavType.StringType },
+                navArgument("start") { type = NavType.StringType; nullable = true; defaultValue = null },
+                navArgument("end") { type = NavType.StringType; nullable = true; defaultValue = null }
+            )
+        ) { entry ->
+            UserCampsiteDetailsScreen(
+                listingId = entry.arguments?.getString("listingId").orEmpty(),
+                profileId = deviceId,
+                searchStart = entry.arguments?.getString("start")?.toLongOrNull()?.let(::Date),
+                searchEnd = entry.arguments?.getString("end")?.toLongOrNull()?.let(::Date),
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -139,7 +169,7 @@ fun CampsiteReservationApp() {
             route = "userReservations"
         ){
             UserReservationsScreen(
-                profileId = "test-user",
+                profileId = deviceId,
                 onBack  = {
                     navController.popBackStack()
                 },
@@ -150,7 +180,13 @@ fun CampsiteReservationApp() {
         }
 
         composable(
-            route = "userReservationDetails/{reservationId}"
+            route = "userReservationDetails/{reservationId}",
+            arguments = listOf(
+                navArgument("reservationId") {
+                    type = NavType.StringType
+                }
+            )
+
         ){ entry ->
             ReservationDetailScreen(
                 reservationId = entry.arguments?.getString("reservationId").orEmpty(),
@@ -163,52 +199,70 @@ fun CampsiteReservationApp() {
         composable(
             route = "userLotteries"
         ){
-            TempMyLotteriesScreen(
-                profileId = "test-owner",
+            UserCurrentLotteriesScreen(
+                profileId = deviceId,
                 onBack = {
                     navController.popBackStack()
                 },
-                onWonSelection = {
-                    navController.navigate("userWonSelection")
+                onToBooking = { lotteryId ->
+                    navController.navigate("userWonSelection/$lotteryId")
                 }
             )
         }
 
         composable(
-            route = "userWonSelection"
-        ){
+            route = "userWonSelection/{lotteryId}",
+            arguments = listOf(
+                navArgument("lotteryId"){
+                    type = NavType.StringType
+                }
+            )
+        ){ entry ->
+            val lotteryId = entry.arguments?.getString("lotteryId").orEmpty()
             UserWonSelectionScreen(
-                lotteryId = "3pTqrKarXVyXaGdHkLGo",
+                lotteryId = lotteryId,
                 onBack = {
                     navController.popBackStack()
                 },
-                onFinished = {
-                    navController.navigate("userWonBooking")
+                onFinished = { campsiteName ->
+                    navController.navigate("userWonBooking/$lotteryId/$campsiteName")
                 },
             )
         }
 
         composable(
-            route = "userWonBooking"
-        ){
+            route = "userWonBooking/{lotteryId}/{campsiteName}",
+            arguments = listOf(
+                navArgument("lotteryId") {
+                    type = NavType.StringType
+                },
+                navArgument("campsiteName") {
+                    type = NavType.StringType
+                }
+            )
+        ){ entry ->
             UserWonBookingScreen(
-                lotteryId = "3pTqrKarXVyXaGdHkLGo",
-                campsiteName = "Test",
-                profileId = "user-test",
+                lotteryId = entry.arguments?.getString("lotteryId").orEmpty(),
+                campsiteName = entry.arguments?.getString("campsiteName").orEmpty(),
+                profileId = deviceId,
                 onBack = {
                     navController.popBackStack()
                 },
                 onFinished = {
-                    navController.navigate("userHome")
+                    //keep the user home at the top of the stack
+                    navController.popBackStack("userHome", inclusive = false)
                 },
             )
         }
+
+
+        // ------------------------ Owner ------------------------ //
 
         composable(
             route = "ownerHome"
         ){
             OwnerHomeScreen(
-                profileId = "test-owner",
+                profileId = OWNER_ID,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -231,15 +285,15 @@ fun CampsiteReservationApp() {
             route = "ownerListings"
         ){
             OwnerListingsScreen(
-                ownerId = "test-owner",
+                ownerId = OWNER_ID,
                 onBack = {
                     navController.popBackStack()
                 },
                 onRegisterNew = {
                     navController.navigate("ownerCampDetails")
                 },
-                onDetails = {
-                    //navController.navigate("ownerCampUpdate")
+                onDetails = { listing ->
+                    //navController.navigate("ownerCampUpdate/${listing.id}")
                 }
             )
         }
@@ -250,7 +304,7 @@ fun CampsiteReservationApp() {
             route = "ownerLotteries"
         ){
             TempOwnerLotteryListScreen(
-                profileId = "test-owner",
+                profileId = OWNER_ID,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -273,7 +327,7 @@ fun CampsiteReservationApp() {
                 onCreate = {
                     navController.popBackStack()
                 },
-                ownerID = "test-owner",
+                ownerID = OWNER_ID,
             )
         }
 
@@ -281,28 +335,13 @@ fun CampsiteReservationApp() {
             route = "ownerCampDetails"
         ){
             OwnerCampDetailsScreen(
-                ownerId= "test-owner",
+                ownerId= OWNER_ID,
                 onBack = {
                     navController.popBackStack()
                 },
                 onPublished = {
                     navController.popBackStack()
                 },
-            )
-        }
-
-        composable(
-            route = "campsiteDetails/{listingId}?start={start}&end={end}",
-            arguments = listOf(
-                navArgument("start") { nullable = true; defaultValue = null },
-                navArgument("end") { nullable = true; defaultValue = null }
-            )
-        ) { entry ->
-            UserCampsiteDetailsScreen(
-                listingId = entry.arguments?.getString("listingId").orEmpty(),
-                searchStart = parseRouteDate(entry.arguments?.getString("start")),
-                searchEnd = parseRouteDate(entry.arguments?.getString("end")),
-                onBack = { navController.popBackStack() }
             )
         }
     }

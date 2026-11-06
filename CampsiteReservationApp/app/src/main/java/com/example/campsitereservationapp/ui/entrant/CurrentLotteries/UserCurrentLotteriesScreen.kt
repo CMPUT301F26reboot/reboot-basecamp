@@ -39,7 +39,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lot
  * 
  * @param [modifier] is optional modifier
  * @param [vm] is optional viewmodel
- * @param [profileID] is the document id of the entrant's profile
+ * @param [profileId] is the document id of the entrant's profile
  * @param [onBack] is lambda for going back
  * @param [onToBooking] is lambda called to go to booking screen
  */
@@ -47,11 +47,11 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lot
 fun UserCurrentLotteriesScreen(
     modifier: Modifier = Modifier,
     vm: UserCurrentLotteriesViewModel = viewModel(),
-    profileID: String,
+    profileId: String,
     onBack: () -> Unit,
-    onToBooking: () -> Unit
+    onToBooking: (lotteryId: String) -> Unit
 ){
-    vm.start(profileID)
+    vm.start(profileId)
     var showWon by remember{ mutableStateOf(true) }
     var showOngoing by remember{ mutableStateOf(false) }
 
@@ -113,7 +113,7 @@ fun UserCurrentLotteriesScreen(
                     WonLotteryCard(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
-                        profileID = profileID,
+                        profileId = profileId,
                         onToBooking = onToBooking)
                 }
             }
@@ -123,7 +123,7 @@ fun UserCurrentLotteriesScreen(
                     OngoingLotteryCard(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
-                        profileID = profileID,
+                        profileId = profileId,
                         onToLeave = vm::leaveLottery
                         )
                 }
@@ -139,7 +139,7 @@ fun UserCurrentLotteriesScreen(
  * 
  * @param [lottery] is the lottery being displayed
  * @param [imageURL] is the image for that lottery
- * @param [profileID] is document id of the entrant's profile.
+ * @param [profileId] is document id of the entrant's profile.
  * Not used right now but will be passed on to the onToBooking lambda when it's finished
  * @param [onToBooking] lambda to go to booking screen
  */
@@ -147,8 +147,8 @@ fun UserCurrentLotteriesScreen(
 fun WonLotteryCard(
     lottery: Lottery,
     imageURL: String,
-    profileID: String,
-    onToBooking: () -> Unit
+    profileId: String,
+    onToBooking: (lotteryId: String) -> Unit
     ){
     OutlinedCard(modifier = Modifier.fillMaxWidth(fraction = 0.9f)){
         Column(
@@ -203,7 +203,7 @@ fun WonLotteryCard(
 
                     Button(
                         modifier = Modifier.fillMaxWidth(0.7f),
-                        onClick = {onToBooking()},
+                        onClick = {onToBooking(lottery.id)},
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(vertical = 14.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -226,14 +226,14 @@ fun WonLotteryCard(
  * 
  * @param [lottery] is the lottery being displayed
  * @param [imageURL] is the image for that lottery
- * @param [profileID] is document id of the entrant's profile.
+ * @param [profileId] is document id of the entrant's profile.
  * @param [onToLeave] lambda to go leave lottery (vm::leaveLottery)
  */
 @Composable
 fun OngoingLotteryCard(
     lottery: Lottery,
     imageURL: String,
-    profileID: String,
+    profileId: String,
     onToLeave: (Lottery, String) -> Unit
 ){
     OutlinedCard(modifier = Modifier.fillMaxWidth(fraction = 0.9f)){
@@ -287,7 +287,7 @@ fun OngoingLotteryCard(
                     )
                     Button(
                         modifier = Modifier.fillMaxWidth(0.7f),
-                        onClick = {onToLeave(lottery, profileID)},
+                        onClick = {onToLeave(lottery, profileId)},
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(vertical = 14.dp),
                         colors = ButtonDefaults.buttonColors(
