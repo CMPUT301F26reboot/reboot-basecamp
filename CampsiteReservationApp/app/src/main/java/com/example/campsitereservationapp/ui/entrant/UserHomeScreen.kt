@@ -1,17 +1,43 @@
 package com.example.campsitereservationapp.ui.entrant
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.example.campsitereservationapp.R
 
 @Composable
 fun UserHomeScreen(
     profileId: String,
+    onBack: () -> Unit,
     onSearchCampsites: () -> Unit,
     onMyLotteries: () -> Unit,
     onMyReservations: () -> Unit,
@@ -20,6 +46,7 @@ fun UserHomeScreen(
 ){
     UserHomeContent(
         profileId = profileId,
+        onBack = onBack,
         onSearchCampsites = onSearchCampsites,
         onMyLotteries = onMyLotteries,
         onMyReservations = onMyReservations,
@@ -32,6 +59,7 @@ fun UserHomeScreen(
 @Composable
 internal fun UserHomeContent(
     profileId: String,
+    onBack: () -> Unit,
     onSearchCampsites: () -> Unit,
     onMyLotteries: () -> Unit,
     onMyReservations: () -> Unit,
@@ -40,28 +68,108 @@ internal fun UserHomeContent(
 
 ){
     Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        FilledTonalIconButton(
+            onClick = onBack,
+            modifier = Modifier.padding(start = 16.dp, top = 8.dp)
+        ) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+        }
+    }
+
+
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Button(onClick = onSearchCampsites, modifier = Modifier) {
-            Text("Search Campsites")
+
+        Image(
+            painter = painterResource(id = R.drawable.reboot_basecamp_logo),
+            contentDescription = "Reboot Campsite Lottery logo",
+            modifier = Modifier.size(200.dp),
+            contentScale = ContentScale.Fit
+        )
+
+        Button(
+            onClick = onSearchCampsites,
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.surface
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 32.dp)
+        ) {
+            Icon(Icons.Filled.Search, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Search Campsites", fontWeight = FontWeight.Bold)
         }
 
-        Button(onClick = onMyLotteries, modifier = Modifier) {
-            Text("My Lotteries")
+        Button(
+            onClick = onMyLotteries,
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                contentColor = MaterialTheme.colorScheme.inverseSurface
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 32.dp)
+        ) {
+            Icon(Icons.Filled.List, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("My Lotteries", fontWeight = FontWeight.Bold)
         }
 
-        Button(onClick = onMyReservations, modifier = Modifier) {
-            Text("My Reservations")
+        Button(
+            onClick = onMyReservations,
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                contentColor = MaterialTheme.colorScheme.inverseSurface
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 32.dp)
+        ) {
+            Icon(Icons.Filled.Bookmark, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("My Reservations", fontWeight = FontWeight.Bold)
         }
 
-        Button(onClick = onNotifications, modifier = Modifier) {
-            Text("Notifications")
+        Button(
+            onClick = onNotifications,
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                contentColor = MaterialTheme.colorScheme.inverseSurface
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 32.dp)
+        ) {
+            Icon(Icons.Filled.Notifications, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Notifications", fontWeight = FontWeight.Bold)
         }
+    }
 
-        Button(onClick = onProfile, modifier = Modifier) {
-            Text("My Profile")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(26.dp)
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        FilledTonalIconButton(
+            onClick = onProfile,
+            modifier = Modifier.size(55.dp),
+        ) {
+            Icon(
+                Icons.Filled.Person,
+                contentDescription = "Back",
+                modifier = Modifier.size(35.dp)
+            )
         }
     }
 }

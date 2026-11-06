@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.ui.entrant.UserWonSelectionScreen
 import com.example.campsitereservationapp.ui.entrant.UserWonBookingScreen
 import com.example.campsitereservationapp.ui.entrant.UserWonSelectionViewModel
+import com.example.campsitereservationapp.ui.owner.campsitelist.OwnerListingsScreen
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
 import com.google.firebase.firestore.auth.User
 
@@ -31,9 +32,9 @@ class MainActivity : ComponentActivity() {
                 )*/
 
                 CampsiteReservationApp()
-                }
             }
         }
     }
+}
 
 

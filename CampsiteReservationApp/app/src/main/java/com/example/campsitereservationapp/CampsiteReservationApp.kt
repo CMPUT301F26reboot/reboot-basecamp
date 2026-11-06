@@ -7,7 +7,9 @@ import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.UserCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
 import com.example.campsitereservationapp.ui.entrant.parseRouteDate
-import com.example.campsitereservationapp.ui.owner.campsitedetails.OwnerHomeScreen
+import com.example.campsitereservationapp.ui.owner.campsitedetails.OwnerCampDetailsScreen
+import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
+import com.example.campsitereservationapp.ui.owner.campsitelist.OwnerListingsScreen
 
 //private const val CAMPSITE_DETAILS_ROUTE = "campsiteDetails/{listingId}?start={start}&end={end}"
 
@@ -34,7 +36,10 @@ fun CampsiteReservationApp() {
             route = "userHome"
         ){
             UserHomeScreen(
-                profileId = "123",
+                profileId = "test-user",
+                onBack = {
+                    navController.navigate("tempNav")
+                },
                 onSearchCampsites = {
                     // actual:
                     // navController.navigate("userSearchCampsites")
@@ -61,19 +66,15 @@ fun CampsiteReservationApp() {
             route = "ownerHome"
         ){
             OwnerHomeScreen(
-                profileId = "321",
+                profileId = "test-owner",
+                onBack = {
+                  navController.navigate("tempNav")
+                },
                 onManageLotteries = {
-                    navController.navigate("ownerManageLotteries")
+                    //navController.navigate("ownerLotteries")
                 },
-                onMyCampsites = {
-                    //Actual:
-                    // navController.navigate("ownerCampsites")
-
-                    // Test with a current screen:
-                    //navController.navigate("ownerCampDetails")
-                },
-                onAddCampsite = {
-                    //navController.navigate("ownerAddCampsite")
+                onManageCampsites = {
+                    navController.navigate("ownerListings")
                 },
                 onNotificationHistory = {
                     //navController.navigate("ownerNotificationHistory")
@@ -81,6 +82,37 @@ fun CampsiteReservationApp() {
                 onProfile = {
                     //navController.navigate("ownerProfile")
                 }
+            )
+        }
+
+        composable(
+            route = "ownerListings"
+        ){
+            OwnerListingsScreen(
+                ownerId = "test-owner",
+                onBack = {
+                    navController.navigate("ownerHome")
+                },
+                onRegisterNew = {
+                    //navController.navigate("ownerRegister")
+                },
+                onDetails = {
+                    navController.navigate("ownerCampDetails")
+                }
+            )
+        }
+
+        composable(
+            route = "ownerCampDetails"
+        ){
+            OwnerCampDetailsScreen(
+                ownerId= "test-owner",
+                onBack = {
+                    navController.navigate("ownerListings")
+                },
+                onPublished = {
+                    navController.navigate("ownerListings")
+                },
             )
         }
 
