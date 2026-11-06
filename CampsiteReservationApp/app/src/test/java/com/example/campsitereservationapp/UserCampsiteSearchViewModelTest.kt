@@ -36,7 +36,6 @@ class UserCampsiteSearchViewModelTest {
         dates = listOf(day(2027, 7, 9), day(2027, 7, 10), day(2027, 7, 11)),
         campsiteIDs = listOf("listing-two-jack")
     ).apply { id = "lottery-jul-2027-banff" }
-
     private val firestore = MockFirestore()
     private lateinit var viewModel: UserCampsiteSearchViewModel
 
