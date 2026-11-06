@@ -80,6 +80,7 @@ fun OwnerCampDetailsScreen(
         tags = viewModel.tags,
         onAddTag = viewModel::addTag,
         onRemoveTag = viewModel::removeTag,
+        onLocationPicked = viewModel::setLocation,
         canPublish = viewModel.canPublish,
         isPublishing = viewModel.isPublishing,
         onPublish = { viewModel.publish(ownerId, context) },
@@ -115,6 +116,7 @@ fun OwnerCampDetailsContent(
     tags: List<String>,
     onAddTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
+    onLocationPicked: (latitude: Double, longitude: Double) -> Unit,
     canPublish: Boolean,
     isPublishing: Boolean,
     onPublish: () -> Unit,
@@ -153,7 +155,7 @@ fun OwnerCampDetailsContent(
                 onAcceptanceRequiredChange = onRulesAcceptanceRequiredChange
             )
             TagsSection(tags = tags, onAddTag = onAddTag, onRemoveTag = onRemoveTag)
-            MapPlaceholderSection()
+            MapSection(onLocationPicked = onLocationPicked)
             PublishButton(enabled = canPublish && !isPublishing, isPublishing = isPublishing, onClick = onPublish)
         }
     }
