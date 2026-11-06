@@ -415,7 +415,7 @@ private fun ProfileFieldRow(
                 LaunchedEffect(Unit) { focusRequester.requestFocus() }
             } else {
                 Text(
-                    text = if (field == ProfileField.USERNAME) "@$value" else value,
+                    text = value,
                     style = valueStyle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

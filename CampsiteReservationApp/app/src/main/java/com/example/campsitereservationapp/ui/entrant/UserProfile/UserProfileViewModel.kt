@@ -24,7 +24,6 @@ import kotlinx.coroutines.withContext
  */
 enum class ProfileField(val key: String, val label: String) {
     NAME("name", "Name"),
-    USERNAME("username", "Username"),
     EMAIL("email", "Email Address"),
     PHONE_NUMBER("phoneNumber", "Phone Number")
 }
@@ -49,10 +48,6 @@ class UserProfileViewModel : DatabaseModel() {
 
     /** The user's saved name. */
     var name by mutableStateOf("")
-        private set
-
-    /** The user's saved username. */
-    var username by mutableStateOf("")
         private set
 
     /** The user's saved email address. */
@@ -114,7 +109,6 @@ class UserProfileViewModel : DatabaseModel() {
             .addOnSuccessListener { document ->
                 document.toObject(Profile::class.java)?.let { profile ->
                     name = profile.name
-                    username = profile.username
                     email = profile.email
                     phoneNumber = profile.phoneNumber
                     profilePicture = profile.profilePicture
@@ -135,7 +129,6 @@ class UserProfileViewModel : DatabaseModel() {
      */
     fun valueOf(field: ProfileField): String = when (field) {
         ProfileField.NAME -> name
-        ProfileField.USERNAME -> username
         ProfileField.EMAIL -> email
         ProfileField.PHONE_NUMBER -> phoneNumber
     }
@@ -253,7 +246,6 @@ class UserProfileViewModel : DatabaseModel() {
     private fun setValue(field: ProfileField, value: String) {
         when (field) {
             ProfileField.NAME -> name = value
-            ProfileField.USERNAME -> username = value
             ProfileField.EMAIL -> email = value
             ProfileField.PHONE_NUMBER -> phoneNumber = value
         }
@@ -262,7 +254,6 @@ class UserProfileViewModel : DatabaseModel() {
     /** Returns the message to show if [value] isn't valid for [field], or null if it is. */
     private fun errorFor(field: ProfileField, value: String): String? = when (field) {
         ProfileField.NAME -> if (value.isBlank()) "Enter your name" else null
-        ProfileField.USERNAME -> if (value.isBlank()) "Enter a username" else null
         ProfileField.EMAIL -> if (isValidEmail(value)) null else "Enter a valid email address"
         ProfileField.PHONE_NUMBER ->
             if (isValidPhoneNumber(value)) null else "Enter a valid phone number"
