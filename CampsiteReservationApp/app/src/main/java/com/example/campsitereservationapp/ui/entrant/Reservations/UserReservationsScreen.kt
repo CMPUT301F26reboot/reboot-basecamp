@@ -66,9 +66,6 @@ private val buttonGrey = Color(0xFFEAEAEA)
  * the ViewModel, and [UserReservationContent] is the UI version that just takes
  * values and callbacks.
  *
- * Outstanding issues:
- * - The "Lotteries" tab doesn't do anything when you tap it.
- *
  * @param profileId the current user's Firestore document ID. Used to filter reservations by `entrantID`.
  * @param onBack called when the back button is tapped.
  * @param onOpenReservation called with a reservation id when the user taps "View".
@@ -80,6 +77,7 @@ fun UserReservationsScreen(
     profileId: String,
     onBack: () -> Unit,
     onOpenReservation: (reservationId: String) -> Unit = {},
+    onToLotteries: () -> Unit,
     viewModel: UserReservationsViewModel = viewModel()
 ){
     val rows = viewModel.filteredReservations(profileId)
@@ -101,7 +99,8 @@ fun UserReservationsScreen(
         onLeaveReview = viewModel::onLeaveReviewClicked,
         onDismissReview = viewModel::dismissReviewSheet,
         onRatingChanged = viewModel::onRatingChanged,
-        onSubmitReview = viewModel::submitReview
+        onSubmitReview = viewModel::submitReview,
+        onLotteriesTab = onToLotteries
 
 
     )
@@ -136,7 +135,9 @@ fun UserReservationContent(
     onLeaveReview: (String) -> Unit,
     onDismissReview: () -> Unit,
     onRatingChanged: (Int) -> Unit,
-    onSubmitReview: (Int) -> Unit    ) {
+    onSubmitReview: (Int) -> Unit,
+    onLotteriesTab: () -> Unit
+    ) {
     Column(Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -159,7 +160,7 @@ fun UserReservationContent(
 
         ) {
             Button(
-                onClick = { }, //need to navigate to lotteries screen
+                onClick = onLotteriesTab,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
