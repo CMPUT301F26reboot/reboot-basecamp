@@ -46,6 +46,7 @@ import java.time.YearMonth
 import java.time.format.TextStyle as DateTextStyle
 import com.example.campsitereservationapp.ui.theme.AvailableGreenBackground
 import com.example.campsitereservationapp.ui.theme.AvailableGreenContent
+import com.example.campsitereservationapp.utils.DateFormatter
 import java.util.Calendar
 import java.util.Date
 
@@ -186,6 +187,7 @@ private fun MonthGrid(
     selectedDays: Set<Date>,
     onDayClick: (Date) -> Unit
 ) {
+    val formatter = DateFormatter()
     val daysInMonth = month.lengthOfMonth()
     val leadingBlanks = firstWeekdayOffset(month, firstDayOfWeek)
     val rows = (leadingBlanks + daysInMonth + 6) / 7
@@ -202,7 +204,7 @@ private fun MonthGrid(
                         contentAlignment = Alignment.Center
                     ) {
                         if (dayOfMonth in 1..daysInMonth) {
-                            val date = dateOf(month.year, month.monthValue, dayOfMonth)
+                            val date = formatter.formatDate(dateOf(month.year, month.monthValue, dayOfMonth))
                             val state = when {
                                 date in selectedDays -> DayState.Selected
                                 date in availableDays -> DayState.Available

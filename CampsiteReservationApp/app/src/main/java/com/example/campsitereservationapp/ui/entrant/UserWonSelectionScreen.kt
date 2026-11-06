@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 
 
@@ -277,7 +278,7 @@ fun UserWonSelectionCampsiteCard(
                     val firstPhoto = listing.photoUrls.firstOrNull()
                     if (firstPhoto!= null) {
                         AsyncImage(
-                            model = firstPhoto,
+                            model = decodeBase64Image(firstPhoto),
                             contentDescription = listing.name,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
