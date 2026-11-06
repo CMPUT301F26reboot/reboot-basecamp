@@ -8,6 +8,6 @@ class Profile(name: String = "",
     @DocumentId
     var id = ""
     var email = ""
-    var phoneNumber = 0
+    var phoneNumber = ""
     var profilePicture = "" //should be a URL
 }
