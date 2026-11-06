@@ -27,7 +27,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
-import com.example.campsitereservationapp.ui.theme.AcceptGreen
 import java.time.YearMonth
 import java.util.Date
 import kotlin.collections.emptySet
@@ -56,11 +55,11 @@ fun UserCampsiteSearchScreen(
     var location by remember{mutableStateOf("")}
     var occupancyInput by remember{mutableStateOf("")}
     var occupancy by remember{mutableStateOf(0)}
+    var selectedDates by remember{mutableStateOf(emptySet<Date>())}
+    var searchResults by remember{mutableStateOf(emptyList<Listing>())}
     var showCalendar by remember{mutableStateOf(false)}
     var showCalText by remember{mutableStateOf("")}
     showCalText = "Date Selection"
-
-
 
     if(occupancyInput == "")
         occupancy = 0
@@ -69,7 +68,7 @@ fun UserCampsiteSearchScreen(
 
     Spacer(modifier = Modifier.padding(8.dp))
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.Center){
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)){
         FilledTonalIconButton(
             onClick = onBack,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp)
@@ -81,20 +80,18 @@ fun UserCampsiteSearchScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             TextField(
-                modifier = Modifier.fillMaxWidth(fraction = 0.7f).padding(5.dp),
+                modifier = Modifier.fillMaxWidth(fraction = 0.7f),
                 value = keyword,
                 onValueChange = { keyword = it },
                 label = { Text("Search Bar") },
-                shape = RoundedCornerShape(12.dp),
             )
 
             Button(
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
                 onClick = { vm.doSearch(keyword, location, occupancy) },
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(vertical = 14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AcceptGreen,
+                    containerColor = Color.Black,
                     contentColor = Color.White
                 )
             ){
@@ -107,20 +104,17 @@ fun UserCampsiteSearchScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ){
             TextField(
-                modifier = Modifier.fillMaxWidth(fraction = 0.5f).padding(5.dp),
+                modifier = Modifier.fillMaxWidth(fraction = 0.5f),
                 value = location,
                 onValueChange = {location = it},
-                label = {Text("Location")},
-                shape = RoundedCornerShape(12.dp),
-            )
+                label = {Text("Location")})
 
             TextField(
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                modifier = Modifier.fillMaxWidth(),
                 value = occupancyInput,
                 onValueChange = {occupancyInput = it},
                 label = {Text("Occupancy")},
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -133,10 +127,10 @@ fun UserCampsiteSearchScreen(
             else
                 showCalText = "Show Date Selection"
                       },
-            modifier = Modifier.fillMaxWidth().padding(5.dp),
+            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             contentPadding = PaddingValues(vertical = 18.dp),
-            border = BorderStroke(1.dp, Color.Gray),
+            border = BorderStroke(1.dp, Color.Black),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
         )
         {
@@ -157,8 +151,7 @@ fun UserCampsiteSearchScreen(
                     listing = listing,
                     onSelect = {
                         onToDetails(listing.id, vm._selectedDates.minOrNull(), vm._selectedDates.maxOrNull())
-                    },
-                    vm = vm
+                    }
                 )
             }
         }
@@ -179,8 +172,7 @@ fun UserSearchCampsiteCard(
     listing: Listing,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    onSelect: () -> Unit = {},
-    vm: UserCampsiteSearchViewModel = viewModel()
+    onSelect: () -> Unit = {}
 ) {
     val cardBackground = if (isSelected) Color(0xFFF9FAFB) else Color.White
     val cardBorderColor = if (isSelected) Color(0xFF111827) else Color(0xFFE5E7EB)
@@ -193,7 +185,7 @@ fun UserSearchCampsiteCard(
         border = BorderStroke(cardBorderWidth, cardBorderColor),
         modifier = modifier
             .fillMaxWidth()
-            .height(130.dp)
+            .height(176.dp)
     ) {
         Column(
             modifier = Modifier
