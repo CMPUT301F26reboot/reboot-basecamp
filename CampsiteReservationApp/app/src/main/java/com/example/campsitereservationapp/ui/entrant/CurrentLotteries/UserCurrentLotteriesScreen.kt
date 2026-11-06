@@ -49,7 +49,8 @@ fun UserCurrentLotteriesScreen(
     vm: UserCurrentLotteriesViewModel = viewModel(),
     profileId: String,
     onBack: () -> Unit,
-    onToBooking: (lotteryId: String) -> Unit
+    onToBooking: (lotteryId: String) -> Unit,
+    onToReservations: () -> Unit
 ){
     vm.start(profileId)
     var showWon by remember{ mutableStateOf(true) }
@@ -76,23 +77,7 @@ fun UserCurrentLotteriesScreen(
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
-
-
         ) {
-            Button(
-                onClick = { }, //need to navigate to lotteries screen
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                Text(
-                    "Lotteries",
-                    style = MaterialTheme.typography.titleMedium
-
-                )
-            }
-            Spacer(Modifier.width(16.dp))
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
                     onClick = { /* Already on this screen */ },
@@ -102,7 +87,7 @@ fun UserCurrentLotteriesScreen(
                     )
                 ) {
                     Text(
-                        "Reservations",
+                        "Lotteries",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -113,6 +98,19 @@ fun UserCurrentLotteriesScreen(
                         .width(120.dp)
                         .height(2.dp)
                         .background(MaterialTheme.colorScheme.onSurface)
+                )
+            }
+            Spacer(Modifier.width(16.dp))
+            Button(
+                onClick = onToReservations,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                Text(
+                    "Reservations",
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
         }

@@ -171,7 +171,10 @@ fun CampsiteReservationApp() {
             UserReservationsScreen(
                 profileId = deviceId,
                 onBack  = {
-                    navController.popBackStack()
+                    navController.navigate("userHome")
+                },
+                onToLotteries = {
+                    navController.navigate("userLotteries")
                 },
                 onOpenReservation = { reservationId ->
                     navController.navigate("userReservationDetails/$reservationId")
@@ -202,10 +205,13 @@ fun CampsiteReservationApp() {
             UserCurrentLotteriesScreen(
                 profileId = deviceId,
                 onBack = {
-                    navController.popBackStack()
+                    navController.navigate("userHome")
                 },
                 onToBooking = { lotteryId ->
                     navController.navigate("userWonSelection/$lotteryId")
+                },
+                onToReservations = {
+                    navController.navigate("userReservations")
                 }
             )
         }
