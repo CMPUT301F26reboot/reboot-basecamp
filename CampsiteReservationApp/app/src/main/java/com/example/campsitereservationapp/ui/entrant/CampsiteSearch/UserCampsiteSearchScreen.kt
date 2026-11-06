@@ -42,12 +42,13 @@ import kotlin.collections.emptySet
          * @param [modifier] is optional modifier to the main Column
          * @param [onBack] is a lambda to return to previous screen
          * @param [onToDetails] is a lambda to go to campsite details screen with a provided listing ID
+         * and first/last selected search dates (otherwise null if not selected)
          */
 fun UserCampsiteSearchScreen(
     modifier: Modifier = Modifier,
     vm: UserCampsiteSearchViewModel = viewModel(),
     onBack: () -> Unit,
-    onToDetails: (String) -> Unit
+    onToDetails: (listingId: String, start: Date?, end: Date?) -> Unit
 ){
     val scope = rememberCoroutineScope()
     var keyword by remember{mutableStateOf("")}
@@ -146,7 +147,12 @@ fun UserCampsiteSearchScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(vm._searchResults){ listing ->
-                UserSearchCampsiteCard(listing = listing, onSelect = {onToDetails(listing.id)})
+                UserSearchCampsiteCard(
+                    listing = listing,
+                    onSelect = {
+                        onToDetails(listing.id, vm._selectedDates.minOrNull(), vm._selectedDates.maxOrNull())
+                    }
+                )
             }
         }
     }

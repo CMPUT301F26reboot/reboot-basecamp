@@ -63,7 +63,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 fun UserWonSelectionScreen(
     lotteryId: String = "3pTqrKarXVyXaGdHkLGo" ,
     onBack: () -> Unit,
-    onFinished: () -> Unit,
+    onFinished: (campsiteName: String) -> Unit,
     viewModel: UserWonSelectionViewModel = viewModel()
 ) {
 
@@ -103,7 +103,13 @@ fun UserWonSelectionScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
-                    onClick = onFinished,
+                    onClick = {
+                        val campsite = selectedCampsite
+                        if (campsite  != null){
+                            onFinished(campsite.name)
+                        }
+                    },
+                    enabled = selectedCampsite != null,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF111827),
                         contentColor = Color.White
