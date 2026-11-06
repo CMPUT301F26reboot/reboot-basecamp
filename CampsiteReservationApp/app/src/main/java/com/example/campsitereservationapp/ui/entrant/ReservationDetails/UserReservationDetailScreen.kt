@@ -67,8 +67,9 @@ fun ReservationDetailScreen(
     val reservation = viewModel.allReservations.firstOrNull { it.id == reservationId }
     val listing = reservation?.let { viewModel.listingFor(it) }
     if (reservation == null || listing == null) {
-        LaunchedEffect(Unit) {
-            onBack()
+        if (viewModel.allReservations.isNotEmpty()) {
+            LaunchedEffect(Unit) { onBack() }
+            return
         }
         return
     }
