@@ -75,18 +75,21 @@ class UserSignUpViewModelTest {
         }
     }
 
+    /** Makes writing the profile return a task that the test can complete. */
     private fun stubWrite(): FakeTask<Void> {
         val write = FakeTask<Void>()
         every { document.set(any()) } returns write.task
         return write
     }
 
+    /** Makes reading the profile return a task that the test can complete. */
     private fun stubRead(): FakeTask<DocumentSnapshot> {
         val read = FakeTask<DocumentSnapshot>()
         every { document.get() } returns read.task
         return read
     }
 
+    /** Fills in every field with valid text that has spaces around it. */
     private fun fillInValidForm() {
         viewModel.name = "  Alex Tremblay "
         viewModel.username = " alextremblay "
