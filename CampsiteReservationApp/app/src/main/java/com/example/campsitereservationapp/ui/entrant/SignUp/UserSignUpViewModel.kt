@@ -14,14 +14,11 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
 
     /** The text in each field of the form. */
     var name by mutableStateOf("")
-    var username by mutableStateOf("")
     var email by mutableStateOf("")
     var phoneNumber by mutableStateOf("")
 
     /** The message to show under each field, or null if the field is valid. */
     var nameError by mutableStateOf<String?>(null)
-        private set
-    var usernameError by mutableStateOf<String?>(null)
         private set
     var emailError by mutableStateOf<String?>(null)
         private set
@@ -63,7 +60,6 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
         isSaving = true
 
         val profile = Profile(name = name.trim(), deviceId = deviceId)
-        profile.username = username.trim()
         profile.email = email.trim()
         profile.phoneNumber = phoneNumber.trim()
 
@@ -83,7 +79,6 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
     /** Sets an error on each invalid field and returns true if there are none. */
     private fun validate(): Boolean {
         nameError = if (name.isBlank()) "Enter your name" else null
-        usernameError = if (username.isBlank()) "Enter a username" else null
         emailError =
             if (EMAIL_FORMAT.matches(email.trim())) null
             else "Enter a valid email address"
@@ -91,7 +86,7 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
             if (PHONE_FORMAT.matches(phoneNumber.trim())) null
             else "Enter a valid phone number"
 
-        return listOf(nameError, usernameError, emailError, phoneNumberError).all { it == null }
+        return listOf(nameError, emailError, phoneNumberError).all { it == null }
     }
 
     private companion object {
