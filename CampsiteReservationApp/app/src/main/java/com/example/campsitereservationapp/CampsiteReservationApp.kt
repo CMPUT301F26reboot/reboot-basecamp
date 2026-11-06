@@ -2,6 +2,7 @@ package com.example.campsitereservationapp
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,6 +13,7 @@ import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsit
 import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
 import com.example.campsitereservationapp.ui.entrant.SignUp.PoliciesScreen
 import com.example.campsitereservationapp.ui.entrant.SignUp.UserSignUpScreen
+import com.example.campsitereservationapp.ui.entrant.UserProfile.UserProfileScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.parseRouteDate
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchScreen
 import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationDetailScreen
@@ -23,6 +25,7 @@ import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDet
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
 import com.example.campsitereservationapp.ui.owner.TempOwnerLotteryListScreen
+import com.example.campsitereservationapp.utils.getDeviceId
 
 // We do not have Compasables for the navController.navigate's that are in comments
 // They are just commented there as placeholders, the route name may change depending on
@@ -95,7 +98,26 @@ fun CampsiteReservationApp() {
                     //navController.navigate("userNotifications")
                 },
                 onProfile = {
-                    //navController.navigate("userProfile")
+                    navController.navigate("userProfile")
+                }
+            )
+        }
+
+        composable(
+            route = "userProfile"
+        ){
+            UserProfileScreen(
+                profileId = getDeviceId(LocalContext.current),
+                onBack = {
+                    navController.popBackStack()
+                },
+                onPolicies = {
+                    navController.navigate("policies")
+                },
+                onDeleted = {
+                    navController.navigate("userSignUp") {
+                        popUpTo("tempNav")
+                    }
                 }
             )
         }

@@ -4,6 +4,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Pro
 import com.google.firebase.firestore.util.CustomClassMapper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Tests for [Profile], the account model created by the sign up screen. */
@@ -18,6 +19,7 @@ class ProfileTest {
         assertEquals("", profile.username)
         assertEquals("", profile.email)
         assertEquals("", profile.phoneNumber)
+        assertTrue(profile.notificationsEnabled)
     }
 
     @Test
@@ -43,6 +45,7 @@ class ProfileTest {
         assertEquals("alextremblay", fields["username"])
         assertEquals("alex@example.com", fields["email"])
         assertEquals("+1 (403) 555-0199", fields["phoneNumber"])
+        assertEquals(true, fields["notificationsEnabled"])
         assertFalse(fields.containsKey("id"))
     }
 }

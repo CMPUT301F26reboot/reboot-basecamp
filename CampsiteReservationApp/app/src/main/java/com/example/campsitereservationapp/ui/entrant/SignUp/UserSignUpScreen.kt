@@ -125,7 +125,28 @@ fun UserSignUpScreen(
     )
 }
 
-/** The UI for the sign up form. */
+/**
+ * The UI for the sign up form. Everything it shows comes from its parameters, and every tap goes
+ * back out through a callback.
+ *
+ * @param name the text in the Name field.
+ * @param onNameChange called when the user types in the Name field.
+ * @param nameError the message to show under the Name field, or null if there isn't one.
+ * @param username the text in the Username field.
+ * @param onUsernameChange called when the user types in the Username field.
+ * @param usernameError the message to show under the Username field, or null if there isn't one.
+ * @param email the text in the Email Address field.
+ * @param onEmailChange called when the user types in the Email Address field.
+ * @param emailError the message to show under the Email Address field, or null if there isn't one.
+ * @param phoneNumber the text in the Phone Number field.
+ * @param onPhoneNumberChange called when the user types in the Phone Number field.
+ * @param phoneNumberError the message to show under the Phone Number field, or null if there isn't one.
+ * @param isSaving true while the profile is being written, which disables the button.
+ * @param onCreateAccount called when the user taps "Create Account".
+ * @param onOwnerSignUp called when the user taps "here" to create a camp owner account.
+ * @param onPolicies called when the user taps "Policies & Guidelines".
+ * @param snackbarHostState shows the message when an account can't be created.
+ */
 @Composable
 internal fun UserSignUpContent(
     name: String,
@@ -225,6 +246,13 @@ internal fun UserSignUpContent(
 /**
  * A labelled text box that shows [error] underneath it when there is one. Built on
  * [BasicTextField] because OutlinedTextField can't be shorter than 56dp, and the mockup is 42dp.
+ *
+ * @param label the name shown above the text box.
+ * @param value the text in the text box.
+ * @param onValueChange called when the user types.
+ * @param placeholder the example text shown while the text box is empty.
+ * @param error the message to show under the text box, or null if there isn't one.
+ * @param keyboardType the keyboard to show for this field.
  */
 @Composable
 private fun SignUpField(
@@ -296,7 +324,13 @@ private fun SignUpField(
     }
 }
 
-/** Underlined text that acts as a link. */
+/**
+ * Underlined text that acts as a link.
+ *
+ * @param text the text to show.
+ * @param fontSize the size of the text, in sp.
+ * @param onClick called when the user taps the text.
+ */
 @Composable
 private fun SignUpLink(text: String, fontSize: Int, onClick: () -> Unit) {
     Text(
