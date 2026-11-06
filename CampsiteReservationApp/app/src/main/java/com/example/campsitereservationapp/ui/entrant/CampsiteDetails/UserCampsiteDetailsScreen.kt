@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,6 +43,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -49,11 +51,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,6 +79,7 @@ import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.ui.components.dateOf
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
+import kotlinx.coroutines.launch
 import java.time.YearMonth
 import java.util.Date
 
@@ -119,7 +126,10 @@ fun UserCampsiteDetailsScreen(
     onBack: () -> Unit,
     viewModel: UserCampsiteDetailsViewModel = viewModel()
 ) {
-    LaunchedEffect(listingId, searchStart, searchEnd) { viewModel.start(listingId, searchStart, searchEnd) }
+    LaunchedEffect(listingId, searchStart, searchEnd) { viewModel.start(listingId, profileId = profileId, searchStart, searchEnd) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     val listing = viewModel.listing
 
@@ -141,8 +151,25 @@ fun UserCampsiteDetailsScreen(
         selectedLotteryId = viewModel.selectedLotteryId,
         hasCapacity = viewModel.hasCapacity,
         onSelectLottery = viewModel::selectLottery,
-        onJoin = { lotteryId -> viewModel.joinLottery(lotteryId, profileId = profileId) },
-        onBack = onBack
+        onJoin = { lotteryId ->
+            viewModel.joinLottery(
+                lotteryId,
+                profileId = profileId,
+                onResult = {success ->
+                    val message = if (success) {
+                        "You joined the lottery!"
+                    } else {
+                        "Couldn't join the lottery. Please try again."
+                    }
+
+                    scope.launch {
+                        snackbarHostState.showSnackbar(message)
+                    }
+                }
+            )
+        },
+        onBack = onBack,
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -192,14 +219,26 @@ internal fun UserCampsiteDetailsContent(
     onSelectLottery: (String) -> Unit,
     onJoin: (String) -> Unit,
     onBack: () -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             Surface(tonalElevation = 3.dp) {
                 Button(
-                    onClick = { selectedLotteryId?.let(onJoin) },
+                    onClick = {
+                        if (selectedLotteryId != null) {
+                            onJoin(selectedLotteryId)
+                        }
+                    },
                     enabled = selectedLotteryId != null && hasCapacity,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    ),
+                    contentPadding = PaddingValues(vertical = 16.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
