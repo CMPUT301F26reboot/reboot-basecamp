@@ -1,3 +1,10 @@
+/*
+ * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
+ * - Q: Where do I find what makes a box slightly rounded or more square?
+ *   A: RoundedCornerShape(x.dp) from androidx.compose.foundation.shape. A smaller value is more
+ *      square, and CircleShape is fully round.
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
 import androidx.compose.foundation.layout.Column

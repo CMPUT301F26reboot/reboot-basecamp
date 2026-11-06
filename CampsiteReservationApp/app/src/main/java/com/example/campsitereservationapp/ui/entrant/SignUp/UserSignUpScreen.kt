@@ -111,9 +111,6 @@ fun UserSignUpScreen(
         name = viewModel.name,
         onNameChange = { viewModel.name = it },
         nameError = viewModel.nameError,
-        username = viewModel.username,
-        onUsernameChange = { viewModel.username = it },
-        usernameError = viewModel.usernameError,
         email = viewModel.email,
         onEmailChange = { viewModel.email = it },
         emailError = viewModel.emailError,
@@ -155,9 +152,6 @@ internal fun UserSignUpContent(
     name: String,
     onNameChange: (String) -> Unit,
     nameError: String?,
-    username: String,
-    onUsernameChange: (String) -> Unit,
-    usernameError: String?,
     email: String,
     onEmailChange: (String) -> Unit,
     emailError: String?,
@@ -203,8 +197,6 @@ internal fun UserSignUpContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     SignUpField("Name", name, onNameChange, "Alex Tremblay", nameError)
-                    Spacer(modifier = Modifier.height(10.dp))
-                    SignUpField("Username", username, onUsernameChange, "alextremblay", usernameError)
                     Spacer(modifier = Modifier.height(10.dp))
                     SignUpField(
                         "Email Address", email, onEmailChange, "alex@example.com", emailError,

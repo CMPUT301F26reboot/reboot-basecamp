@@ -20,7 +20,6 @@ class Profile(var name: String = "",
               val deviceId: String = "") {
     @DocumentId
     var id = ""
-    var username = ""
     var email = ""
     var phoneNumber = ""
     var profilePicture = "" //Base64 text, see PhotoUtils

@@ -1,3 +1,17 @@
+/*
+ * AI use:
+ * - Claude helped me write the KDoc comments.
+ * - Q: How do I find the days a winner can still book?
+ *   A: Lottery days for the campsite minus the days already reserved at that campsite, both
+ *      normalised to midnight.
+ * - Q: How do I save a decline without overwriting other people?
+ *   A: update() with FieldValue.arrayUnion(profileId), which is atomic.
+ * - Q: Dates can't be selected in Interactive Preview. Why?
+ *   A: The preview used empty {} callbacks; give it real remember { mutableStateOf() } state.
+ * - Q: Firestore won't save LocalDate. What now?
+ *   A: Firestore only supports java.util.Date/Timestamp, so switch to Date.
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.entrant.WonBooking
 
 import androidx.compose.foundation.BorderStroke

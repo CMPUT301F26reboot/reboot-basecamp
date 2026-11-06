@@ -1,3 +1,17 @@
+/*
+ * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
+ * - Claude also helped write the screen code and the KDoc comments.
+ * - Q: Is there documentation for an availability calendar in Compose?
+ *   A: Material 3 DatePicker/DateRangePicker can only pick one date or one range, not colour many
+ *      days, so a custom grid fits better. Useful docs: Compose layout basics, java.util.Calendar;
+ *      the kizitonwose/Calendar library is an alternative.
+ * - Q: Easiest way to build the month grid?
+ *   A: Pad blank cells up to the 1st's weekday, then draw rows of 7 with Row/Column. Don't use
+ *      LazyVerticalGrid, because it can't sit inside a scrolling screen.
+ * - Q: How do I match the same day when the times differ?
+ *   A: Normalise both dates to midnight with Calendar; this became toDayOnly().
+ * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
+ */
 package com.example.campsitereservationapp.ui.components
 
 import androidx.compose.foundation.background

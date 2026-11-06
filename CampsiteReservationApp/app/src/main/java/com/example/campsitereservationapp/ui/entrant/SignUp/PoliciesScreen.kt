@@ -20,7 +20,7 @@ import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScree
 private val POLICY_SECTIONS = listOf(
     "Your account" to "You are identified by your device, so no password is needed. Your device " +
             "ID is stored with your profile. Please provide accurate contact details.",
-    "Your information" to "Your name, username, email address and phone number are used to " +
+    "Your information" to "Your name, email address and phone number are used to " +
             "manage your account, lotteries and reservations. You can update or delete your profile " +
             "at any time.",
     "Lotteries" to "Joining a lottery does not guarantee a campsite. Winners are drawn from the " +

@@ -1,3 +1,11 @@
+/*
+ * AI use:
+ * - Written fully by Claude. I couldn't find documentation online for resizing photos and storing
+ *   them as Base64 inside a Firestore document, so I asked Claude to write it and i would review it.
+ * - Q: How do I store campsite photos in Firestore without Firebase Storage?
+ *   A: Scale each photo down to 640 px, compress it to JPEG (quality 80), and Base64-encode it. Cap
+ *      listings at 4 photos to stay under Firestore's 1 MiB document limit.
+ */
 package com.example.campsitereservationapp.utils
 
 import android.content.Context

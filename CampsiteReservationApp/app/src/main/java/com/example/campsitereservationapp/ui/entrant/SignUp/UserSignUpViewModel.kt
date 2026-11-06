@@ -19,11 +19,8 @@ import com.example.campsitereservationapp.utils.isValidPhoneNumber
  */
 class UserSignUpViewModel : ProfileCreatingViewModel() {
 
-    /** The text in the Name field. */
+    /** The text in each field of the form. */
     var name by mutableStateOf("")
-
-    /** The text in the Username field. */
-    var username by mutableStateOf("")
 
     /** The text in the Email Address field. */
     var email by mutableStateOf("")
@@ -33,10 +30,6 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
 
     /** The message to show under the Name field, or null if it is valid. */
     var nameError by mutableStateOf<String?>(null)
-        private set
-
-    /** The message to show under the Username field, or null if it is valid. */
-    var usernameError by mutableStateOf<String?>(null)
         private set
 
     /** The message to show under the Email Address field, or null if it is valid. */
@@ -90,7 +83,6 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
         isSaving = true
 
         val profile = Profile(name = name.trim(), deviceId = deviceId)
-        profile.username = username.trim()
         profile.email = email.trim()
         profile.phoneNumber = phoneNumber.trim()
 
@@ -110,7 +102,6 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
     /** Sets an error on each invalid field and returns true if there are none. */
     private fun validate(): Boolean {
         nameError = if (name.isBlank()) "Enter your name" else null
-        usernameError = if (username.isBlank()) "Enter a username" else null
         emailError =
             if (isValidEmail(email)) null
             else "Enter a valid email address"
@@ -118,6 +109,14 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
             if (isValidPhoneNumber(phoneNumber)) null
             else "Enter a valid phone number"
 
-        return listOf(nameError, usernameError, emailError, phoneNumberError).all { it == null }
+        return listOf(nameError, emailError, phoneNumberError).all { it == null }
+    }
+
+    private companion object {
+        /** Text with no spaces, one @, and a dot in the domain, e.g. alex@example.com */
+        val EMAIL_FORMAT = Regex("""^[^\s@]+@[^\s@]+\.[^\s@]+$""")
+
+        /** Digits with optional +, spaces, dashes, dots and brackets, e.g. +1 (403) 555-0199 */
+        val PHONE_FORMAT = Regex("""^\+?(?:[\s().-]*\d){10,15}[\s().-]*$""")
     }
 }
