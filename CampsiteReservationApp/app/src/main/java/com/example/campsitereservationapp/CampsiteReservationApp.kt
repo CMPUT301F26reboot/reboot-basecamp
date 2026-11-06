@@ -94,7 +94,7 @@ fun CampsiteReservationApp() {
             UserHomeScreen(
                 profileId = deviceId,
                 onBack = {
-                    navController.popBackStack()
+                    navController.navigate("tempNav")
                 },
                 onSearchCampsites = {
                     navController.navigate("userSearchCampsites")
@@ -270,7 +270,7 @@ fun CampsiteReservationApp() {
             OwnerHomeScreen(
                 profileId = OWNER_ID,
                 onBack = {
-                    navController.popBackStack()
+                    navController.navigate("tempNav")
                 },
                 onManageLotteries = {
                     navController.navigate("ownerLotteries")
