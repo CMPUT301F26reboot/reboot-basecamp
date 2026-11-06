@@ -25,6 +25,7 @@ class UserCampsiteSearchViewModelTest {
         maxOccupancy = 6
     ).apply { id = "listing-two-jack" }
 
+    
     private val tunnelMountain = Listing(
         name = "Tunnel Mountain Village II",
         address = "Tunnel Mountain Rd, Banff, AB T1L 1B3",
