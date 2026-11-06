@@ -16,7 +16,6 @@ class ProfileTest {
 
         assertEquals("", profile.name)
         assertEquals("", profile.deviceId)
-        assertEquals("", profile.username)
         assertEquals("", profile.email)
         assertEquals("", profile.phoneNumber)
         assertTrue(profile.notificationsEnabled)
@@ -34,7 +33,6 @@ class ProfileTest {
     fun firestoreFormat_containsEveryFieldExceptId() {
         val profile = Profile(name = "Alex Tremblay", deviceId = "device-123")
         profile.id = "device-123"
-        profile.username = "alextremblay"
         profile.email = "alex@example.com"
         profile.phoneNumber = "+1 (403) 555-0199"
 
@@ -42,7 +40,6 @@ class ProfileTest {
 
         assertEquals("Alex Tremblay", fields["name"])
         assertEquals("device-123", fields["deviceId"])
-        assertEquals("alextremblay", fields["username"])
         assertEquals("alex@example.com", fields["email"])
         assertEquals("+1 (403) 555-0199", fields["phoneNumber"])
         assertEquals(true, fields["notificationsEnabled"])

@@ -92,7 +92,6 @@ class UserSignUpViewModelTest {
     /** Fills in every field with valid text that has spaces around it. */
     private fun fillInValidForm() {
         viewModel.name = "  Alex Tremblay "
-        viewModel.username = " alextremblay "
         viewModel.email = " alex@example.com "
         viewModel.phoneNumber = " +1 (403) 555-0199 "
     }
@@ -146,7 +145,6 @@ class UserSignUpViewModelTest {
         viewModel.signUp(deviceId)
 
         assertNotNull(viewModel.nameError)
-        assertNotNull(viewModel.usernameError)
         assertNotNull(viewModel.emailError)
         assertNotNull(viewModel.phoneNumberError)
         assertFalse(viewModel.isSaving)
@@ -201,7 +199,6 @@ class UserSignUpViewModelTest {
         viewModel.signUp(deviceId)
 
         assertNull(viewModel.nameError)
-        assertNull(viewModel.usernameError)
         assertNull(viewModel.emailError)
         assertNull(viewModel.phoneNumberError)
     }
@@ -216,7 +213,6 @@ class UserSignUpViewModelTest {
 
         val profile = written.captured as Profile
         assertEquals("Alex Tremblay", profile.name)
-        assertEquals("alextremblay", profile.username)
         assertEquals("alex@example.com", profile.email)
         assertEquals("+1 (403) 555-0199", profile.phoneNumber)
         assertEquals(deviceId, profile.deviceId)
