@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CampsiteReservationAppTheme {
                 OwnerLotteryCreationScreen(
+                    ownerID = "test-jacob",
                     onBack = {},
                     onCreate = {},
                 )

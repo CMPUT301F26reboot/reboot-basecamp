@@ -3,8 +3,8 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 import android.companion.DeviceId
 import com.google.firebase.firestore.DocumentId
 
-class Profile(name: String = "",
-              deviceId: String = "") {
+class Profile(var name: String = "",
+              val deviceId: String = "") {
     @DocumentId
     protected var id = ""
     protected var email = ""
