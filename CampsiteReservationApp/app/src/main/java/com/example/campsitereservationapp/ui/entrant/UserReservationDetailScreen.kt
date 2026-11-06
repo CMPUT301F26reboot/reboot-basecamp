@@ -1,7 +1,6 @@
 package com.example.campsitereservationapp.ui.entrant
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -37,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationsViewModel
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.utils.decodeBase64Image
 

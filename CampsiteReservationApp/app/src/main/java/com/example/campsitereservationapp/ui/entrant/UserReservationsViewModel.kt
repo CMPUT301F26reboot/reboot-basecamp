@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
+package com.example.campsitereservationapp.ui.entrant
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf

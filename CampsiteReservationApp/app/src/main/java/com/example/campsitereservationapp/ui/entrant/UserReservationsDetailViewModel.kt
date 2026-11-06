@@ -1,10 +1,11 @@
-package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
+package com.example.campsitereservationapp.ui.entrant
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 
 enum class ReservationFilter { All, Reserved, Past }
 
