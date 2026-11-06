@@ -1,6 +1,7 @@
 package com.example.campsitereservationapp.ui.entrant
 
 import android.R
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lot
  * Gives the user a list of either their ongoing lotteries or won lotteries
  * They can pick which using a button
  * Won lotteries can be claimed and ongoing lotteries can be left
- *
+ * 
  * @param [modifier] is optional modifier
  * @param [vm] is optional viewmodel
  * @param [profileID] is the document id of the entrant's profile
@@ -81,7 +82,8 @@ fun UserCurrentLotteriesScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color.Black
-                )
+                ),
+                border = BorderStroke(1.dp, Color.Gray)
                 )
             {
                 Text("Show Won")
@@ -97,7 +99,8 @@ fun UserCurrentLotteriesScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color.Black
-                )
+                ),
+                border = BorderStroke(1.dp, Color.Gray)
             )
             {
                 Text("Show Ongoing")
@@ -105,7 +108,7 @@ fun UserCurrentLotteriesScreen(
         }
 
         if(showWon){
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 items(vm.wonLotteries.toList()){ lottery ->
                     WonLotteryCard(
                         lottery = lottery,
@@ -115,7 +118,7 @@ fun UserCurrentLotteriesScreen(
                 }
             }
         }else{
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 items(vm.ongoingLotteries.toList()){ lottery ->
                     OngoingLotteryCard(
                         lottery = lottery,
@@ -131,9 +134,9 @@ fun UserCurrentLotteriesScreen(
 
 /**
  * Card for a won lottery
- *
+ * 
  * Shows image, title, and a claim button which takes user to booking screen
- *
+ * 
  * @param [lottery] is the lottery being displayed
  * @param [imageURL] is the image for that lottery
  * @param [profileID] is document id of the entrant's profile.
@@ -147,7 +150,7 @@ fun WonLotteryCard(
     profileID: String,
     onToBooking: () -> Unit
     ){
-    Box(modifier = Modifier.fillMaxWidth(fraction = 0.9f)){
+    OutlinedCard(modifier = Modifier.fillMaxWidth(fraction = 0.9f)){
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -218,9 +221,9 @@ fun WonLotteryCard(
 
 /**
  * Card for an ongoing lottery
- *
+ * 
  * Shows image, title, and a claim button which takes user to booking screen
- *
+ * 
  * @param [lottery] is the lottery being displayed
  * @param [imageURL] is the image for that lottery
  * @param [profileID] is document id of the entrant's profile.
