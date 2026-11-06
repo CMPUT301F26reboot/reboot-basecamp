@@ -5,6 +5,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lot
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import java.text.SimpleDateFormat
 import java.time.Month
+import java.util.Locale
 
 
 /**

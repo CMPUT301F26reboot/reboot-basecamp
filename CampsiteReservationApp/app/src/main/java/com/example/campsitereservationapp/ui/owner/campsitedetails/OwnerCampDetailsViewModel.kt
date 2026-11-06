@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.example.campsitereservationapp.utils.encodePhotoToBase64
+import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,6 +32,11 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
 
     var geoLocation by mutableStateOf(Listing().geoLocation)
         private set
+
+    /** Updates [geoLocation] from a point picked on the map (search or dropped pin). */
+    fun setLocation(latitude: Double, longitude: Double) {
+        geoLocation = GeoPoint(latitude, longitude)
+    }
 
     /** True while photos are uploading and the listing document is being written. */
     var isPublishing by mutableStateOf(false)
