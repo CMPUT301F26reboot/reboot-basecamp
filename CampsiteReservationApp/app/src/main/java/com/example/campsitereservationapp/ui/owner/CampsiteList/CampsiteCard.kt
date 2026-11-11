@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
@@ -39,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.utils.decodeBase64Image
+import com.example.campsitereservationapp.ui.theme.RatingAmber
 
 /**
  * One row in the owner's campsite list: thumbnail, name, address, guests, rating, Details
@@ -63,7 +62,7 @@ fun CampsiteCard(
     onQrCodeClick: () -> Unit = {}
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -92,7 +91,7 @@ fun CampsiteCard(
                 ) {
                     Button(
                         onClick = onDetailsClick,
-                        shape = RoundedCornerShape(10.dp),
+                        shape = MaterialTheme.shapes.small,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.onSurface,
                             contentColor = MaterialTheme.colorScheme.surface
@@ -111,7 +110,7 @@ fun CampsiteCard(
 /** Small rounded-square icon button, used for the card's Edit and QR code actions. */
 @Composable
 private fun SquareIconButton(icon: ImageVector, contentDescription: String, onClick: () -> Unit) {
-    Surface(shape = RoundedCornerShape(10.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
+    Surface(shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.surfaceVariant) {
         IconButton(onClick = onClick, modifier = Modifier.size(36.dp)) {
             Icon(icon, contentDescription = contentDescription, modifier = Modifier.size(18.dp))
         }
@@ -124,7 +123,7 @@ fun CampsiteThumbnail(photoUrl: String?) {
     Box(
         modifier = Modifier
             .size(84.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
     ) {
         if (photoUrl != null) {
             AsyncImage(
@@ -142,7 +141,7 @@ fun CampsiteThumbnail(photoUrl: String?) {
 fun RatingRow(rating: Double, numOfReviews: Int) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         if (numOfReviews > 0) {
-            Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFFFA000), modifier = Modifier.size(16.dp))
+            Icon(Icons.Filled.Star, contentDescription = null, tint = RatingAmber, modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(4.dp))
             Text(rating.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.width(4.dp))

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -23,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.campsitereservationapp.ui.theme.PillShape
 
 /** Full-width black pill button that submits the form. */
 @Composable
@@ -30,7 +30,7 @@ internal fun PublishButton(enabled: Boolean, isPublishing: Boolean, onClick: () 
     Button(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(28.dp),
+        shape = PillShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onSurface,
             contentColor = MaterialTheme.colorScheme.surface

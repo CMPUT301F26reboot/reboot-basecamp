@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Info
@@ -28,12 +27,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.campsitereservationapp.ui.entrant.WonBooking.toDayOnly
+import com.example.campsitereservationapp.ui.theme.PillShape
 import java.text.SimpleDateFormat
 import java.time.YearMonth
 import java.util.Calendar
@@ -89,7 +88,7 @@ fun InputDateScreenComponent(
 
             Surface(
                 onClick = { showCalendar = true },
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -122,7 +121,7 @@ fun InputDateScreenComponent(
             if (infoDescription != null) {
                 Spacer(Modifier.height(12.dp))
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -228,10 +227,10 @@ internal fun DateRangeCalendarDialog(
             Spacer(Modifier.height(8.dp))
             Button(
                 onClick = onDismiss,
-                shape = RoundedCornerShape(50),
+                shape = PillShape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.surface
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {

@@ -36,7 +36,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -71,17 +70,18 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.R
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.ui.components.dateOf
-import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
+import com.example.campsitereservationapp.ui.theme.CampsiteReservationTheme
 import kotlinx.coroutines.launch
 import java.time.YearMonth
 import java.util.Date
+import com.example.campsitereservationapp.ui.theme.RatingAmber
+import com.example.campsitereservationapp.ui.theme.PillShape
 
 /**
  * Display data for one lottery card, already formatted for the screen.
@@ -233,7 +233,7 @@ internal fun UserCampsiteDetailsContent(
                         }
                     },
                     enabled = selectedLotteryId != null && hasCapacity,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.onSurface,
                         contentColor = MaterialTheme.colorScheme.surface
@@ -290,7 +290,7 @@ internal fun UserCampsiteDetailsContent(
                     )
 
                     Row {
-                        IconText(Icons.Filled.Star, "$rating ($reviewNum reviews)", tint = Color(0xFFFF9800))
+                        IconText(Icons.Filled.Star, "$rating ($reviewNum reviews)", tint = RatingAmber)
                     }
 
                     InfoRow(label = "Maximum Occupancy", value = "$maxOccupancy guests")
@@ -317,7 +317,7 @@ internal fun UserCampsiteDetailsContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 18.dp),
-                        shape = RoundedCornerShape(20),
+                        shape = MaterialTheme.shapes.medium,
                         color = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         Row(
@@ -336,17 +336,15 @@ internal fun UserCampsiteDetailsContent(
                             Column() {
                                 Text(
                                     text = "Lotteries within: ",
-                                    style = MaterialTheme.typography.labelMedium,
+                                    style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
                                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                                 )
 
                                 Text(
                                     text = desiredDaysRange,
-                                    style = MaterialTheme.typography.labelMedium,
+                                    style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.W900,
-                                    fontSize = 16.sp,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                 )
                             }
@@ -408,7 +406,7 @@ internal fun UserCampsiteDetailsContent(
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .size(100.dp)
-                                        .clip(RoundedCornerShape(16.dp))
+                                        .clip(MaterialTheme.shapes.large)
                                 )
                             }
                         }
@@ -463,7 +461,7 @@ private fun SectionTitle(text: String) {
 @Composable
 private fun TagChip(text: String) {
     Surface(
-        shape = RoundedCornerShape(50),
+        shape = PillShape,
         color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Text(
@@ -516,7 +514,7 @@ private fun LotteryCard(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(MaterialTheme.shapes.medium)
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
 
@@ -581,52 +579,4 @@ private fun IconText(
         )
     }
 }
-
-// Preview used to display screen without running the program
-@Preview(showBackground = true, heightDp = 1520)
-@Composable
-private fun UserCampsiteDetailsPreview() {
-    val may1 = dateOf(2027, 5, 1)
-    val may2 = dateOf(2027, 5, 7)
-    CampsiteReservationAppTheme {
-        UserCampsiteDetailsContent(
-            isLoading = false,
-            name = "Pine Valley Retreat",
-            address = "1284 Pine Valley Road, Yosemite, CA 95389",
-            rating = 4.8,
-            reviewNum = 128,
-            maxOccupancy = 4,
-            ownerName = "Sarah J.",
-            description = "Welcome to Pine Valley! Bring your family and friends and splash in " +
-                    "the river lake, hike through the forest, and enjoy the beautiful scenery!",
-            tags = listOf("Fire Pit", "Swimming", "Hiking", "Picnic Table", "RVs"),
-            photoUrls = listOf("https://picsum.photos/id/128/400/400"),
-            lotteryDays = setOf(may1, may2),
-            desiredDaysRange = "March 1, 2027 - March 7, 2027",
-            initialMonth = YearMonth.of(2027, 3),
-            lotteries = sampleLotteries,
-            selectedLotteryId = null,
-            hasCapacity = true,
-            onSelectLottery = { },
-            onJoin = { },
-            onBack = { }
-        )
-    }
-}
-
-
-private val sampleLotteries = listOf(
-    LotteryCardInfo(
-        id = "lottery1", title = "May Week Lottery",
-        lotteryRange = "May 1, 2027 – May 7, 2027",
-        waitlistCount = 23, waitlistCapacity = 50,
-        imageUrl = "https://picsum.photos/id/1018/400/400"
-    ),
-    LotteryCardInfo(
-        id = "lottery2", title = "Mid-May Lottery",
-        lotteryRange = "May 9, 2027 – May 13, 2027",
-        waitlistCount = 16, waitlistCapacity = null,
-        imageUrl = "https://picsum.photos/id/1036/400/400"
-    )
-)
 

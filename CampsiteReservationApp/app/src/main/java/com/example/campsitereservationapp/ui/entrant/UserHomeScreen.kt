@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -96,7 +95,7 @@ internal fun UserHomeContent(
 
         Button(
             onClick = onSearchCampsites,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.onSurface,
                 contentColor = MaterialTheme.colorScheme.surface
@@ -111,7 +110,7 @@ internal fun UserHomeContent(
 
         Button(
             onClick = onMyLotteries,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface,
                 contentColor = MaterialTheme.colorScheme.inverseSurface
@@ -126,7 +125,7 @@ internal fun UserHomeContent(
 
         Button(
             onClick = onMyReservations,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface,
                 contentColor = MaterialTheme.colorScheme.inverseSurface
@@ -141,7 +140,7 @@ internal fun UserHomeContent(
 
         Button(
             onClick = onNotifications,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface,
                 contentColor = MaterialTheme.colorScheme.inverseSurface

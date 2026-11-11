@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -41,8 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.campsitereservationapp.ui.theme.AvailableGreenBackground
-import com.example.campsitereservationapp.ui.theme.AvailableGreenContent
+import com.example.campsitereservationapp.ui.theme.PillShape
 
 /**
  * Photo picker row: an "Add Photo" circle that opens the system photo picker, followed by
@@ -63,7 +61,7 @@ internal fun PhotosSection(
             title = "Photos & Media (Optional)",
             subtitle = "Upload high quality photos showing campsite amenities",
             trailing = {
-                Surface(shape = RoundedCornerShape(50), color = MaterialTheme.colorScheme.surfaceVariant) {
+                Surface(shape = PillShape, color = MaterialTheme.colorScheme.surfaceVariant) {
                     Text(
                         "${photos.size} / $MAX_PHOTOS Uploaded",
                         style = MaterialTheme.typography.labelSmall,
@@ -92,13 +90,13 @@ private fun AddPhotoButton(enabled: Boolean, onClick: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(
             shape = CircleShape,
-            color = AvailableGreenBackground,
+            color = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
                 .size(72.dp)
                 .clickable(enabled = enabled, onClick = onClick)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.Add, contentDescription = "Add photo", tint = AvailableGreenContent)
+                Icon(Icons.Filled.Add, contentDescription = "Add photo", tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
         Spacer(Modifier.height(4.dp))
@@ -117,11 +115,11 @@ private fun PhotoThumbnail(uri: Uri, isCover: Boolean, onRemove: () -> Unit) {
                 contentDescription = displayName,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
             )
             if (isCover) {
                 Surface(
-                    shape = RoundedCornerShape(6.dp),
+                    shape = MaterialTheme.shapes.small,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(6.dp)
                 ) {

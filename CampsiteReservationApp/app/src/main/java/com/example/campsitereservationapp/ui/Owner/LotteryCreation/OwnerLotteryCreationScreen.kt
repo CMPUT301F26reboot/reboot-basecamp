@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.LocationOn
@@ -32,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -67,6 +65,7 @@ import com.example.campsitereservationapp.ui.components.InputDateScreenComponent
 import com.example.campsitereservationapp.ui.components.IntInputScreenComponent
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.util.Date
+import com.example.campsitereservationapp.ui.theme.PillShape
 @Composable
 fun OwnerLotteryCreationScreen(
     modifier: Modifier = Modifier,
@@ -114,7 +113,7 @@ fun OwnerLotteryCreationScreen(
                 onValueChange = { lotteryName = it },
                 placeholder = { Text("Lottery Title") },
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -203,10 +202,10 @@ fun OwnerLotteryCreationScreen(
                     )
                 },
                 enabled = canCreate,
-                shape = RoundedCornerShape(50),
+                shape = PillShape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.surface
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -293,7 +292,7 @@ fun ListingDropDownSelection(
             }
 
             //dropdown menu
-            listingDropDownMenu(
+            ListingDropDownMenu(
                 listings = listings,
                 selectedListings = selectedListings,
                 onSelect = onSelect
@@ -341,7 +340,7 @@ fun ListingCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(76.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             )
 
@@ -411,7 +410,7 @@ private fun ListingDetail(
  * @param onSelect event call with the listing that was clicked
  */
 @Composable
-fun listingDropDownMenu(
+fun ListingDropDownMenu(
     listings: List<Listing>,
     selectedListings: List<Listing>,
     onSelect: (Listing) -> Unit,
@@ -452,7 +451,7 @@ fun listingDropDownMenu(
                     )
                 },
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 interactionSource = fieldInteraction,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -500,65 +499,3 @@ fun listingDropDownMenu(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-//==============================================Previews===============================
-@Preview(showBackground = true)
-@Composable
-fun ListingCardPreview(){
-    ListingCard(
-        listing = Listing(
-            name = "Bow Valley Riverside Campground",
-            address = "Banff National Park, AB",
-            maxOccupancy = 5
-        ),
-        onDelete = {},
-        modifier = Modifier
-    )
-}
-@Preview(showBackground = true)
-@Composable
-fun ListingDropDownSelectionPreview(){
-    val listings = remember {
-        listOf(
-            Listing(
-                name = "Bow Valley Riverside Campground",
-                address = "Banff National Park, AB",
-                maxOccupancy = 5
-            ).apply { id = "1" },
-            Listing(
-                name = "Coastal Cliffside",
-                address = "Big Sur, CA",
-                maxOccupancy = 4
-            ).apply { id = "2" },
-            Listing(
-                name = "Desert Oasis",
-                address = "Joshua Tree, CA",
-                maxOccupancy = 6
-            ).apply { id = "3" }
-        )
-    }
-    var selectedListings by remember { mutableStateOf(listOf<Listing>()) }
-
-    ListingDropDownSelection(
-        title = "Campsites",
-        subHeader = "Select one or more of your campsites.",
-        listingsHeader = "Selected campsites",
-        listings = listings,
-        selectedListings = selectedListings,
-        onSelect = { selectedListings = selectedListings + it },
-        onRemove = { selectedListings = selectedListings - it },
-        modifier = Modifier
-    )
-}
-
-

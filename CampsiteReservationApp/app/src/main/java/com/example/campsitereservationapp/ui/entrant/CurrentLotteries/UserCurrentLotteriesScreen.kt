@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
@@ -29,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
+import androidx.compose.material3.MaterialTheme
 
 /**
  * Displays the current lotteries of the entrant
@@ -69,7 +69,7 @@ fun UserCurrentLotteriesScreen(
         Spacer(Modifier.padding(32.dp))
         //--------Title-----------------
 
-        Text(modifier = Modifier, fontSize = 28.sp, text = "Lotteries")
+        Text(modifier = Modifier, style = MaterialTheme.typography.headlineMedium, text = "Lotteries")
         //=============QUICKFIX FOR HEADER===========================
         Row(
             modifier = Modifier
@@ -122,14 +122,14 @@ fun UserCurrentLotteriesScreen(
             TextButton(
                 modifier = Modifier.toggleable(value = showWon, interactionSource = null, indication = null,
                     onValueChange = {}),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 onClick = {showWon = true
                     showOngoing = false},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                border = BorderStroke(1.dp, Color.Gray)
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 )
             {
                 Text("Show Won")
@@ -139,14 +139,14 @@ fun UserCurrentLotteriesScreen(
                 modifier = Modifier.toggleable(
                     value = showOngoing, interactionSource = null, indication = null,
                     onValueChange = {}),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 onClick = {showWon = false
                     showOngoing = true},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                border = BorderStroke(1.dp, Color.Gray)
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             )
             {
                 Text("Show Ongoing")
@@ -212,8 +212,8 @@ fun WonLotteryCard(
                     modifier = Modifier
                         .fillMaxWidth(0.25f)
                         .height(95.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFE5E7EB)),
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
                     contentAlignment = Alignment.Center
                 ) {
                     //select first photo, show nothing if Null
@@ -229,7 +229,7 @@ fun WonLotteryCard(
                         Icon(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = null,
-                            tint = Color(0xFF6B7280)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -242,19 +242,19 @@ fun WonLotteryCard(
                 ) {
                     Text(
                         text = lottery.title,
-                        fontSize = 20.sp,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF111827)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Button(
                         modifier = Modifier.fillMaxWidth(0.7f),
                         onClick = {onToBooking(lottery.id)},
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         contentPadding = PaddingValues(vertical = 14.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black,
-                            contentColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.onSurface,
+                            contentColor = MaterialTheme.colorScheme.surface
                         )
                     ){
                         Text("Claim")
@@ -298,8 +298,8 @@ fun OngoingLotteryCard(
                     modifier = Modifier
                         .fillMaxWidth(0.25f)
                         .height(95.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFE5E7EB)),
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
                     contentAlignment = Alignment.Center
                 ) {
                     //select first photo, show nothing if Null
@@ -315,7 +315,7 @@ fun OngoingLotteryCard(
                         Icon(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = null,
-                            tint = Color(0xFF6B7280)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -327,18 +327,18 @@ fun OngoingLotteryCard(
                 ) {
                     Text(
                         text = lottery.title,
-                        fontSize = 20.sp,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Button(
                         modifier = Modifier.fillMaxWidth(0.7f),
                         onClick = {onToLeave(lottery, profileId)},
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         contentPadding = PaddingValues(vertical = 14.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red,
-                            contentColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
                         )
                     ){
                         Text("Leave")
