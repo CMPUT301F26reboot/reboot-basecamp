@@ -10,15 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Queue
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
@@ -94,7 +91,7 @@ internal fun OwnerHomeContent(
 
         Button(
             onClick = onManageLotteries,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.onSurface,
                 contentColor = MaterialTheme.colorScheme.surface
@@ -109,7 +106,7 @@ internal fun OwnerHomeContent(
 
         Button(
             onClick = onManageCampsites,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface,
                 contentColor = MaterialTheme.colorScheme.inverseSurface
@@ -124,7 +121,7 @@ internal fun OwnerHomeContent(
 
         Button(
             onClick = onNotificationHistory,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface,
                 contentColor = MaterialTheme.colorScheme.inverseSurface

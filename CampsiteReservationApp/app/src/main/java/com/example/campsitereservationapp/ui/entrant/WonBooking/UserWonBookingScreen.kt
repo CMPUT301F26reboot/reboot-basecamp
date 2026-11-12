@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -64,7 +63,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -74,6 +72,8 @@ import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.time.YearMonth
 import java.util.Date
+import com.example.campsitereservationapp.ui.theme.RatingAmber
+import com.example.campsitereservationapp.ui.theme.PillShape
 
 /**
  * UserWonBookingScreen.kt
@@ -242,7 +242,7 @@ internal fun UserWonBookingContent(
                         Icon(
                             Icons.Filled.Star,
                             contentDescription = null,
-                            tint = Color(0xFFFF9800),
+                            tint = RatingAmber,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(Modifier.width(4.dp))
@@ -281,7 +281,7 @@ internal fun UserWonBookingContent(
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .size(100.dp)
-                                        .clip(RoundedCornerShape(16.dp))
+                                        .clip(MaterialTheme.shapes.large)
                                 )
                             }
                         }
@@ -352,7 +352,6 @@ internal fun UserWonBookingContent(
     }
 }
 
-private val ActionButtonShape = RoundedCornerShape(12.dp)
 private val ActionButtonPadding = PaddingValues(vertical = 14.dp)
 
 /** Pinned bottom bar with the Book and Decline Offer buttons. */
@@ -373,11 +372,11 @@ private fun BookingActions(
             Button(
                 onClick = onBook,
                 enabled = canBook,
-                shape = ActionButtonShape,
+                shape = MaterialTheme.shapes.medium,
                 contentPadding = ActionButtonPadding,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.surface
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -386,10 +385,10 @@ private fun BookingActions(
             OutlinedButton(
                 onClick = onDecline,
                 enabled = !isDeclining,
-                shape = ActionButtonShape,
+                shape = MaterialTheme.shapes.medium,
                 contentPadding = ActionButtonPadding,
-                border = BorderStroke(1.dp, Color.Black),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Decline Offer", fontWeight = FontWeight.Bold)
@@ -470,7 +469,7 @@ private fun RulesPoliciesSection(
 @Composable
 private fun TagChip(text: String) {
     Surface(
-        shape = RoundedCornerShape(50),
+        shape = PillShape,
         color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Text(

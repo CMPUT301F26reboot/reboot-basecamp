@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -18,7 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,10 +26,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
-import com.example.campsitereservationapp.ui.theme.AcceptGreen
 import java.time.YearMonth
 import java.util.Date
-import kotlin.collections.emptySet
+import com.example.campsitereservationapp.ui.theme.RatingAmber
 
 
 @Composable
@@ -85,17 +83,17 @@ fun UserCampsiteSearchScreen(
                 value = keyword,
                 onValueChange = { keyword = it },
                 label = { Text("Search Bar") },
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
             )
 
             Button(
                 modifier = Modifier.fillMaxWidth().padding(5.dp),
                 onClick = { vm.doSearch(keyword, location, occupancy) },
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 contentPadding = PaddingValues(vertical = 14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AcceptGreen,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
                 )
             ){
                 Text("Search")
@@ -111,7 +109,7 @@ fun UserCampsiteSearchScreen(
                 value = location,
                 onValueChange = {location = it},
                 label = {Text("Location")},
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
             )
 
             TextField(
@@ -120,7 +118,7 @@ fun UserCampsiteSearchScreen(
                 onValueChange = {occupancyInput = it},
                 label = {Text("Occupancy")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
             )
         }
 
@@ -134,10 +132,10 @@ fun UserCampsiteSearchScreen(
                 showCalText = "Show Date Selection"
                       },
             modifier = Modifier.fillMaxWidth().padding(5.dp),
-            shape = RoundedCornerShape(12.dp),
+            shape = MaterialTheme.shapes.medium,
             contentPadding = PaddingValues(vertical = 18.dp),
-            border = BorderStroke(1.dp, Color.Gray),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
         )
         {
             Text(showCalText)
@@ -182,13 +180,13 @@ fun UserSearchCampsiteCard(
     onSelect: () -> Unit = {},
     vm: UserCampsiteSearchViewModel = viewModel()
 ) {
-    val cardBackground = if (isSelected) Color(0xFFF9FAFB) else Color.White
-    val cardBorderColor = if (isSelected) Color(0xFF111827) else Color(0xFFE5E7EB)
+    val cardBackground = if (isSelected) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface
+    val cardBorderColor = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outlineVariant
     val cardBorderWidth = if (isSelected) 2.dp else 1.dp
 
     Surface(
         onClick = onSelect,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = cardBackground,
         border = BorderStroke(cardBorderWidth, cardBorderColor),
         modifier = modifier
@@ -210,8 +208,8 @@ fun UserSearchCampsiteCard(
                     modifier = Modifier
                         .fillMaxWidth(0.25f)
                         .height(95.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFE5E7EB)),
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
                     contentAlignment = Alignment.Center
                 ) {
                     //select first photo, show nothing if Null
@@ -227,7 +225,7 @@ fun UserSearchCampsiteCard(
                         Icon(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = null,
-                            tint = Color(0xFF6B7280)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -239,14 +237,14 @@ fun UserSearchCampsiteCard(
                 ) {
                     Text(
                         text = listing.name,
-                        fontSize = 15.sp,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF111827)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = listing.address,
-                        fontSize = 12.sp,
-                        color = Color(0xFF6B7280)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Row(
@@ -257,12 +255,12 @@ fun UserSearchCampsiteCard(
                             imageVector = Icons.Default.Person,
                             contentDescription = null,
                             modifier = Modifier.size(13.dp),
-                            tint = Color(0xFF6B7280)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = "Up to ${listing.maxOccupancy} guests",
-                            fontSize = 11.sp,
-                            color = Color(0xFF6B7280)
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -274,12 +272,12 @@ fun UserSearchCampsiteCard(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
                             modifier = Modifier.size(13.dp),
-                            tint = Color(0xFFF59E0B)
+                            tint = RatingAmber
                         )
                         Text(
                             text = "${listing.rating} (${listing.numOfReviews} reviews)",
-                            fontSize = 11.sp,
-                            color = Color(0xFF111827),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
