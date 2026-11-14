@@ -300,6 +300,9 @@ fun CampsiteReservationApp() {
                 },
                 onDetails = { listing ->
                     //navController.navigate("ownerCampUpdate/${listing.id}")
+                },
+                onEdit = { listing ->
+                    navController.navigate("ownerCampEdit/${listing.id}")
                 }
             )
         }
@@ -342,6 +345,26 @@ fun CampsiteReservationApp() {
         ){
             OwnerCampDetailsScreen(
                 ownerId= OWNER_ID,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onPublished = {
+                    navController.popBackStack()
+                },
+            )
+        }
+
+        composable(
+            route = "ownerCampEdit/{listingId}",
+            arguments = listOf(
+                navArgument("listingId") {
+                    type = NavType.StringType
+                }
+            )
+        ){ entry ->
+            OwnerCampDetailsScreen(
+                ownerId = OWNER_ID,
+                listingId = entry.arguments?.getString("listingId").orEmpty(),
                 onBack = {
                     navController.popBackStack()
                 },
