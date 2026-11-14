@@ -36,6 +36,7 @@ import com.example.campsitereservationapp.Map.GeocodingViewModel
 import com.example.campsitereservationapp.Map.MapScreenComponent
 import com.example.campsitereservationapp.Map.MapViewModel
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.SectionHeader
+import com.google.firebase.firestore.GeoPoint
 
 private const val DEFAULT_LATITUDE = 51.1784
 private const val DEFAULT_LONGITUDE = -115.5708
@@ -49,7 +50,10 @@ private const val DEFAULT_LONGITUDE = -115.5708
  * either by selecting a search result or dropping a pin on the map.
  */
 @Composable
-internal fun MapSection(onLocationPicked: (latitude: Double, longitude: Double) -> Unit) {
+internal fun MapSection(
+    onLocationPicked: (latitude: Double, longitude: Double) -> Unit,
+    initialLocation: GeoPoint? = null
+) {
     val geocodingViewModel: GeocodingViewModel = viewModel()
     val mapViewModel: MapViewModel = viewModel()
 
@@ -105,8 +109,8 @@ internal fun MapSection(onLocationPicked: (latitude: Double, longitude: Double) 
             modifier = Modifier
                 .fillMaxWidth()
                 .height(220.dp),
-            latitude = searchedCoordinates?.first ?: DEFAULT_LATITUDE,
-            longitude = searchedCoordinates?.second ?: DEFAULT_LONGITUDE,
+            latitude = searchedCoordinates?.first ?: initialLocation?.latitude ?: DEFAULT_LATITUDE,
+            longitude = searchedCoordinates?.second ?: initialLocation?.longitude ?: DEFAULT_LONGITUDE,
             viewModel = mapViewModel
         )
     }

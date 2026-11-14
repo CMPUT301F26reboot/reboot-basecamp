@@ -58,6 +58,7 @@ fun OwnerListingsScreen(
     onBack: () -> Unit,
     onRegisterNew: () -> Unit,
     onDetails: (Listing) -> Unit,
+    onEdit: (Listing) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ListingViewModel = viewModel()
 ) {
@@ -68,6 +69,7 @@ fun OwnerListingsScreen(
         onBack = onBack,
         onRegisterNew = onRegisterNew,
         onDetails = onDetails,
+        onEdit = onEdit,
         modifier = modifier
     )
 }
@@ -82,6 +84,7 @@ fun OwnerListingsContent(
     onBack: () -> Unit,
     onRegisterNew: () -> Unit,
     onDetails: (Listing) -> Unit,
+    onEdit: (Listing) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -125,7 +128,11 @@ fun OwnerListingsContent(
                 }
             }
             items(listings, key = { it.id }) { listing ->
-                CampsiteCard(listing = listing, onDetailsClick = { onDetails(listing) })
+                CampsiteCard(
+                    listing = listing,
+                    onDetailsClick = { onDetails(listing) },
+                    onEditClick = { onEdit(listing) }
+                )
             }
         }
     }
