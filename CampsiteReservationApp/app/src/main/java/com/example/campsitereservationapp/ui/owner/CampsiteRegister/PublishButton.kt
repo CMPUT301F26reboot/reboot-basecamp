@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -26,7 +27,18 @@ import com.example.campsitereservationapp.ui.theme.PillShape
 
 /** Full-width black pill button that submits the form. */
 @Composable
-internal fun PublishButton(enabled: Boolean, isPublishing: Boolean, onClick: () -> Unit) {
+internal fun PublishButton(
+    enabled: Boolean,
+    isPublishing: Boolean,
+    onClick: () -> Unit,
+    isEditing: Boolean = false
+) {
+    val label = when {
+        isPublishing && isEditing -> "Saving..."
+        isPublishing -> "Publishing..."
+        isEditing -> "Save Changes"
+        else -> "Publish Listing"
+    }
     Button(
         onClick = onClick,
         enabled = enabled,
@@ -38,8 +50,8 @@ internal fun PublishButton(enabled: Boolean, isPublishing: Boolean, onClick: () 
         contentPadding = PaddingValues(vertical = 16.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Icon(Icons.Filled.Add, contentDescription = null)
+        Icon(if (isEditing) Icons.Filled.Check else Icons.Filled.Add, contentDescription = null)
         Spacer(Modifier.width(8.dp))
-        Text(if (isPublishing) "Publishing..." else "Publish Listing", fontWeight = FontWeight.Bold)
+        Text(label, fontWeight = FontWeight.Bold)
     }
 }
