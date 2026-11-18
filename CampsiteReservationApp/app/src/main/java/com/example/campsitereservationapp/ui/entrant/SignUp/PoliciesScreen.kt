@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.BackButtonAndHeaderScreenComponent
 
 /** Each section of the policies, as its heading and its text. */
 private val POLICY_SECTIONS = listOf(

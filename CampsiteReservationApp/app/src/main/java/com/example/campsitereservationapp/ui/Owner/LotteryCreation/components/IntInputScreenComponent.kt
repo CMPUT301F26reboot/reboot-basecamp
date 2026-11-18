@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.components
+package com.example.campsitereservationapp.ui.Owner.LotteryCreation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
