@@ -17,6 +17,7 @@ import com.example.campsitereservationapp.ui.entrant.SignUp.UserSignUpScreen
 import com.example.campsitereservationapp.ui.entrant.UserProfile.UserProfileScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchScreen
 import com.example.campsitereservationapp.ui.entrant.CurrentLotteries.UserCurrentLotteriesScreen
+import com.example.campsitereservationapp.ui.entrant.Notifications.UserNotificationsScreen
 import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationDetailScreen
 import com.example.campsitereservationapp.ui.entrant.Reservations.UserReservationsScreen
 import com.example.campsitereservationapp.ui.entrant.WonBooking.UserWonBookingScreen
@@ -106,7 +107,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("userReservations")
                 },
                 onNotifications = {
-                    //navController.navigate("userNotifications")
+                    navController.navigate("userNotifications")
                 },
                 onProfile = {
                     navController.navigate("userProfile")
@@ -258,6 +259,17 @@ fun CampsiteReservationApp() {
                     //keep the user home at the top of the stack
                     navController.popBackStack("userHome", inclusive = false)
                 },
+            )
+        }
+
+        // User Notifications
+        composable(
+            route = "userNotifications"
+        ){
+            UserNotificationsScreen(
+                profileId = deviceId,
+                onBack = { navController.navigate("userHome") },
+                onOpenNotif= {},
             )
         }
 

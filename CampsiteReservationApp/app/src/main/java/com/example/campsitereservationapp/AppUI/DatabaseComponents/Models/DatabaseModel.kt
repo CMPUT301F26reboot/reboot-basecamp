@@ -2,16 +2,14 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import androidx.compose.runtime.mutableStateOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.LogEntry
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import kotlin.math.log
 
 open class DatabaseModel :ViewModel() {
     protected var db = Firebase.firestore
@@ -21,7 +19,7 @@ open class DatabaseModel :ViewModel() {
     protected var lotteriesRef = db.collection("Lotteries")
     protected var profilesRef = db.collection("Profiles")
     protected var reservationsRef = db.collection("Reservations")
-    protected var logentriesRef = db.collection("LogEntries")
+    protected var notificationsRef = db.collection("Notifications")
     protected var chatsRef = db.collection("Chats")
 
     //Every local copy of each collection
@@ -29,7 +27,7 @@ open class DatabaseModel :ViewModel() {
     protected var _lotteries = mutableStateListOf<Lottery>()
     protected var _profiles = mutableStateListOf<Profile>()
     protected var _reservations = mutableStateListOf<Reservation>()
-    protected var _logentries = mutableStateListOf<LogEntry>()
+    protected var _notifications = mutableStateListOf<Notifications>()
     protected var _chats = mutableStateListOf<Chat>()
 
 
@@ -95,16 +93,16 @@ open class DatabaseModel :ViewModel() {
             }
         }
 
-        logentriesRef.addSnapshotListener{ snapshot, error ->
+        notificationsRef.addSnapshotListener{ snapshot, error ->
             if(error != null){
                 return@addSnapshotListener
             }
 
-            _logentries.clear()
+            _notifications.clear()
             snapshot?.documents?.forEach{document ->
-                val logentry = document.toObject(LogEntry::class.java)
-                if(logentry != null){
-                    _logentries.add(logentry)
+                val notification = document.toObject(Notifications::class.java)
+                if(notification != null){
+                    _notifications.add(notification)
                 }
             }
         }
