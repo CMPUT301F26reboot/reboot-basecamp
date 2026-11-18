@@ -42,21 +42,20 @@ import java.util.Locale
 /**
  * One lottery in the owner's list. Every card shows the title, campsite and a status badge, then
  * the details and buttons that fit its [OwnerLotteryItem.status]:
- *  - Active: registration window, stay, draw rule, entrants joined, and View Entrants / Edit /
- *    QR code buttons.
+ *  - Active: registration window, stay, draw rule, entrants joined, and View Entrants / Edit
+ *    buttons.
  *  - Completed: stay and draw results, with Entrants and Results buttons.
  *  - Cancelled: only the title, campsite and "Cancelled" badge.
  *
  * Outstanding issues:
- *  - The buttons only call their callbacks; the entrants, results, edit and QR code screens don't
- *    exist yet.
+ *  - The buttons only call their callbacks; the entrants, results and edit screens don't exist
+ *    yet.
  */
 @Composable
 fun OwnerLotteryCard(
     lottery: OwnerLotteryItem,
     onViewEntrants: () -> Unit,
     onEdit: () -> Unit,
-    onQrCode: () -> Unit,
     onViewResults: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -75,7 +74,7 @@ fun OwnerLotteryCard(
                 LotteryStatus.ACTIVE -> {
                     ActiveDetails(lottery)
                     EntrantsJoinedRow(lottery.entrantCount, lottery.waitlistCap)
-                    ActiveActions(lottery.entrantCount, onViewEntrants, onEdit, onQrCode)
+                    ActiveActions(lottery.entrantCount, onViewEntrants, onEdit)
                 }
                 LotteryStatus.COMPLETED -> {
                     CompletedDetails(lottery)
@@ -220,13 +219,12 @@ private fun EntrantsJoinedRow(entrantCount: Int, waitlistCap: Int?) {
     }
 }
 
-/** Buttons for an open lottery: View Entrants, an Edit icon, and Create/Download QR Code. */
+/** Buttons for an open lottery: View Entrants and an Edit icon. */
 @Composable
 private fun ActiveActions(
     entrantCount: Int,
     onViewEntrants: () -> Unit,
-    onEdit: () -> Unit,
-    onQrCode: () -> Unit
+    onEdit: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -239,7 +237,8 @@ private fun ActiveActions(
                 containerColor = MaterialTheme.colorScheme.onSurface,
                 contentColor = MaterialTheme.colorScheme.surface
             ),
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
+            modifier = Modifier.weight(1f)
         ) {
             Text("View Entrants ($entrantCount)", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
         }
@@ -252,7 +251,6 @@ private fun ActiveActions(
         ) {
             Icon(Icons.Filled.Edit, contentDescription = "Edit lottery", modifier = Modifier.size(18.dp))
         }
-        SecondaryButton("Create/Download QR Code", onQrCode, Modifier.weight(1f))
     }
 }
 

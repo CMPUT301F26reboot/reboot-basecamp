@@ -37,11 +37,10 @@ import java.util.Date
  * @param onCreateLottery event -> navigate to lottery creation.
  * @param onViewEntrants event -> navigate to the entrants of the lottery with the given ID.
  * @param onEditLottery event -> navigate to editing the lottery with the given ID.
- * @param onQrCode event -> show the QR code for the lottery with the given ID.
  * @param onViewResults event -> navigate to the draw results of the lottery with the given ID.
  *
  * Outstanding issues:
- *  - The entrants, results, edit and QR code screens don't exist yet, so those buttons do nothing.
+ *  - The entrants, results and edit screens don't exist yet, so those buttons do nothing.
  */
 @Composable
 fun OwnerLotteryListScreen(
@@ -50,7 +49,6 @@ fun OwnerLotteryListScreen(
     onCreateLottery: () -> Unit,
     onViewEntrants: (String) -> Unit,
     onEditLottery: (String) -> Unit,
-    onQrCode: (String) -> Unit,
     onViewResults: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: OwnerLotterListViewModel = viewModel()
@@ -63,7 +61,6 @@ fun OwnerLotteryListScreen(
         onCreateLottery = onCreateLottery,
         onViewEntrants = onViewEntrants,
         onEditLottery = onEditLottery,
-        onQrCode = onQrCode,
         onViewResults = onViewResults,
         modifier = modifier
     )
@@ -84,7 +81,6 @@ fun OwnerLotteryListContent(
     onCreateLottery: () -> Unit,
     onViewEntrants: (String) -> Unit,
     onEditLottery: (String) -> Unit,
-    onQrCode: (String) -> Unit,
     onViewResults: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -130,7 +126,6 @@ fun OwnerLotteryListContent(
                     lottery = lottery,
                     onViewEntrants = { onViewEntrants(lottery.id) },
                     onEdit = { onEditLottery(lottery.id) },
-                    onQrCode = { onQrCode(lottery.id) },
                     onViewResults = { onViewResults(lottery.id) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )

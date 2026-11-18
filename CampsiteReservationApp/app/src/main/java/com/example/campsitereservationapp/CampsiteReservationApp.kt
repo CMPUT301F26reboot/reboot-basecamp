@@ -324,9 +324,6 @@ fun CampsiteReservationApp() {
                 onEditLottery = { lotteryId ->
                     navController.navigate("editLottery/$lotteryId")
                 },
-                onQrCode = { lotteryId ->
-                    //navController.navigate("lotteryQrCode/$lotteryId")
-                },
                 onViewResults = { lotteryId ->
                     //navController.navigate("lotteryResults/$lotteryId")
                 }
