@@ -16,12 +16,14 @@ class MainActivity : ComponentActivity() {
             CampsiteReservationAppTheme {
                 AdminHomeScreen(
                     profileID = "1",
+                    onBack = {},
                     onManageLotteries = {},
                     onManageProfiles = {},
                     onNotificationLogs = {},
                     onMessageLogs = {},
                     onUserImpersonate = {},
-                    onOwnerImpersonate = {}
+                    onOwnerImpersonate = {},
+                    onProfile = {}
                 )
 
 

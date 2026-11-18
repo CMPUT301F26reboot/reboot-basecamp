@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mail
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,25 +41,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.R
+import com.example.campsitereservationapp.ui.Admin.HomeScreenComponents.HomeScreenBackButton
 import com.example.campsitereservationapp.ui.Admin.HomeScreenComponents.HomeScreenButton
 import com.example.campsitereservationapp.ui.Admin.HomeScreenComponents.HomeScreenLogo
+import com.example.campsitereservationapp.ui.Admin.HomeScreenComponents.HomeScreenProfileButton
+import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
 
 @Composable
 fun AdminHomeScreen(
     profileID: String,
+    onBack: () -> Unit,
     onManageLotteries: () -> Unit,
     onManageProfiles: () -> Unit,
     onNotificationLogs: () -> Unit,
     onMessageLogs: () -> Unit,
     onUserImpersonate: () -> Unit,
     onOwnerImpersonate: () -> Unit,
+    onProfile: () -> Unit
 ){
+
+    HomeScreenBackButton(onBack = onBack)
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         HomeScreenLogo()
 
         HomeScreenButton(
@@ -109,11 +118,11 @@ fun AdminHomeScreen(
                 )
             }
         }
-
-
-
-
     }
+
+    HomeScreenProfileButton( onProfileClick = onProfile)
+
+
 
 
 }
