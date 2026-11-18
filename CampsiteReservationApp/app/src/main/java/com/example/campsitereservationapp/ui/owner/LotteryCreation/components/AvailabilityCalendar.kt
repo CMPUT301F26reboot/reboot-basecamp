@@ -12,7 +12,7 @@
  *   A: Normalise both dates to midnight with Calendar; this became toDayOnly().
  * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
  */
-package com.example.campsitereservationapp.ui.Owner.LotteryCreation.components
+package com.example.campsitereservationapp.ui.owner.LotteryCreation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

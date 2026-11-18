@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.AvailabilityCalendar
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.AvailabilityCalendar
 import java.time.YearMonth
 import java.util.Date
 import com.example.campsitereservationapp.ui.theme.RatingAmber

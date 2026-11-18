@@ -68,7 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.AvailabilityCalendar
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.AvailabilityCalendar
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.time.YearMonth
 import java.util.Date

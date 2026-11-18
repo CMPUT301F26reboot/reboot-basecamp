@@ -1,8 +1,8 @@
-package com.example.campsitereservationapp.ui.Owner.Watilist;
+package com.example.campsitereservationapp.ui.owner.Watilist;
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.formatDateRange
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.formatDateRange
 
 class OwnerWaitlistViewModel: DatabaseModel(){
 

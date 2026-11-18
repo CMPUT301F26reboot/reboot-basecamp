@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.Owner.LotteryCreation.components
+package com.example.campsitereservationapp.ui.owner.LotteryCreation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

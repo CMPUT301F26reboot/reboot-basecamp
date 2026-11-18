@@ -45,8 +45,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.mutableIntStateOf
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.formatDateRange
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.nextDateRange
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.formatDateRange
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.nextDateRange
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -59,10 +59,10 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.window.PopupProperties
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.BackButtonAndHeaderScreenComponent
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.CustomDialogScreenComponent
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.InputDateScreenComponent
-import com.example.campsitereservationapp.ui.Owner.LotteryCreation.components.IntInputScreenComponent
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.CustomDialogScreenComponent
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.InputDateScreenComponent
+import com.example.campsitereservationapp.ui.owner.LotteryCreation.components.IntInputScreenComponent
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.util.Date
 import com.example.campsitereservationapp.ui.theme.PillShape
