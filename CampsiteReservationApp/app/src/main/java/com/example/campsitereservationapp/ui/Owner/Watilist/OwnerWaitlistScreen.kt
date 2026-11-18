@@ -20,6 +20,7 @@ fun OwnerWaitlistScreen(
 ){
     //get needed information
     val lottery = viewModel.getLottery(lotteryID)
+    val formatedLotteryDates = viewModel.getFormatedDates(lottery)
     val waitlist = lottery?.waitlist ?: emptyList()
 
 
