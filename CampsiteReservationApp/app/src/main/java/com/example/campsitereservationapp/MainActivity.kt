@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
                 AdminHomeScreen(
                     profileID = "1",
                     onBack = {},
-                    onManageLotteries = {},
+                    onManageCampsites = {},
                     onManageProfiles = {},
                     onNotificationLogs = {},
                     onMessageLogs = {},

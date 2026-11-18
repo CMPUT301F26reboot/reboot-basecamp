@@ -3,6 +3,7 @@ package com.example.campsitereservationapp.ui.entrant
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,8 @@ fun UserHomeScreen(
     onMyReservations: () -> Unit,
     onNotifications: () -> Unit,
     onProfile: () -> Unit,
+    //slot to add exit impersonation for Admin Impersonation
+    adminExitImpersonation: @Composable ColumnScope.() -> Unit = {}
 ){
     UserHomeContent(
         profileId = profileId,
@@ -51,7 +54,11 @@ fun UserHomeScreen(
         onMyLotteries = onMyLotteries,
         onMyReservations = onMyReservations,
         onNotifications = onNotifications,
-        onProfile = onProfile
+        onProfile = onProfile,
+        //slot to add exit impersonation for Admin Impersonation
+        adminExitImpersonation = adminExitImpersonation
+
+
     )
 
 }
@@ -65,6 +72,7 @@ internal fun UserHomeContent(
     onMyReservations: () -> Unit,
     onNotifications: () -> Unit,
     onProfile: () -> Unit,
+    adminExitImpersonation: @Composable ColumnScope.() -> Unit = {}
 
 ){
     Column(
@@ -171,5 +179,6 @@ internal fun UserHomeContent(
                 modifier = Modifier.size(35.dp)
             )
         }
+        adminExitImpersonation()
     }
 }

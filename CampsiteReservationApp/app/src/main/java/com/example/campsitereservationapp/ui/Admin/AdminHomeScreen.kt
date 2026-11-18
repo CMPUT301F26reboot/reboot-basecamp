@@ -53,7 +53,7 @@ import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScree
 fun AdminHomeScreen(
     profileID: String,
     onBack: () -> Unit,
-    onManageLotteries: () -> Unit,
+    onManageCampsites: () -> Unit,
     onManageProfiles: () -> Unit,
     onNotificationLogs: () -> Unit,
     onMessageLogs: () -> Unit,
@@ -73,8 +73,8 @@ fun AdminHomeScreen(
 
         HomeScreenButton(
             icon = Icons.Filled.Layers,
-            text = "Manage Lotteries",
-            onClick = onManageLotteries
+            text = "Manage Campsites",
+            onClick = onManageCampsites
         )
         HomeScreenButton(
             icon = Icons.Filled.Person,
