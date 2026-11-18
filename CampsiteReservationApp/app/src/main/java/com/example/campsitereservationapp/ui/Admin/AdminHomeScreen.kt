@@ -111,12 +111,12 @@ fun AdminHomeScreen(
                 HomeScreenButton(
                     icon = Icons.Filled.Person,
                     text = "User",
-                    onClick = { onUserImpersonate }
+                    onClick = onUserImpersonate
                 )
                 HomeScreenButton(
                     icon = Icons.Filled.Home,
                     text = "Campsite Owner",
-                    onClick = { onOwnerImpersonate }
+                    onClick = onOwnerImpersonate
                 )
             }
         }

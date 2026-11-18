@@ -13,21 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CampsiteReservationAppTheme {
-                AdminHomeScreen(
-                    profileID = "1",
-                    onBack = {},
-                    onManageCampsites = {},
-                    onManageProfiles = {},
-                    onNotificationLogs = {},
-                    onMessageLogs = {},
-                    onUserImpersonate = {},
-                    onOwnerImpersonate = {},
-                    onProfile = {}
-                )
-
-
-            }
+            TempAdminNavigation()
         }
     }
 }
