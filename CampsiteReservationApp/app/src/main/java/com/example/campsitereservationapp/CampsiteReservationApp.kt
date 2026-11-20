@@ -24,7 +24,7 @@ import com.example.campsitereservationapp.ui.entrant.WonSelection.UserWonSelecti
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
-import com.example.campsitereservationapp.ui.owner.TempOwnerLotteryListScreen
+import com.example.campsitereservationapp.ui.Owner.Lotterylist.OwnerLotteryListScreen
 import com.example.campsitereservationapp.utils.getDeviceId
 import java.util.Date
 
@@ -307,21 +307,25 @@ fun CampsiteReservationApp() {
             )
         }
 
-        // Note: This is a Temp file, so the paramaters will likely be different for the real
-        // OwnerLotteryListScreen (like onViewLotteries won't need to exist b/c it will display them by default)
         composable(
             route = "ownerLotteries"
         ){
-            TempOwnerLotteryListScreen(
-                profileId = OWNER_ID,
+            OwnerLotteryListScreen(
+                ownerId = OWNER_ID,
                 onBack = {
                     navController.popBackStack()
                 },
                 onCreateLottery = {
                     navController.navigate("createLottery")
                 },
-                onViewLotteries = {
-                    //navController.navigate("viewLotteries")
+                onViewEntrants = { lotteryId ->
+                    //navController.navigate("lotteryEntrants/$lotteryId")
+                },
+                onEditLottery = { lotteryId ->
+                    navController.navigate("editLottery/$lotteryId")
+                },
+                onViewResults = { lotteryId ->
+                    //navController.navigate("lotteryResults/$lotteryId")
                 }
             )
         }
@@ -337,6 +341,29 @@ fun CampsiteReservationApp() {
                     navController.popBackStack()
                 },
                 ownerID = OWNER_ID,
+            )
+        }
+
+        composable(
+            route = "editLottery/{lotteryId}",
+            arguments = listOf(
+                navArgument("lotteryId") {
+                    type = NavType.StringType
+                }
+            )
+        ){ entry ->
+            OwnerLotteryCreationScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onCreate = {
+                    navController.popBackStack()
+                },
+                ownerID = OWNER_ID,
+                lotteryId = entry.arguments?.getString("lotteryId").orEmpty(),
+                onCancelled = {
+                    navController.popBackStack()
+                },
             )
         }
 

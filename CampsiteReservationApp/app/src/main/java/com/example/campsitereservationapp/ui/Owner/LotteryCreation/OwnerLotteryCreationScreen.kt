@@ -66,12 +66,25 @@ import com.example.campsitereservationapp.ui.components.IntInputScreenComponent
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.util.Date
 import com.example.campsitereservationapp.ui.theme.PillShape
+import androidx.compose.material.icons.filled.Check
+import com.example.campsitereservationapp.ui.components.datesBetween
+
+/**
+ * Creates a new lottery, or edits an existing one when [lotteryId] is given. In edit mode the
+ * form starts filled with the lottery's values, a summary card is shown at the top, and a Danger
+ * section below the fields lets the owner cancel the lottery.
+ * @param onCreate event call after the lottery is created or saved and the dialog is closed
+ * @param lotteryId the lottery to edit, or null to create a new one
+ * @param onCancelled event call after the lottery has been cancelled
+ */
 @Composable
 fun OwnerLotteryCreationScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     onCreate: () -> Unit = {},
     ownerID: String = "test-owner",
+    lotteryId: String? = null,
+    onCancelled: () -> Unit = {},
     viewModel: OwnerLotteryCreationViewModel = viewModel()
 ){
     var lotteryDates by remember { mutableStateOf(listOf<Date>()) }
@@ -82,6 +95,27 @@ fun OwnerLotteryCreationScreen(
     var showCreatedDialog by remember { mutableStateOf(false) }
     var showFailedDialog by remember { mutableStateOf(false) }
     var lotteryName by remember { mutableStateOf("") }
+    var showCancelDialog by remember { mutableStateOf(false) }
+    var showCancelFailedDialog by remember { mutableStateOf(false) }
+    var isCancelling by remember { mutableStateOf(false) }
+    var prefilled by remember { mutableStateOf(false) }
+
+    val isEditing = lotteryId != null
+    val editingLottery = lotteryId?.let { viewModel.getLottery(it) }
+    val enrolled = editingLottery?.let(::enrolledCount) ?: 0
+
+    LaunchedEffect(editingLottery) {
+        if (!prefilled && editingLottery != null) {
+            lotteryName = editingLottery.title
+            lotteryDates = datesBetween(editingLottery.start, editingLottery.end)
+            dates.clear()
+            dates.addAll(editingLottery.dates.sorted())
+            selectedListingIDs = editingLottery.campsiteIDs
+            winnersToDraw = editingLottery.lotteryWinners ?: 0
+            waitlistCap = editingLottery.waitlistCapacity ?: 0
+            prefilled = true
+        }
+    }
 
     val ownerListings = viewModel.getOwnerListings(ownerID)
     val selectedListings = ownerListings.filter { it.id in selectedListingIDs }
@@ -90,7 +124,10 @@ fun OwnerLotteryCreationScreen(
             selectedListings.isNotEmpty() &&
             dates.isNotEmpty() &&
             winnersToDraw > 0 &&
-            winnersToDraw < waitlistCap
+            winnersToDraw < waitlistCap &&
+            waitlistCap >= enrolled &&
+            (!isEditing || prefilled) &&
+            !isCancelling
 
     Scaffold(modifier = modifier) { padding ->
         Column(
@@ -102,10 +139,15 @@ fun OwnerLotteryCreationScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             BackButtonAndHeaderScreenComponent(
-                title = "Create Lottery",
-                subHeader = "Choose your campsites and lottery dates.",
+                title = if (isEditing) "Edit Lottery Details" else "Create Lottery",
+                subHeader = if (isEditing) "Update your lottery, or cancel it below."
+                    else "Choose your campsites and lottery dates.",
                 onBack = onBack
             )
+
+            if (editingLottery != null) {
+                LotterySummaryCard(lottery = editingLottery, campsites = selectedListings)
+            }
 
             // Input lottery title:
             OutlinedTextField(
@@ -179,27 +221,51 @@ fun OwnerLotteryCreationScreen(
                     )
                     IntInputScreenComponent(
                         title = "Waitlist Capacity Cap",
-                        subHeader = "Maximum entrants allowed",
+                        subHeader = if (isEditing) "Maximum entrants allowed ($enrolled enrolled)"
+                            else "Maximum entrants allowed",
                         num = waitlistCap,
                         onNumChange = { waitlistCap = it }
                     )
                 }
             }
 
+            if (editingLottery != null) {
+                CancelLotterySection(
+                    enrolledCount = enrolled,
+                    onCancelClick = { showCancelDialog = true },
+                    enabled = !isCancelling
+                )
+            }
+
             //create button
             Button(
                 onClick = {
-                    viewModel.createAndAddLottery(
-                        title = lotteryName,
-                        dates = dates.toList(),
-                        start = lotteryDates[0],
-                        end = lotteryDates[lotteryDates.lastIndex],
-                        campsiteIDs = selectedListingIDs,
-                        winnersToDraw = winnersToDraw,
-                        waitlistCap = waitlistCap,
-                        onSuccess = { showCreatedDialog = true},
-                        onFailure = { showFailedDialog = true}
-                    )
+                    if (lotteryId != null) {
+                        viewModel.updateLottery(
+                            lotteryId = lotteryId,
+                            title = lotteryName,
+                            dates = dates.toList(),
+                            start = lotteryDates[0],
+                            end = lotteryDates[lotteryDates.lastIndex],
+                            campsiteIDs = selectedListingIDs,
+                            winnersToDraw = winnersToDraw,
+                            waitlistCap = waitlistCap,
+                            onSuccess = { showCreatedDialog = true },
+                            onFailure = { showFailedDialog = true }
+                        )
+                    } else {
+                        viewModel.createAndAddLottery(
+                            title = lotteryName,
+                            dates = dates.toList(),
+                            start = lotteryDates[0],
+                            end = lotteryDates[lotteryDates.lastIndex],
+                            campsiteIDs = selectedListingIDs,
+                            winnersToDraw = winnersToDraw,
+                            waitlistCap = waitlistCap,
+                            onSuccess = { showCreatedDialog = true},
+                            onFailure = { showFailedDialog = true}
+                        )
+                    }
                 },
                 enabled = canCreate,
                 shape = PillShape,
@@ -211,9 +277,9 @@ fun OwnerLotteryCreationScreen(
                     .fillMaxWidth()
                     .height(56.dp)
             ) {
-                Icon(Icons.Filled.Add, contentDescription = null)
+                Icon(if (isEditing) Icons.Filled.Check else Icons.Filled.Add, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text("Create", fontWeight = FontWeight.Bold)
+                Text(if (isEditing) "Save Changes" else "Create", fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -227,8 +293,9 @@ fun OwnerLotteryCreationScreen(
                 showCreatedDialog = false
                 onCreate()
             },
-            title = "Lottery created",
-            description = "Your lottery for $names is live. " +
+            title = if (isEditing) "Changes saved" else "Lottery created",
+            description = if (isEditing) "Your lottery for $names has been updated."
+                else "Your lottery for $names is live. " +
                     "Campers can enter until ${formatDateRange(listOf(end))}."
         )
     } else if (showFailedDialog)
@@ -237,8 +304,32 @@ fun OwnerLotteryCreationScreen(
             onDismissRequest = {
                 showFailedDialog = false
             },
-            title = "Lottery creation Failed",
+            title = if (isEditing) "Couldn't save changes" else "Lottery creation Failed",
 
+        )
+    } else if (showCancelDialog && lotteryId != null) {
+        CancelLotteryDialog(
+            lotteryTitle = lotteryName,
+            enrolledCount = enrolled,
+            onConfirm = {
+                showCancelDialog = false
+                isCancelling = true
+                viewModel.cancelLottery(
+                    lotteryId = lotteryId,
+                    onSuccess = onCancelled,
+                    onFailure = {
+                        isCancelling = false
+                        showCancelFailedDialog = true
+                    }
+                )
+            },
+            onDismiss = { showCancelDialog = false }
+        )
+    } else if (showCancelFailedDialog) {
+        CustomDialogScreenComponent(
+            onDismissRequest = { showCancelFailedDialog = false },
+            title = "Couldn't cancel the lottery",
+            description = "Please try again."
         )
     }
 }
