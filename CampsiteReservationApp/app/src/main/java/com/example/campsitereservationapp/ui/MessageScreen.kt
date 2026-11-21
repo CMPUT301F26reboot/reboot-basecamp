@@ -1,3 +1,7 @@
+/**
+ * This file contains the composables that make up the Chat Screen
+ * The screen is shared between entrants and owners, only the message color and alignment change
+ */
 package com.example.campsitereservationapp.ui
 
 import androidx.compose.foundation.background
@@ -66,7 +70,10 @@ fun MessageScreen(
             }
         }
 
-        Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.1f)){
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.1f),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)){
             TextField(
                 value = nextText,
                 onValueChange = {nextText = it},

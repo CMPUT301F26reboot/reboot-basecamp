@@ -12,6 +12,14 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
+/**
+ * View Model for the message screen
+ *
+ * Finds the appropriate chat or creates one if one does not exist
+ * Holds a list of messages is [messages]
+ * Provides ability to send a message and find name of a chatter
+ * Automatically updates [messages] when a message is sent
+ */
 class MessageScreenViewModel: DatabaseModel() {
 
     var myChat = chatsRef.document()
@@ -50,7 +58,6 @@ class MessageScreenViewModel: DatabaseModel() {
 
                 addChatListener()
 
-//                loadMessages()
             }
 
 
@@ -59,6 +66,17 @@ class MessageScreenViewModel: DatabaseModel() {
 
     }
 
+    /**
+     * Sends a message
+     *
+     * Creates a message and saves it to the Messages collection,
+     * then adds the id of that message to the messageIDList of the chat
+     * triggering a recomposition
+     *
+     * @param [senderID] is the document id for the sender's profile document
+     * @param [receiverID] is the document id for the receiver's profile document
+     * @param [text] is the text of the message
+     */
     fun sendMessage(senderID: String, receiverID: String, text: String){
         var myMessage = messagesRef.document()
         val newMessage = Message(text, senderID, receiverID, Timestamp.now())
@@ -66,6 +84,11 @@ class MessageScreenViewModel: DatabaseModel() {
         myChat.update("messageIDList", FieldValue.arrayUnion(myMessage.id))
     }
 
+    /**
+     * Gets the name of a profile based on a profile id
+     *
+     * @param [profileID] document id of the profile you want to get the name of
+     */
     fun getName(profileID: String): String{
         for(profile in _profiles){
             if(profile.id == profileID){
@@ -84,7 +107,6 @@ class MessageScreenViewModel: DatabaseModel() {
     }
 
 
-
     private fun getMessage(messageID: String): Message{
         for(message in _messages){
             if(message.id == messageID){
@@ -94,21 +116,6 @@ class MessageScreenViewModel: DatabaseModel() {
         return Message()
     }
 
-    private fun loadMessages(){
-        messages.clear()
-        myChat.get().addOnSuccessListener { snapshot ->
-            var tempChat = snapshot?.toObject(Chat::class.java)
-            if (tempChat != null) {
-                for (messageID in tempChat.messageIDList) {
-                    val message = getMessage(messageID)
-                    if (message.id.isNotEmpty()) {
-                        messages.add(message)
-                    }
-                }
-                messages.sortBy { it.timestamp }
-            }
-        }
-    }
 
     private fun addChatListener(){
         myChat.addSnapshotListener { snapshot, error ->
@@ -129,24 +136,5 @@ class MessageScreenViewModel: DatabaseModel() {
             }
         }
     }
-
-
-
-    private fun getMessageID(senderID: String, receiverID: String, text: String, timestamp: Timestamp): String{
-        var answer = ""
-        val queryResult = messagesRef
-            .whereEqualTo("senderID", senderID)
-            .whereEqualTo("senderID", senderID)
-            .whereEqualTo("text", text)
-            .whereEqualTo("timestamp", timestamp)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val temp = querySnapshot.documents.first().toObject(Message::class.java)?.id
-                if(temp != null){
-                    answer = temp
-                }
-            }
-        return answer
-    }
+    
 }
