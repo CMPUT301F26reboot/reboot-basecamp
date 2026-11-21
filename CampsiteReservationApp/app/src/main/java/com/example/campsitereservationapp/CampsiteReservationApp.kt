@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
@@ -34,7 +35,7 @@ import java.util.Date
 
 // OWNER_ID is hardcoded for now since no owner signup/device setup yet.
 private const val OWNER_ID = "test-owner"
-
+private const val ADMIN_ID = "test-admin"
 @Composable
 fun CampsiteReservationApp() {
     val navController = rememberNavController()
@@ -348,6 +349,30 @@ fun CampsiteReservationApp() {
                 onPublished = {
                     navController.popBackStack()
                 },
+            )
+        }
+
+        //==========================Admin===================================
+
+        composable(
+            route = "AdminHomeScreen"
+        ){
+            AdminHomeScreen(
+                profileID = ADMIN_ID,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onManageCampsites = { TODO() },
+                onManageProfiles = { TODO() },
+                onNotificationLogs = { TODO() },
+                onMessageLogs = { TODO() },
+                onUserImpersonate = {
+                    navController.navigate("userSignUp")
+                },
+                onOwnerImpersonate = {
+                    navController.navigate("ownerHome")
+                },
+                onProfile = {TODO()},
             )
         }
     }
