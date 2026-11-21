@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.Admin.ImpersonationScreenComponents
+package com.example.campsitereservationapp.ui.Admin.RoleSwitchScreenComponents
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun ImpersonationButton(
+fun RoleSwitchButton(
     onClick: () -> Unit,
     ){
     Button(
@@ -37,7 +37,7 @@ fun ImpersonationButton(
         Icon(Icons.Filled.ExitToApp, contentDescription = null)
 
         Spacer(Modifier.width(8.dp))
-        Text("Exit Impersonation", fontWeight = FontWeight.Bold)
+        Text("Exit Role Switch", fontWeight = FontWeight.Bold)
     }
 
 }

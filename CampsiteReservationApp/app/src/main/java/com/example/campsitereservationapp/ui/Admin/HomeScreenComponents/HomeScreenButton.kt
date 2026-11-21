@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -17,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
@@ -38,7 +34,7 @@ fun HomeScreenButton(
     ){
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = if (darkened) {
             ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.onSurface,
@@ -55,22 +51,9 @@ fun HomeScreenButton(
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
         }
-        Spacer(Modifier.width(8.dp))
         Text(text, fontWeight = FontWeight.Bold)
     }
-
-}
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenButtonPreview() {
-
-    HomeScreenButton(
-        icon = Icons.Filled.Search,
-        text = "Standard Button",
-        darkened = false,
-        onClick = {}
-    )
-
 
 }

@@ -30,16 +30,10 @@ fun HomeScreenProfileButton(
         ) {
             Icon(
                 Icons.Filled.Person,
-                contentDescription = "Back",
+                contentDescription = "Profile",
                 modifier = Modifier.size(35.dp)
             )
         }
     }
 
-}
-
-@Preview
-@Composable
-fun HomeProfileButtonPreview(){
-    HomeScreenProfileButton(onProfileClick = {})
 }

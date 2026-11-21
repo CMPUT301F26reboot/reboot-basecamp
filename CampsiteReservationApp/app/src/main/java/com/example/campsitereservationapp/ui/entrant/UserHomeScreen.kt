@@ -3,7 +3,6 @@ package com.example.campsitereservationapp.ui.entrant
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,8 +50,7 @@ fun UserHomeScreen(
         onMyLotteries = onMyLotteries,
         onMyReservations = onMyReservations,
         onNotifications = onNotifications,
-        onProfile = onProfile,
-
+        onProfile = onProfile
     )
 
 }

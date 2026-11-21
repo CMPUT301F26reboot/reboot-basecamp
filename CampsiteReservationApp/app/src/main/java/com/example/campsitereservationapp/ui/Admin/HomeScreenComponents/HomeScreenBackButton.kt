@@ -29,11 +29,3 @@ fun HomeScreenBackButton(
         }
     }
 }
-
-@Preview
-@Composable
-fun HomeBackButtonPreview(){
-    HomeScreenBackButton(
-        onBack = {}
-    )
-}

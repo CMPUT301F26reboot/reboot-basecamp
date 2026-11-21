@@ -3,7 +3,6 @@ package com.example.campsitereservationapp.ui.owner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +46,7 @@ fun OwnerHomeScreen(
         onManageLotteries = onManageLotteries,
         onManageCampsites = onManageCampsites,
         onNotificationHistory = onNotificationHistory,
-        onProfile = onProfile,
+        onProfile = onProfile
     )
 
 }
@@ -60,6 +59,7 @@ internal fun OwnerHomeContent(
     onManageCampsites: () -> Unit,
     onNotificationHistory: () -> Unit,
     onProfile: () -> Unit,
+
     ){
 
     Column(
@@ -153,4 +153,3 @@ internal fun OwnerHomeContent(
         }
     }
 }
-
