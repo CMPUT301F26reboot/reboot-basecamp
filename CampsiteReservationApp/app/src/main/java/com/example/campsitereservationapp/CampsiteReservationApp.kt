@@ -35,7 +35,6 @@ import java.util.Date
 
 // OWNER_ID is hardcoded for now since no owner signup/device setup yet.
 private const val OWNER_ID = "test-owner"
-private const val ADMIN_ID = "test-admin"
 @Composable
 fun CampsiteReservationApp() {
     val navController = rememberNavController()
@@ -55,6 +54,9 @@ fun CampsiteReservationApp() {
                 },
                 onOwner = {
                     navController.navigate("ownerHome")
+                },
+                onAdmin = {
+                    navController.navigate("AdminHome")
                 }
             )
         }
@@ -355,7 +357,7 @@ fun CampsiteReservationApp() {
         //==========================Admin===================================
 
         composable(
-            route = "AdminHomeScreen"
+            route = "AdminHome"
         ){
             AdminHomeScreen(
                 onBack = {
@@ -366,7 +368,7 @@ fun CampsiteReservationApp() {
                 onNotificationLogs = { TODO() },
                 onMessageLogs = { TODO() },
                 onUserImpersonate = {
-                    navController.navigate("userSignUp")
+                    navController.navigate("userHome")
                 },
                 onOwnerImpersonate = {
                     navController.navigate("ownerHome")

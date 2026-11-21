@@ -32,12 +32,14 @@ import com.example.campsitereservationapp.R
 fun TempNavigationScreen(
     profileId: String,
     onOwner: () -> Unit,
-    onUser: () -> Unit
+    onUser: () -> Unit,
+    onAdmin: () -> Unit
 ){
     TempNavigationContent(
         profileId = profileId,
         onOwner = onOwner,
         onUser = onUser,
+        onAdmin = onAdmin
     )
 
 }
@@ -46,7 +48,8 @@ fun TempNavigationScreen(
 internal fun TempNavigationContent(
     profileId: String,
     onOwner: () -> Unit,
-    onUser: () -> Unit
+    onUser: () -> Unit,
+    onAdmin: () -> Unit
 
 ){
     Column(
@@ -86,6 +89,19 @@ internal fun TempNavigationContent(
             modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 32.dp)
         ) {
             Text("Owner", fontWeight = FontWeight.Bold)
+        }
+
+        Button(
+            onClick = onAdmin,
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                contentColor = MaterialTheme.colorScheme.inverseSurface
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 32.dp)
+        ) {
+            Text("Admin", fontWeight = FontWeight.Bold)
         }
     }
 }
