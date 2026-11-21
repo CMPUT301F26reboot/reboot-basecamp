@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.ui.owner.campsitedetails.MapSection
+import com.google.firebase.firestore.GeoPoint
 
 /**
  * Lets an owner register a new campsite listing (US 02.01.01). Stateful wrapper that wires
@@ -54,8 +55,13 @@ fun OwnerCampDetailsScreen(
     onBack: () -> Unit,
     onPublished: () -> Unit,
     modifier: Modifier = Modifier,
+    listingId: String? = null,
     viewModel: OwnerCampDetailsViewModel = viewModel()
 ) {
+    LaunchedEffect(listingId) {
+        listingId?.let(viewModel::loadListing)
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -71,6 +77,9 @@ fun OwnerCampDetailsScreen(
     }
 
     OwnerCampDetailsContent(
+        isEditing = viewModel.isEditing,
+        existingPhotos = viewModel.existingPhotos,
+        onRemoveExistingPhoto = viewModel::removeExistingPhoto,
         photos = viewModel.photos,
         onAddPhotos = viewModel::addPhotos,
         onRemovePhoto = viewModel::removePhoto,
@@ -90,6 +99,7 @@ fun OwnerCampDetailsScreen(
         tags = viewModel.tags,
         onAddTag = viewModel::addTag,
         onRemoveTag = viewModel::removeTag,
+        geoLocation = viewModel.geoLocation,
         onLocationPicked = viewModel::setLocation,
         canPublish = viewModel.canPublish,
         isPublishing = viewModel.isPublishing,
@@ -107,6 +117,9 @@ fun OwnerCampDetailsScreen(
  */
 @Composable
 fun OwnerCampDetailsContent(
+    isEditing: Boolean,
+    existingPhotos: List<String>,
+    onRemoveExistingPhoto: (String) -> Unit,
     photos: List<Uri>,
     onAddPhotos: (List<Uri>) -> Unit,
     onRemovePhoto: (Uri) -> Unit,
@@ -126,6 +139,7 @@ fun OwnerCampDetailsContent(
     tags: List<String>,
     onAddTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
+    geoLocation: GeoPoint,
     onLocationPicked: (latitude: Double, longitude: Double) -> Unit,
     canPublish: Boolean,
     isPublishing: Boolean,
@@ -136,7 +150,12 @@ fun OwnerCampDetailsContent(
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { RegisterCampsiteTopBar(onBack = onBack) },
+        topBar = {
+            RegisterCampsiteTopBar(
+                title = if (isEditing) "Edit Campsite" else "Register Campsite",
+                onBack = onBack
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(
@@ -147,7 +166,13 @@ fun OwnerCampDetailsContent(
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            PhotosSection(photos = photos, onAddPhotos = onAddPhotos, onRemovePhoto = onRemovePhoto)
+            PhotosSection(
+                existingPhotos = existingPhotos,
+                onRemoveExistingPhoto = onRemoveExistingPhoto,
+                photos = photos,
+                onAddPhotos = onAddPhotos,
+                onRemovePhoto = onRemovePhoto
+            )
             BasicInformationSection(
                 siteName = siteName,
                 onSiteNameChange = onSiteNameChange,
@@ -165,8 +190,16 @@ fun OwnerCampDetailsContent(
                 onAcceptanceRequiredChange = onRulesAcceptanceRequiredChange
             )
             TagsSection(tags = tags, onAddTag = onAddTag, onRemoveTag = onRemoveTag)
-            MapSection(onLocationPicked = onLocationPicked)
-            PublishButton(enabled = canPublish && !isPublishing, isPublishing = isPublishing, onClick = onPublish)
+            MapSection(
+                initialLocation = geoLocation.takeIf { isEditing && (it.latitude != 0.0 || it.longitude != 0.0) },
+                onLocationPicked = onLocationPicked
+            )
+            PublishButton(
+                enabled = canPublish && !isPublishing,
+                isPublishing = isPublishing,
+                isEditing = isEditing,
+                onClick = onPublish
+            )
         }
     }
 }
@@ -175,7 +208,7 @@ fun OwnerCampDetailsContent(
  * Top bar with a back arrow, the screen title, and a profile icon (not yet wired to anything).
  */
 @Composable
-private fun RegisterCampsiteTopBar(onBack: () -> Unit) {
+private fun RegisterCampsiteTopBar(title: String, onBack: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 3.dp) {
         Row(
             modifier = Modifier
@@ -187,7 +220,7 @@ private fun RegisterCampsiteTopBar(onBack: () -> Unit) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Text(
-                "Register Campsite",
+                title,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f)

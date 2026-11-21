@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.LocationOn
@@ -32,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -67,12 +65,26 @@ import com.example.campsitereservationapp.ui.components.InputDateScreenComponent
 import com.example.campsitereservationapp.ui.components.IntInputScreenComponent
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.util.Date
+import com.example.campsitereservationapp.ui.theme.PillShape
+import androidx.compose.material.icons.filled.Check
+import com.example.campsitereservationapp.ui.components.datesBetween
+
+/**
+ * Creates a new lottery, or edits an existing one when [lotteryId] is given. In edit mode the
+ * form starts filled with the lottery's values, a summary card is shown at the top, and a Danger
+ * section below the fields lets the owner cancel the lottery.
+ * @param onCreate event call after the lottery is created or saved and the dialog is closed
+ * @param lotteryId the lottery to edit, or null to create a new one
+ * @param onCancelled event call after the lottery has been cancelled
+ */
 @Composable
 fun OwnerLotteryCreationScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     onCreate: () -> Unit = {},
     ownerID: String = "test-owner",
+    lotteryId: String? = null,
+    onCancelled: () -> Unit = {},
     viewModel: OwnerLotteryCreationViewModel = viewModel()
 ){
     var lotteryDates by remember { mutableStateOf(listOf<Date>()) }
@@ -83,6 +95,27 @@ fun OwnerLotteryCreationScreen(
     var showCreatedDialog by remember { mutableStateOf(false) }
     var showFailedDialog by remember { mutableStateOf(false) }
     var lotteryName by remember { mutableStateOf("") }
+    var showCancelDialog by remember { mutableStateOf(false) }
+    var showCancelFailedDialog by remember { mutableStateOf(false) }
+    var isCancelling by remember { mutableStateOf(false) }
+    var prefilled by remember { mutableStateOf(false) }
+
+    val isEditing = lotteryId != null
+    val editingLottery = lotteryId?.let { viewModel.getLottery(it) }
+    val enrolled = editingLottery?.let(::enrolledCount) ?: 0
+
+    LaunchedEffect(editingLottery) {
+        if (!prefilled && editingLottery != null) {
+            lotteryName = editingLottery.title
+            lotteryDates = datesBetween(editingLottery.start, editingLottery.end)
+            dates.clear()
+            dates.addAll(editingLottery.dates.sorted())
+            selectedListingIDs = editingLottery.campsiteIDs
+            winnersToDraw = editingLottery.lotteryWinners ?: 0
+            waitlistCap = editingLottery.waitlistCapacity ?: 0
+            prefilled = true
+        }
+    }
 
     val ownerListings = viewModel.getOwnerListings(ownerID)
     val selectedListings = ownerListings.filter { it.id in selectedListingIDs }
@@ -91,7 +124,10 @@ fun OwnerLotteryCreationScreen(
             selectedListings.isNotEmpty() &&
             dates.isNotEmpty() &&
             winnersToDraw > 0 &&
-            winnersToDraw < waitlistCap
+            winnersToDraw < waitlistCap &&
+            waitlistCap >= enrolled &&
+            (!isEditing || prefilled) &&
+            !isCancelling
 
     Scaffold(modifier = modifier) { padding ->
         Column(
@@ -103,10 +139,15 @@ fun OwnerLotteryCreationScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             BackButtonAndHeaderScreenComponent(
-                title = "Create Lottery",
-                subHeader = "Choose your campsites and lottery dates.",
+                title = if (isEditing) "Edit Lottery Details" else "Create Lottery",
+                subHeader = if (isEditing) "Update your lottery, or cancel it below."
+                    else "Choose your campsites and lottery dates.",
                 onBack = onBack
             )
+
+            if (editingLottery != null) {
+                LotterySummaryCard(lottery = editingLottery, campsites = selectedListings)
+            }
 
             // Input lottery title:
             OutlinedTextField(
@@ -114,7 +155,7 @@ fun OwnerLotteryCreationScreen(
                 onValueChange = { lotteryName = it },
                 placeholder = { Text("Lottery Title") },
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -180,41 +221,65 @@ fun OwnerLotteryCreationScreen(
                     )
                     IntInputScreenComponent(
                         title = "Waitlist Capacity Cap",
-                        subHeader = "Maximum entrants allowed",
+                        subHeader = if (isEditing) "Maximum entrants allowed ($enrolled enrolled)"
+                            else "Maximum entrants allowed",
                         num = waitlistCap,
                         onNumChange = { waitlistCap = it }
                     )
                 }
             }
 
+            if (editingLottery != null) {
+                CancelLotterySection(
+                    enrolledCount = enrolled,
+                    onCancelClick = { showCancelDialog = true },
+                    enabled = !isCancelling
+                )
+            }
+
             //create button
             Button(
                 onClick = {
-                    viewModel.createAndAddLottery(
-                        title = lotteryName,
-                        dates = dates.toList(),
-                        start = lotteryDates[0],
-                        end = lotteryDates[lotteryDates.lastIndex],
-                        campsiteIDs = selectedListingIDs,
-                        winnersToDraw = winnersToDraw,
-                        waitlistCap = waitlistCap,
-                        onSuccess = { showCreatedDialog = true},
-                        onFailure = { showFailedDialog = true}
-                    )
+                    if (lotteryId != null) {
+                        viewModel.updateLottery(
+                            lotteryId = lotteryId,
+                            title = lotteryName,
+                            dates = dates.toList(),
+                            start = lotteryDates[0],
+                            end = lotteryDates[lotteryDates.lastIndex],
+                            campsiteIDs = selectedListingIDs,
+                            winnersToDraw = winnersToDraw,
+                            waitlistCap = waitlistCap,
+                            onSuccess = { showCreatedDialog = true },
+                            onFailure = { showFailedDialog = true }
+                        )
+                    } else {
+                        viewModel.createAndAddLottery(
+                            title = lotteryName,
+                            dates = dates.toList(),
+                            start = lotteryDates[0],
+                            end = lotteryDates[lotteryDates.lastIndex],
+                            campsiteIDs = selectedListingIDs,
+                            winnersToDraw = winnersToDraw,
+                            waitlistCap = waitlistCap,
+                            onSuccess = { showCreatedDialog = true},
+                            onFailure = { showFailedDialog = true}
+                        )
+                    }
                 },
                 enabled = canCreate,
-                shape = RoundedCornerShape(50),
+                shape = PillShape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.surface
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
             ) {
-                Icon(Icons.Filled.Add, contentDescription = null)
+                Icon(if (isEditing) Icons.Filled.Check else Icons.Filled.Add, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text("Create", fontWeight = FontWeight.Bold)
+                Text(if (isEditing) "Save Changes" else "Create", fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -228,8 +293,9 @@ fun OwnerLotteryCreationScreen(
                 showCreatedDialog = false
                 onCreate()
             },
-            title = "Lottery created",
-            description = "Your lottery for $names is live. " +
+            title = if (isEditing) "Changes saved" else "Lottery created",
+            description = if (isEditing) "Your lottery for $names has been updated."
+                else "Your lottery for $names is live. " +
                     "Campers can enter until ${formatDateRange(listOf(end))}."
         )
     } else if (showFailedDialog)
@@ -238,8 +304,32 @@ fun OwnerLotteryCreationScreen(
             onDismissRequest = {
                 showFailedDialog = false
             },
-            title = "Lottery creation Failed",
+            title = if (isEditing) "Couldn't save changes" else "Lottery creation Failed",
 
+        )
+    } else if (showCancelDialog && lotteryId != null) {
+        CancelLotteryDialog(
+            lotteryTitle = lotteryName,
+            enrolledCount = enrolled,
+            onConfirm = {
+                showCancelDialog = false
+                isCancelling = true
+                viewModel.cancelLottery(
+                    lotteryId = lotteryId,
+                    onSuccess = onCancelled,
+                    onFailure = {
+                        isCancelling = false
+                        showCancelFailedDialog = true
+                    }
+                )
+            },
+            onDismiss = { showCancelDialog = false }
+        )
+    } else if (showCancelFailedDialog) {
+        CustomDialogScreenComponent(
+            onDismissRequest = { showCancelFailedDialog = false },
+            title = "Couldn't cancel the lottery",
+            description = "Please try again."
         )
     }
 }
@@ -293,7 +383,7 @@ fun ListingDropDownSelection(
             }
 
             //dropdown menu
-            listingDropDownMenu(
+            ListingDropDownMenu(
                 listings = listings,
                 selectedListings = selectedListings,
                 onSelect = onSelect
@@ -341,7 +431,7 @@ fun ListingCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(76.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             )
 
@@ -411,7 +501,7 @@ private fun ListingDetail(
  * @param onSelect event call with the listing that was clicked
  */
 @Composable
-fun listingDropDownMenu(
+fun ListingDropDownMenu(
     listings: List<Listing>,
     selectedListings: List<Listing>,
     onSelect: (Listing) -> Unit,
@@ -452,7 +542,7 @@ fun listingDropDownMenu(
                     )
                 },
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 interactionSource = fieldInteraction,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -500,65 +590,3 @@ fun listingDropDownMenu(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-//==============================================Previews===============================
-@Preview(showBackground = true)
-@Composable
-fun ListingCardPreview(){
-    ListingCard(
-        listing = Listing(
-            name = "Bow Valley Riverside Campground",
-            address = "Banff National Park, AB",
-            maxOccupancy = 5
-        ),
-        onDelete = {},
-        modifier = Modifier
-    )
-}
-@Preview(showBackground = true)
-@Composable
-fun ListingDropDownSelectionPreview(){
-    val listings = remember {
-        listOf(
-            Listing(
-                name = "Bow Valley Riverside Campground",
-                address = "Banff National Park, AB",
-                maxOccupancy = 5
-            ).apply { id = "1" },
-            Listing(
-                name = "Coastal Cliffside",
-                address = "Big Sur, CA",
-                maxOccupancy = 4
-            ).apply { id = "2" },
-            Listing(
-                name = "Desert Oasis",
-                address = "Joshua Tree, CA",
-                maxOccupancy = 6
-            ).apply { id = "3" }
-        )
-    }
-    var selectedListings by remember { mutableStateOf(listOf<Listing>()) }
-
-    ListingDropDownSelection(
-        title = "Campsites",
-        subHeader = "Select one or more of your campsites.",
-        listingsHeader = "Selected campsites",
-        listings = listings,
-        selectedListings = selectedListings,
-        onSelect = { selectedListings = selectedListings + it },
-        onRemove = { selectedListings = selectedListings - it },
-        modifier = Modifier
-    )
-}
-
-

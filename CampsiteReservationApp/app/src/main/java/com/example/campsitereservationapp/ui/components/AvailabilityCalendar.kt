@@ -58,8 +58,6 @@ import java.text.DateFormat
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle as DateTextStyle
-import com.example.campsitereservationapp.ui.theme.AvailableGreenBackground
-import com.example.campsitereservationapp.ui.theme.AvailableGreenContent
 import com.example.campsitereservationapp.utils.DateFormatter
 import java.util.Calendar
 import java.util.Date
@@ -250,7 +248,7 @@ private fun DayCell(
         DayState.Selected ->
             MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary
         DayState.Available ->
-            AvailableGreenBackground to AvailableGreenContent
+            MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
         DayState.Unavailable ->
             MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
     }

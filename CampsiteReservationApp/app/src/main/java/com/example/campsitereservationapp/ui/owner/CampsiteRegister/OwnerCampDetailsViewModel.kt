@@ -30,6 +30,18 @@ import kotlinx.coroutines.withContext
 
 class OwnerCampDetailsViewModel : DatabaseModel() {
 
+    var editingListingId by mutableStateOf<String?>(null)
+        private set
+
+    val isEditing: Boolean
+        get() = editingListingId != null
+
+    var isLoading by mutableStateOf(false)
+        private set
+
+    var existingPhotos by mutableStateOf<List<String>>(emptyList())
+        private set
+
     /** Locally picked photo URIs, in upload order. The first is the cover photo. */
     var photos by mutableStateOf<List<Uri>>(emptyList())
         private set
@@ -66,15 +78,49 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
 
     /** True once [siteName] and [location] are filled in and nothing is already in flight. */
     val canPublish: Boolean
-        get() = siteName.isNotBlank() && location.isNotBlank() && !isPublishing
+        get() = siteName.isNotBlank() && location.isNotBlank() && !isPublishing && !isLoading
+
+    fun loadListing(listingId: String) {
+        if (editingListingId == listingId) return
+        editingListingId = listingId
+        isLoading = true
+
+        listingsRef.document(listingId).get()
+            .addOnSuccessListener { document ->
+                val listing = document.toObject(Listing::class.java)
+                if (listing != null) fillFrom(listing) else errorMessage = "Couldn't find this campsite."
+                isLoading = false
+            }
+            .addOnFailureListener {
+                isLoading = false
+                errorMessage = "Couldn't load this campsite. Please try again."
+            }
+    }
+
+    private fun fillFrom(listing: Listing) {
+        siteName = listing.name
+        location = listing.address
+        maxOccupancy = listing.maxOccupancy.coerceAtLeast(MIN_OCCUPANCY)
+        overview = listing.description
+        rules = listing.rules
+        rulesAcceptanceRequired = listing.rulesAcceptanceRequired
+        tags = listing.tags
+        existingPhotos = listing.photoUrls
+        photos = emptyList()
+        geoLocation = listing.geoLocation
+    }
 
     /** Adds [uris] to [photos], de-duplicated and capped at [MAX_PHOTOS]. */
     fun addPhotos(uris: List<Uri>) {
-        photos = (photos + uris).distinct().take(MAX_PHOTOS)
+        photos = (photos + uris).distinct().take(MAX_PHOTOS - existingPhotos.size)
     }
 
     fun removePhoto(uri: Uri) {
         photos = photos - uri
+    }
+
+    fun removeExistingPhoto(photo: String) {
+        existingPhotos = existingPhotos - photo
     }
 
     fun incrementOccupancy() {
@@ -95,6 +141,7 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
     fun clearError() {
         errorMessage = null
     }
+
     fun publish(ownerId: String, context: Context) {
         if (!canPublish) return
         isPublishing = true
@@ -111,7 +158,9 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
                 return@launch
             }
 
-            saveListing(ownerId, encodedPhotos)
+            val allPhotos = existingPhotos + encodedPhotos
+            val listingId = editingListingId
+            if (listingId == null) saveListing(ownerId, allPhotos) else updateListing(listingId, allPhotos)
         }
     }
 
@@ -137,6 +186,30 @@ class OwnerCampDetailsViewModel : DatabaseModel() {
             .addOnFailureListener {
                 isPublishing = false
                 errorMessage = "Couldn't publish the listing. Please try again."
+            }
+    }
+
+    private fun updateListing(listingId: String, photoUrls: List<String>) {
+        val changes = mapOf(
+            "name" to siteName.trim(),
+            "address" to location.trim(),
+            "maxOccupancy" to maxOccupancy,
+            "description" to overview.trim(),
+            "tags" to tags,
+            "photoUrls" to photoUrls,
+            "geoLocation" to geoLocation,
+            "rules" to rules.trim(),
+            "rulesAcceptanceRequired" to rulesAcceptanceRequired
+        )
+
+        listingsRef.document(listingId).update(changes)
+            .addOnSuccessListener {
+                isPublishing = false
+                isPublished = true
+            }
+            .addOnFailureListener {
+                isPublishing = false
+                errorMessage = "Couldn't save your changes. Please try again."
             }
     }
 

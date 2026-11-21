@@ -23,8 +23,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -35,14 +35,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.campsitereservationapp.ui.theme.AvailableGreenBackground
-import com.example.campsitereservationapp.ui.theme.AvailableGreenContent
+import com.example.campsitereservationapp.ui.theme.PillShape
+import com.example.campsitereservationapp.utils.decodeBase64Image
 
 /**
  * Photo picker row: an "Add Photo" circle that opens the system photo picker, followed by
@@ -52,8 +53,11 @@ import com.example.campsitereservationapp.ui.theme.AvailableGreenContent
 internal fun PhotosSection(
     photos: List<Uri>,
     onAddPhotos: (List<Uri>) -> Unit,
-    onRemovePhoto: (Uri) -> Unit
+    onRemovePhoto: (Uri) -> Unit,
+    existingPhotos: List<String> = emptyList(),
+    onRemoveExistingPhoto: (String) -> Unit = {}
 ) {
+    val photoCount = existingPhotos.size + photos.size
     val pickPhotos = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
         if (uris.isNotEmpty()) onAddPhotos(uris)
     }
@@ -63,9 +67,9 @@ internal fun PhotosSection(
             title = "Photos & Media (Optional)",
             subtitle = "Upload high quality photos showing campsite amenities",
             trailing = {
-                Surface(shape = RoundedCornerShape(50), color = MaterialTheme.colorScheme.surfaceVariant) {
+                Surface(shape = PillShape, color = MaterialTheme.colorScheme.surfaceVariant) {
                     Text(
-                        "${photos.size} / $MAX_PHOTOS Uploaded",
+                        "$photoCount / $MAX_PHOTOS Uploaded",
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                     )
@@ -75,12 +79,25 @@ internal fun PhotosSection(
         Spacer(Modifier.height(12.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
-                AddPhotoButton(enabled = photos.size < MAX_PHOTOS) {
+                AddPhotoButton(enabled = photoCount < MAX_PHOTOS) {
                     pickPhotos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 }
             }
+            itemsIndexed(existingPhotos, key = { index, _ -> "saved-$index" }) { index, photo ->
+                PhotoThumbnail(
+                    model = remember(photo) { decodeBase64Image(photo) },
+                    displayName = null,
+                    isCover = index == 0,
+                    onRemove = { onRemoveExistingPhoto(photo) }
+                )
+            }
             items(photos, key = { it.toString() }) { uri ->
-                PhotoThumbnail(uri = uri, isCover = uri == photos.first(), onRemove = { onRemovePhoto(uri) })
+                PhotoThumbnail(
+                    model = uri,
+                    displayName = rememberDisplayName(uri),
+                    isCover = existingPhotos.isEmpty() && uri == photos.first(),
+                    onRemove = { onRemovePhoto(uri) }
+                )
             }
         }
     }
@@ -92,13 +109,13 @@ private fun AddPhotoButton(enabled: Boolean, onClick: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(
             shape = CircleShape,
-            color = AvailableGreenBackground,
+            color = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
                 .size(72.dp)
                 .clickable(enabled = enabled, onClick = onClick)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.Add, contentDescription = "Add photo", tint = AvailableGreenContent)
+                Icon(Icons.Filled.Add, contentDescription = "Add photo", tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
         Spacer(Modifier.height(4.dp))
@@ -108,20 +125,19 @@ private fun AddPhotoButton(enabled: Boolean, onClick: () -> Unit) {
 
 /** One picked photo: thumbnail, a "Cover Photo" badge on the first photo, and a remove button. */
 @Composable
-private fun PhotoThumbnail(uri: Uri, isCover: Boolean, onRemove: () -> Unit) {
-    val displayName = rememberDisplayName(uri)
+private fun PhotoThumbnail(model: Any?, displayName: String?, isCover: Boolean, onRemove: () -> Unit) {
     Column {
         Box(modifier = Modifier.size(112.dp, 92.dp)) {
             AsyncImage(
-                model = uri,
+                model = model,
                 contentDescription = displayName,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
             )
             if (isCover) {
                 Surface(
-                    shape = RoundedCornerShape(6.dp),
+                    shape = MaterialTheme.shapes.small,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(6.dp)
                 ) {
@@ -171,4 +187,4 @@ private fun rememberDisplayName(uri: Uri): String? {
     return state.value
 }
 
-private const val MAX_PHOTOS = 6
+private const val MAX_PHOTOS = 4

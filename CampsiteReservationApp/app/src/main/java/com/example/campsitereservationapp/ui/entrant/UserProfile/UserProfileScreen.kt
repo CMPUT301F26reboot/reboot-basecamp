@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,11 +55,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,19 +65,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
 import com.example.campsitereservationapp.utils.decodeBase64Image
+import com.example.campsitereservationapp.ui.theme.DeleteRed
 
-private val TitleColor = Color(0xFF111827)
-private val LabelColor = Color(0xFF6B7280)
-private val IconColor = Color(0xFF9CA3AF)
-private val SurfaceGray = Color(0xFFF3F4F6)
-private val SwitchGreen = Color(0xFF10B981)
-private val DeleteRed = Color(0xFFEF4444)
-private val LinkGreen = Color(0xFF1A3A2C)
 
 /**
  * Shows the user's profile and lets them change their details (US 01.07.03), delete their profile
@@ -125,10 +115,10 @@ fun UserProfileScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = LinkGreen)
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
         return
     }
@@ -208,7 +198,7 @@ internal fun UserProfileContent(
     }
 
     Scaffold(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(
@@ -227,9 +217,9 @@ internal fun UserProfileContent(
 
             Text(
                 text = "Profile Information",
-                fontSize = 18.sp,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = TitleColor
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -253,13 +243,13 @@ internal fun UserProfileContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Notifications", fontSize = 15.sp, color = LabelColor)
+                Text(text = "Notifications", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Switch(
                     checked = notificationsEnabled,
                     onCheckedChange = onNotificationsChange,
                     colors = SwitchDefaults.colors(
-                        checkedTrackColor = SwitchGreen,
-                        checkedThumbColor = Color.White
+                        checkedTrackColor = MaterialTheme.colorScheme.secondary,
+                        checkedThumbColor = MaterialTheme.colorScheme.onSecondary
                     )
                 )
             }
@@ -268,10 +258,10 @@ internal fun UserProfileContent(
             Button(
                 onClick = { showDeleteDialog = true },
                 enabled = !isSaving,
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DeleteRed,
-                    contentColor = Color.White
+                    contentColor = MaterialTheme.colorScheme.onError
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -283,9 +273,9 @@ internal fun UserProfileContent(
             Spacer(modifier = Modifier.height(40.dp))
             Text(
                 text = "Policies & Guidelines",
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = LinkGreen,
+                color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -310,14 +300,14 @@ private fun ProfilePictureRow(profilePicture: String, isSaving: Boolean, onEditP
             modifier = Modifier
                 .size(80.dp)
                 .clip(CircleShape)
-                .background(SurfaceGray),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             if (profilePicture.isEmpty()) {
                 Icon(
                     imageVector = Icons.Filled.Person,
                     contentDescription = "No profile picture",
-                    tint = IconColor,
+                    tint = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.size(40.dp)
                 )
             } else {
@@ -333,10 +323,10 @@ private fun ProfilePictureRow(profilePicture: String, isSaving: Boolean, onEditP
         Button(
             onClick = onEditPicture,
             enabled = !isSaving,
-            shape = RoundedCornerShape(8.dp),
+            shape = MaterialTheme.shapes.small,
             colors = ButtonDefaults.buttonColors(
-                containerColor = SurfaceGray,
-                contentColor = TitleColor
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         ) {
             Icon(
@@ -375,7 +365,7 @@ private fun ProfileFieldRow(
     onEdit: () -> Unit,
     onSave: () -> Unit
 ) {
-    val valueStyle = TextStyle(fontSize = 15.sp, color = TitleColor, textAlign = TextAlign.End)
+    val valueStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface, textAlign = TextAlign.End)
     val focusRequester = remember { FocusRequester() }
 
     Column {
@@ -383,7 +373,7 @@ private fun ProfileFieldRow(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = field.label, fontSize = 15.sp, color = LabelColor)
+            Text(text = field.label, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.width(16.dp))
 
             if (isEditing) {
@@ -393,7 +383,7 @@ private fun ProfileFieldRow(
                         onValueChange = onDraftChange,
                         singleLine = true,
                         textStyle = valueStyle,
-                        cursorBrush = SolidColor(LinkGreen),
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = keyboardTypeOf(field),
                             imeAction = ImeAction.Done
@@ -403,13 +393,13 @@ private fun ProfileFieldRow(
                             .fillMaxWidth()
                             .focusRequester(focusRequester)
                     )
-                    HorizontalDivider(color = LinkGreen)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.primary)
                 }
                 IconButton(onClick = onSave, enabled = !isSaving) {
                     Icon(
                         imageVector = Icons.Filled.Check,
                         contentDescription = "Save ${field.label}",
-                        tint = LinkGreen
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 LaunchedEffect(Unit) { focusRequester.requestFocus() }
@@ -425,7 +415,7 @@ private fun ProfileFieldRow(
                     Icon(
                         imageVector = Icons.Filled.Edit,
                         contentDescription = "Edit ${field.label}",
-                        tint = IconColor
+                        tint = MaterialTheme.colorScheme.outline
                     )
                 }
             }
@@ -433,7 +423,7 @@ private fun ProfileFieldRow(
         if (error != null) {
             Text(
                 text = error,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.End,
                 modifier = Modifier

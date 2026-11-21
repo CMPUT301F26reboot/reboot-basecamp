@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
@@ -39,16 +38,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.ui.theme.RatingAmber
 
 
 /**
@@ -111,10 +109,10 @@ fun UserWonSelectionScreen(
                     },
                     enabled = selectedCampsite != null,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF111827),
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
                     ),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
@@ -142,7 +140,7 @@ fun UserWonSelectionScreen(
                     text = "Choose a campsite",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color(0xFF111827),
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -150,7 +148,7 @@ fun UserWonSelectionScreen(
                 Text(
                     text = "Select a campsite from this lottery to view its details before booking.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF6B7280),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -159,15 +157,15 @@ fun UserWonSelectionScreen(
 
                 //=====================DATE BANNER========================
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = Color(0xFFF3F4F6),
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = "Lottery period:",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF6B7280)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         if (lotteryDate != null) {
@@ -177,7 +175,7 @@ fun UserWonSelectionScreen(
                                 modifier = Modifier
                                 .fillMaxWidth(),
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF111827)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -196,13 +194,13 @@ fun UserWonSelectionScreen(
                         text = "Campsites in this lottery",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color(0xFF111827)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     //number of campsites counter
                     Text(
                         text = "${listings.orEmpty().size} sites",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF6B7280)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -247,13 +245,13 @@ fun UserWonSelectionCampsiteCard(
     isSelected: Boolean = false,
     onSelect: () -> Unit = {}
 ) {
-    val cardBackground = if (isSelected) Color(0xFFF9FAFB) else Color.White
-    val cardBorderColor = if (isSelected) Color(0xFF111827) else Color(0xFFE5E7EB)
+    val cardBackground = if (isSelected) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface
+    val cardBorderColor = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outlineVariant
     val cardBorderWidth = if (isSelected) 2.dp else 1.dp
 
     Surface(
         onClick = onSelect,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = cardBackground,
         border = BorderStroke(cardBorderWidth, cardBorderColor),
         modifier = modifier
@@ -275,8 +273,8 @@ fun UserWonSelectionCampsiteCard(
                     modifier = Modifier
                         .fillMaxWidth(0.25f)
                         .height(95.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFE5E7EB)),
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
                     contentAlignment = Alignment.Center
                 ) {
                     //select first photo, show nothing if Null
@@ -292,7 +290,7 @@ fun UserWonSelectionCampsiteCard(
                         Icon(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = null,
-                            tint = Color(0xFF6B7280)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -304,14 +302,14 @@ fun UserWonSelectionCampsiteCard(
                 ) {
                     Text(
                         text = listing.name,
-                        fontSize = 15.sp,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF111827)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = listing.address,
-                        fontSize = 12.sp,
-                        color = Color(0xFF6B7280)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Row(
@@ -322,12 +320,12 @@ fun UserWonSelectionCampsiteCard(
                             imageVector = Icons.Default.Person,
                             contentDescription = null,
                             modifier = Modifier.size(13.dp),
-                            tint = Color(0xFF6B7280)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = "Up to ${listing.maxOccupancy} guests",
-                            fontSize = 11.sp,
-                            color = Color(0xFF6B7280)
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -339,12 +337,12 @@ fun UserWonSelectionCampsiteCard(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
                             modifier = Modifier.size(13.dp),
-                            tint = Color(0xFFF59E0B)
+                            tint = RatingAmber
                         )
                         Text(
                             text = "${listing.rating} (${listing.numOfReviews} reviews)",
-                            fontSize = 11.sp,
-                            color = Color(0xFF111827),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -359,17 +357,17 @@ fun UserWonSelectionCampsiteCard(
             ) {
                 Text(
                     text = if (isSelected) "Selected campsite" else "Select campsite",
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) Color(0xFF111827) else Color(0xFF6B7280)
+                    color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 RadioButton(
                     selected = isSelected,
                     onClick = onSelect,
                     colors = RadioButtonDefaults.colors(
-                        selectedColor = Color(0xFF111827),
-                        unselectedColor = Color(0xFFE5E7EB)
+                        selectedColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedColor = MaterialTheme.colorScheme.outlineVariant
                     )
                 )
             }

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -59,6 +58,7 @@ fun OwnerListingsScreen(
     onBack: () -> Unit,
     onRegisterNew: () -> Unit,
     onDetails: (Listing) -> Unit,
+    onEdit: (Listing) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ListingViewModel = viewModel()
 ) {
@@ -69,6 +69,7 @@ fun OwnerListingsScreen(
         onBack = onBack,
         onRegisterNew = onRegisterNew,
         onDetails = onDetails,
+        onEdit = onEdit,
         modifier = modifier
     )
 }
@@ -83,6 +84,7 @@ fun OwnerListingsContent(
     onBack: () -> Unit,
     onRegisterNew: () -> Unit,
     onDetails: (Listing) -> Unit,
+    onEdit: (Listing) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -126,7 +128,11 @@ fun OwnerListingsContent(
                 }
             }
             items(listings, key = { it.id }) { listing ->
-                CampsiteCard(listing = listing, onDetailsClick = { onDetails(listing) })
+                CampsiteCard(
+                    listing = listing,
+                    onDetailsClick = { onDetails(listing) },
+                    onEditClick = { onEdit(listing) }
+                )
             }
         }
     }
@@ -137,7 +143,7 @@ fun OwnerListingsContent(
 private fun RegisterNewCampsiteButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onSurface,
             contentColor = MaterialTheme.colorScheme.surface

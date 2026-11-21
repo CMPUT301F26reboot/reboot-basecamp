@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -31,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.campsitereservationapp.ui.theme.PillShape
 
 /** Tag input field plus the chips for tags already added. */
 @Composable
@@ -71,7 +71,7 @@ internal fun TagsSection(tags: List<String>, onAddTag: (String) -> Unit, onRemov
 /** Removable chip for one tag. */
 @Composable
 private fun TagChip(tag: String, onRemove: () -> Unit) {
-    Surface(shape = RoundedCornerShape(50), color = MaterialTheme.colorScheme.surfaceVariant) {
+    Surface(shape = PillShape, color = MaterialTheme.colorScheme.surfaceVariant) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 12.dp, end = 4.dp, top = 6.dp, bottom = 6.dp)) {
             Text(tag, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelMedium)
             IconButton(onClick = onRemove, modifier = Modifier.size(20.dp)) {

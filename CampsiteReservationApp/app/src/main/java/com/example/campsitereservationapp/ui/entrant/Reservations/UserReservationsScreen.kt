@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
@@ -48,13 +47,9 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationFilter
 import java.util.Date
+import com.example.campsitereservationapp.ui.theme.PillShape
+import androidx.compose.foundation.shape.ZeroCornerSize
 
-private val buttonRed = Color(0xFFfef2f2)
-private val textRed = Color(0xFFb91c1c)
-private val outlineRed = Color(0xFFfecaca)
-private val buttonGreen = Color(0xFFcff7d3)
-private val textGreen = Color(0xFF166534)
-private val buttonGrey = Color(0xFFEAEAEA)
 
 /**
  * User Reservations screen — US 01.06.01 (view active), US 01.06.02 (view past + rate),
@@ -210,13 +205,13 @@ fun UserReservationContent(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                 colors = if (filter == ReservationFilter.All) {
                     ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
                     )
                 } else {
                     ButtonDefaults.buttonColors(
-                        containerColor = buttonGrey,
-                        contentColor = Color.Gray
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             ) {
@@ -230,13 +225,13 @@ fun UserReservationContent(
                 onClick = { onFilterChange(ReservationFilter.Reserved) },
                 colors = if (filter == ReservationFilter.Reserved) {
                     ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
                     )
                 } else {
                     ButtonDefaults.buttonColors(
-                        containerColor = buttonGrey,
-                        contentColor = Color.Gray
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -248,13 +243,13 @@ fun UserReservationContent(
                 onClick = { onFilterChange(ReservationFilter.Past) },
                 colors = if (filter == ReservationFilter.Past) {
                     ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
                     )
                 } else {
                     ButtonDefaults.buttonColors(
-                        containerColor = buttonGrey,
-                        contentColor = Color.Gray
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             ) {
@@ -317,7 +312,7 @@ fun UserReservationContent(
             text = { Text("Your dates will become available to other campers. This can't be undone.") },
             confirmButton = {
                 TextButton(onClick = onConfirmCancel) {
-                    Text("Yes, cancel", color = textRed)
+                    Text("Yes, cancel", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
@@ -335,7 +330,7 @@ fun UserReservationContent(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    //.background(Color.Black.copy(alpha = 0.5f)) // Dim background
+                    //.background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) // Dim background
                     .clickable { onDismissReview() }, // Click outside to close
                 contentAlignment = Alignment.BottomCenter
             ) {
@@ -343,8 +338,8 @@ fun UserReservationContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(enabled = false) {}, // Prevent clicks passing through
-                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                    color = Color.White
+                    shape = MaterialTheme.shapes.extraLarge.copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize),
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     val reservation = rows.firstOrNull { it.first.id == reviewingReservationId }
                     val campsiteName = reservation?.second?.name ?: "this campsite"
@@ -377,7 +372,7 @@ private fun ReservationCard(
     onLeaveReview: () -> Unit
 ) {
     Surface(
-        color = if(isPast){ Color.LightGray} else{Color.White},
+        color = if(isPast){ MaterialTheme.colorScheme.surfaceVariant} else{MaterialTheme.colorScheme.surface},
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier
             .fillMaxWidth()
@@ -388,7 +383,7 @@ private fun ReservationCard(
                 Box(
                     Modifier
                         .size(72.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(MaterialTheme.shapes.small)
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
@@ -439,12 +434,12 @@ private fun ReservationCard(
                     Spacer(Modifier.height(6.dp))
 
                     Surface(
-                        shape = RoundedCornerShape(50),
-                        color = if (isPast) buttonGrey else buttonGreen
+                        shape = PillShape,
+                        color = if (isPast) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.secondaryContainer
                     ) {
                         Text(
                             text = if (isPast) "Past reservation" else "Reserved",
-                            color = if (isPast) Color.Gray else textGreen,
+                            color = if (isPast) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSecondaryContainer,
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
                         )
@@ -463,8 +458,8 @@ private fun ReservationCard(
                         Button(
                             onClick = onOpen,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Black,
-                                contentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.onSurface,
+                                contentColor = MaterialTheme.colorScheme.surface
                             )
                         ) { Text("View") }
                     }
@@ -475,16 +470,16 @@ private fun ReservationCard(
                         OutlinedButton(
                             onClick = onCancel,
                             enabled = !isCancelling,
-                            border = BorderStroke(2.dp, outlineRed),
+                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f)),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = buttonRed // Changes inside color
+                                containerColor = MaterialTheme.colorScheme.errorContainer // Changes inside color
                             )
 
 
                         ) {
                             Text("Cancel Reservation",
                                 fontWeight = FontWeight.Bold,
-                                color = textRed)
+                                color = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -497,8 +492,8 @@ private fun ReservationCard(
                         Button(
                             onClick = onLeaveReview,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Black,
-                                contentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.onSurface,
+                                contentColor = MaterialTheme.colorScheme.surface
                             ),
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
                         ) {
@@ -547,7 +542,7 @@ private fun ReviewSheetContent(
                 Icon(
                     imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
                     contentDescription = "Rate $i",
-                    tint = if (i <= rating) Color.Black else Color.Gray,
+                    tint = if (i <= rating) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outline,
                     modifier = Modifier
                         .size(48.dp)
                         .clickable { onRatingChange(i) }
@@ -558,7 +553,7 @@ private fun ReviewSheetContent(
         Text(
             text = if (rating == 0) "Tap a star to rate" else "$rating out of 5 stars",
             style = MaterialTheme.typography.bodySmall,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(Modifier.height(32.dp))
@@ -569,8 +564,8 @@ private fun ReviewSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
-            shape = RoundedCornerShape(8.dp)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSurface),
+            shape = MaterialTheme.shapes.small
         ) {
             Text("Submit", fontWeight = FontWeight.Bold)
         }

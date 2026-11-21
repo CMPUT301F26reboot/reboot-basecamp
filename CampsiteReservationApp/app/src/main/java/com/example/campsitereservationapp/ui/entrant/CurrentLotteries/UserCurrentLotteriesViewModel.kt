@@ -37,7 +37,7 @@ class UserCurrentLotteriesViewModel: DatabaseModel() {
     internal fun getOngoingLotteries(profileID: String){
         ongoingLotteries.clear()
         for(lottery in _lotteries){
-            if(profileID in lottery.waitlist){
+            if(profileID in lottery.waitlist && !lottery.cancelled){
                 ongoingLotteries.add(lottery)
             }
         }
@@ -46,7 +46,7 @@ class UserCurrentLotteriesViewModel: DatabaseModel() {
     internal fun getWonLotteries(profileID: String){
         wonLotteries.clear()
         for(lottery in _lotteries){
-            if(profileID in lottery.selectedlist){
+            if(profileID in lottery.selectedlist && !lottery.cancelled){
                 wonLotteries.add(lottery)
             }
         }

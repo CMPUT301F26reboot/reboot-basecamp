@@ -4,18 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
-import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
-import com.example.campsitereservationapp.ui.theme.CampsiteReservationAppTheme
+import com.example.campsitereservationapp.ui.theme.CampsiteReservationTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CampsiteReservationApp()
+            CampsiteReservationTheme {
+                /* UserWonSelectionScreen(
+                    onBack = {},
+                    onFinished = {},
+                )*/
+
+                CampsiteReservationApp()
+            }
         }
     }
 }
-
-

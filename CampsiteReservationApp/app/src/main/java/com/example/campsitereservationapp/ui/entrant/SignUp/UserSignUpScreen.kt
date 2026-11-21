@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -38,7 +37,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -49,16 +47,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.R
 
-private val RebootGreen = Color(0xFF1A3A2C)
-private val LabelGray = Color(0xFF404040)
-private val TextGray = Color(0xFF3F3F46)
-private val HintGray = Color(0xFF6B7280)
-private val BorderGray = Color(0xFFE5E7EB)
-private val InputBorder = Color(0xFF757575)
 
 /**
  * Shown when the device is not recognized (US 01.09.01). A device that already has a profile is
@@ -99,10 +90,10 @@ fun UserSignUpScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = RebootGreen)
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
         return
     }
@@ -165,7 +156,7 @@ internal fun UserSignUpContent(
     snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(
@@ -186,9 +177,9 @@ internal fun UserSignUpContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = Color.White,
-                border = BorderStroke(1.dp, BorderGray),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 shadowElevation = 1.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -212,31 +203,31 @@ internal fun UserSignUpContent(
                     Button(
                         onClick = onCreateAccount,
                         enabled = !isSaving,
-                        colors = ButtonDefaults.buttonColors(containerColor = RebootGreen),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier
                             .widthIn(min = 155.dp)
                             .height(44.dp)
                     ) {
                         Text(
                             text = if (isSaving) "Creating Account..." else "Create Account",
-                            fontSize = 15.sp,
+                            style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Medium
                         )
                     }
                     Spacer(modifier = Modifier.height(20.dp))
-                    HorizontalDivider(color = BorderGray)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "Looking to create a camp owner account? Create ",
-                            fontSize = 12.sp,
-                            color = TextGray
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        SignUpLink("here", 12, onOwnerSignUp)
+                        SignUpLink("here", MaterialTheme.typography.bodySmall, onOwnerSignUp)
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    SignUpLink("Policies & Guidelines", 14, onPolicies)
+                    SignUpLink("Policies & Guidelines", MaterialTheme.typography.bodyMedium, onPolicies)
                 }
             }
         }
@@ -265,24 +256,24 @@ private fun SignUpField(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val colors = OutlinedTextFieldDefaults.colors(
-        unfocusedBorderColor = InputBorder,
-        focusedBorderColor = RebootGreen
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedBorderColor = MaterialTheme.colorScheme.primary
     )
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = label,
-            fontSize = 13.sp,
+            style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Medium,
-            color = LabelGray
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(4.dp))
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             singleLine = true,
-            textStyle = TextStyle(fontSize = 15.sp, color = Color.Black),
-            cursorBrush = SolidColor(RebootGreen),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             interactionSource = interactionSource,
             modifier = Modifier
@@ -297,7 +288,7 @@ private fun SignUpField(
                 visualTransformation = VisualTransformation.None,
                 interactionSource = interactionSource,
                 isError = error != null,
-                placeholder = { Text(text = placeholder, fontSize = 15.sp, color = HintGray) },
+                placeholder = { Text(text = placeholder, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 colors = colors,
                 contentPadding = PaddingValues(horizontal = 12.dp),
                 container = {
@@ -306,7 +297,7 @@ private fun SignUpField(
                         isError = error != null,
                         interactionSource = interactionSource,
                         colors = colors,
-                        shape = RoundedCornerShape(4.dp),
+                        shape = MaterialTheme.shapes.extraSmall,
                         focusedBorderThickness = 1.dp,
                         unfocusedBorderThickness = 1.dp
                     )
@@ -316,7 +307,7 @@ private fun SignUpField(
         if (error != null) {
             Text(
                 text = error,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(top = 2.dp)
             )
@@ -328,16 +319,16 @@ private fun SignUpField(
  * Underlined text that acts as a link.
  *
  * @param text the text to show.
- * @param fontSize the size of the text, in sp.
+ * @param style the text style to use.
  * @param onClick called when the user taps the text.
  */
 @Composable
-private fun SignUpLink(text: String, fontSize: Int, onClick: () -> Unit) {
+private fun SignUpLink(text: String, style: TextStyle, onClick: () -> Unit) {
     Text(
         text = text,
-        fontSize = fontSize.sp,
+        style = style,
         fontWeight = FontWeight.SemiBold,
-        color = RebootGreen,
+        color = MaterialTheme.colorScheme.primary,
         textDecoration = TextDecoration.Underline,
         modifier = Modifier.clickable(onClick = onClick)
     )
