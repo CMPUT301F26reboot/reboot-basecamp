@@ -51,7 +51,6 @@ import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScree
 
 @Composable
 fun AdminHomeScreen(
-    profileID: String,
     onBack: () -> Unit,
     onManageCampsites: () -> Unit,
     onManageProfiles: () -> Unit,
@@ -123,8 +122,6 @@ fun AdminHomeScreen(
     }
 
     HomeScreenProfileButton( onProfileClick = onProfile)
-
-
 
 
 }

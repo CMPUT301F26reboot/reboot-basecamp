@@ -358,7 +358,6 @@ fun CampsiteReservationApp() {
             route = "AdminHomeScreen"
         ){
             AdminHomeScreen(
-                profileID = ADMIN_ID,
                 onBack = {
                     navController.popBackStack()
                 },
