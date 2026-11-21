@@ -9,7 +9,7 @@ import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
  * Wraps [OwnerHomeScreen] and inserts the gold Exit Impersonation button.
  */
 @Composable
-fun AdminImpersonationOwnerScreen(
+fun AdminRoleSwitchOwnerScreen(
     profileId: String,
     onBack: () -> Unit = {},
     onManageLotteries: () -> Unit = {},
