@@ -43,8 +43,6 @@ fun OwnerHomeScreen(
     onManageCampsites: () -> Unit,
     onNotificationHistory: () -> Unit,
     onProfile: () -> Unit,
-    //slot to add exit impersonation for Admin Impersonation
-    adminExitImpersonation: @Composable ColumnScope.() -> Unit = {}
 ){
     OwnerHomeContent(
         profileId = profileId,
@@ -65,9 +63,6 @@ internal fun OwnerHomeContent(
     onManageCampsites: () -> Unit,
     onNotificationHistory: () -> Unit,
     onProfile: () -> Unit,
-    //slot to add exit impersonation for Admin Impersonation
-    adminExitImpersonation: @Composable ColumnScope.() -> Unit = {}
-
     ){
 
     Column(

@@ -44,8 +44,6 @@ fun UserHomeScreen(
     onMyReservations: () -> Unit,
     onNotifications: () -> Unit,
     onProfile: () -> Unit,
-    //slot to add exit impersonation for Admin Impersonation
-    adminExitImpersonation: @Composable ColumnScope.() -> Unit = {}
 ){
     UserHomeContent(
         profileId = profileId,
@@ -69,7 +67,6 @@ internal fun UserHomeContent(
     onMyReservations: () -> Unit,
     onNotifications: () -> Unit,
     onProfile: () -> Unit,
-    adminExitImpersonation: @Composable ColumnScope.() -> Unit = {}
 
 ){
     Column(
