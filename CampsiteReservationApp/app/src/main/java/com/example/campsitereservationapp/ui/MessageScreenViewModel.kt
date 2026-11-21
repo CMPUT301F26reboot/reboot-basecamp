@@ -59,6 +59,21 @@ class MessageScreenViewModel: DatabaseModel() {
 
     }
 
+    fun sendMessage(senderID: String, receiverID: String, text: String){
+        var myMessage = messagesRef.document()
+        val newMessage = Message(text, senderID, receiverID, Timestamp.now())
+        myMessage.set(newMessage)
+        myChat.update("messageIDList", FieldValue.arrayUnion(myMessage.id))
+    }
+
+    fun getName(profileID: String): String{
+        for(profile in _profiles){
+            if(profile.id == profileID){
+                return profile.name
+            }
+        }
+        return ""
+    }
     private fun idIsOwner(ID: String): Boolean{
         for(profile in _profiles){
             if(profile.id == ID && profile.role == "Owner"){
@@ -68,12 +83,7 @@ class MessageScreenViewModel: DatabaseModel() {
         return false
     }
 
-    fun sendMessage(senderID: String, receiverID: String, text: String){
-        var myMessage = messagesRef.document()
-        val newMessage = Message(text, senderID, receiverID, Timestamp.now())
-        myMessage.set(newMessage)
-        myChat.update("messageIDList", FieldValue.arrayUnion(myMessage.id))
-    }
+
 
     private fun getMessage(messageID: String): Message{
         for(message in _messages){
