@@ -55,9 +55,6 @@ fun UserHomeScreen(
         onMyReservations = onMyReservations,
         onNotifications = onNotifications,
         onProfile = onProfile,
-        //slot to add exit impersonation for Admin Impersonation
-        adminExitImpersonation = adminExitImpersonation
-
 
     )
 
@@ -179,6 +176,5 @@ internal fun UserHomeContent(
                 modifier = Modifier.size(35.dp)
             )
         }
-        adminExitImpersonation()
     }
 }

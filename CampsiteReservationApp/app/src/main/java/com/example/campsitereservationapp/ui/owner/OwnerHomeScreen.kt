@@ -53,8 +53,6 @@ fun OwnerHomeScreen(
         onManageCampsites = onManageCampsites,
         onNotificationHistory = onNotificationHistory,
         onProfile = onProfile,
-        //slot to add exit impersonation for Admin Impersonation
-        adminExitImpersonation = adminExitImpersonation
     )
 
 }
@@ -161,7 +159,6 @@ internal fun OwnerHomeContent(
                 modifier = Modifier.size(35.dp)
             )
         }
-        adminExitImpersonation()
     }
 }
 
