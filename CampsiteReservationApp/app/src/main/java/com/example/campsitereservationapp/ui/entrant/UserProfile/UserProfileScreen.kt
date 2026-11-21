@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.ui.components.StatusBadge
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.ui.theme.DeleteRed
 
@@ -80,6 +81,8 @@ import com.example.campsitereservationapp.ui.theme.DeleteRed
  * @param onBack called when the user taps the back button.
  * @param onPolicies called when the user taps "Policies & Guidelines".
  * @param onDeleted called once the profile has been deleted.
+ * @param isAdmin true when this device is an administrator. Shows an "Administrator" badge and
+ *        hides Delete Profile, so an admin can't leave admin rights behind without a profile.
  * @param viewModel holds the profile and makes changes to it.
  */
 @Composable
@@ -88,6 +91,7 @@ fun UserProfileScreen(
     onBack: () -> Unit,
     onPolicies: () -> Unit,
     onDeleted: () -> Unit,
+    isAdmin: Boolean = false,
     viewModel: UserProfileViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -141,7 +145,8 @@ fun UserProfileScreen(
         onDelete = viewModel::deleteProfile,
         onBack = onBack,
         onPolicies = onPolicies,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        isAdmin = isAdmin
     )
 }
 
@@ -165,6 +170,7 @@ fun UserProfileScreen(
  * @param onBack called when the user taps the back button.
  * @param onPolicies called when the user taps "Policies & Guidelines".
  * @param snackbarHostState shows confirmation and error messages.
+ * @param isAdmin shows the "Administrator" badge and hides Delete Profile.
  */
 @Composable
 internal fun UserProfileContent(
@@ -183,7 +189,8 @@ internal fun UserProfileContent(
     onDelete: () -> Unit,
     onBack: () -> Unit,
     onPolicies: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    isAdmin: Boolean = false
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -211,6 +218,15 @@ internal fun UserProfileContent(
         ) {
             BackButtonAndHeaderScreenComponent(onBack = onBack)
             Spacer(modifier = Modifier.height(16.dp))
+
+            if (isAdmin) {
+                StatusBadge(
+                    text = "Administrator",
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             ProfilePictureRow(profilePicture, isSaving, onEditPicture)
             Spacer(modifier = Modifier.height(24.dp))
@@ -254,20 +270,22 @@ internal fun UserProfileContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(
-                onClick = { showDeleteDialog = true },
-                enabled = !isSaving,
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = DeleteRed,
-                    contentColor = MaterialTheme.colorScheme.onError
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
-                Text(text = "Delete Profile", fontWeight = FontWeight.Bold)
+            if (!isAdmin) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = { showDeleteDialog = true },
+                    enabled = !isSaving,
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DeleteRed,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Text(text = "Delete Profile", fontWeight = FontWeight.Bold)
+                }
             }
 
             Spacer(modifier = Modifier.height(40.dp))

@@ -23,6 +23,7 @@ open class DatabaseModel :ViewModel() {
     protected var reservationsRef = db.collection("Reservations")
     protected var logentriesRef = db.collection("LogEntries")
     protected var chatsRef = db.collection("Chats")
+    protected var adminsRef = db.collection("Admins")
 
     //Every local copy of each collection
     protected var _listings = mutableStateListOf<Listing>()

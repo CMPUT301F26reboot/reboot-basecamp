@@ -1,6 +1,7 @@
 package com.example.campsitereservationapp
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
@@ -8,6 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
+import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
+import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
@@ -24,7 +29,7 @@ import com.example.campsitereservationapp.ui.entrant.WonSelection.UserWonSelecti
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
-import com.example.campsitereservationapp.ui.Owner.Lotterylist.OwnerLotteryListScreen
+import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryListScreen
 import com.example.campsitereservationapp.utils.getDeviceId
 import java.util.Date
 
@@ -34,6 +39,13 @@ import java.util.Date
 
 // OWNER_ID is hardcoded for now since no owner signup/device setup yet.
 private const val OWNER_ID = "test-owner"
+
+/**
+ * Sign-up forwards at once when the device
+ * already has a profile, so an admin with a profile goes straight to Admin Home and an admin
+ * without one signs up first, so every admin has a profile before reaching the admin screens.
+ */
+private const val SIGN_UP_ROUTE = "userSignUp?next={next}"
 
 @Composable
 fun CampsiteReservationApp() {
@@ -47,13 +59,22 @@ fun CampsiteReservationApp() {
         composable(
             route = "tempNav"
         ) {
+            val adminAccess: AdminAccessViewModel = viewModel()
+            LaunchedEffect(deviceId) {
+                adminAccess.check(deviceId)
+            }
+
             TempNavigationScreen(
                 profileId = deviceId,
+                showAdmin = adminAccess.isAdmin,
                 onUser = {
                     navController.navigate("userSignUp")
                 },
                 onOwner = {
                     navController.navigate("ownerHome")
+                },
+                onAdmin = {
+                    navController.navigate("userSignUp?next=adminHome")
                 }
             )
         }
@@ -61,12 +82,16 @@ fun CampsiteReservationApp() {
         // ------------------------ User/Entrant ------------------------- ///
 
         composable(
-            route = "userSignUp"
-        ){
+            route = SIGN_UP_ROUTE,
+            arguments = listOf(
+                navArgument("next") { type = NavType.StringType; nullable = true; defaultValue = null }
+            )
+        ){ entry ->
+            val next = entry.arguments?.getString("next")
             UserSignUpScreen(
                 onSignedUp = {
-                    navController.navigate("userHome") {
-                        popUpTo("userSignUp") { inclusive = true }
+                    navController.navigate(next ?: "userHome") {
+                        popUpTo(SIGN_UP_ROUTE) { inclusive = true }
                     }
                 },
                 onOwnerSignUp = {
@@ -117,8 +142,14 @@ fun CampsiteReservationApp() {
         composable(
             route = "userProfile"
         ){
+            val adminAccess: AdminAccessViewModel = viewModel()
+            LaunchedEffect(deviceId) {
+                adminAccess.check(deviceId)
+            }
+
             UserProfileScreen(
                 profileId = deviceId,
+                isAdmin = adminAccess.isAdmin,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -399,6 +430,46 @@ fun CampsiteReservationApp() {
                     navController.popBackStack()
                 },
             )
+        }
+
+        // ------------------------ Admin ------------------------- ///
+
+        composable(
+            route = "adminHome"
+        ){
+            AdminGate(
+                deviceId = deviceId,
+                onDenied = {
+                    navController.popBackStack()
+                }
+            ) {
+                AdminHomeScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onManageCampsites = {
+                        //navController.navigate("adminCampsites")
+                    },
+                    onManageProfiles = {
+                        //navController.navigate("adminProfiles")
+                    },
+                    onNotificationLogs = {
+                        //navController.navigate("adminNotificationLogs")
+                    },
+                    onMessageLogs = {
+                        //navController.navigate("adminMessageLogs")
+                    },
+                    onUserRoleSwitch = {
+                        navController.navigate("userHome")
+                    },
+                    onOwnerRoleSwitch = {
+                        navController.navigate("ownerHome")
+                    },
+                    onProfile = {
+                        navController.navigate("userProfile")
+                    }
+                )
+            }
         }
     }
 }
