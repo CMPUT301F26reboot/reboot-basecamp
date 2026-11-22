@@ -1,3 +1,10 @@
+/*
+ * CampsiteQrCode.kt
+ *
+ * Owner side of the campsite QR code feature (US 02.02.01). Generates a listing's promotional QR
+ * code with qrcode-kotlin, shows it in a dialog from the owner's campsite list, and lets the
+ * owner download it.
+ */
 package com.example.campsitereservationapp.qrcode
 
 import android.Manifest

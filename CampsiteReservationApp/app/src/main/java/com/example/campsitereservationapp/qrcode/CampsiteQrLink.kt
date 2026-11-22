@@ -1,3 +1,10 @@
+/*
+ * CampsiteQrLink.kt
+ *
+ * Defines the link encoded in every campsite QR code (basecamp://campsite/{listingId}). It is the
+ * single shared definition used to build the code on the owner side and to match the deep link
+ * that opens the campsite's details when an entrant scans it with their camera (US 01.12.01).
+ */
 package com.example.campsitereservationapp.qrcode
 
 /**
