@@ -101,7 +101,7 @@ class UserCampsiteDetailsViewModel : ListingViewModel() {
         val id = listingId ?: return emptyList()
         val now = Date()
         return _lotteries
-            .filter { id in it.campsiteIDs }
+            .filter { id in it.campsiteIDs && !it.cancelled }
             .filter { now in it.start..it.end}
             .filter { overlapsSearch(it) }
             .filter { profileId !in it.waitlist}
