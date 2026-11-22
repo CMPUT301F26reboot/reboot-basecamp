@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.coil.compose)
     implementation(libs.firebase.database)
+    implementation("io.github.g0dkar:qrcode-kotlin:4.5.0")
     coreLibraryDesugaring(libs.android.desugar.jdk.libs)
     testImplementation(libs.junit)
     testImplementation("io.mockk:mockk:1.14.5")
