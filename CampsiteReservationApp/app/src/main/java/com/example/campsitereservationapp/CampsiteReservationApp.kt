@@ -25,7 +25,7 @@ import com.example.campsitereservationapp.ui.entrant.WonSelection.UserWonSelecti
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
-import com.example.campsitereservationapp.ui.Owner.Lotterylist.OwnerLotteryListScreen
+import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryListScreen
 import com.example.campsitereservationapp.utils.getDeviceId
 import java.util.Date
 
@@ -269,7 +269,15 @@ fun CampsiteReservationApp() {
             UserNotificationsScreen(
                 profileId = deviceId,
                 onBack = { navController.navigate("userHome") },
-                onOpenNotif= {},
+                onOpenNotif= {notifType, reservationId, lotteryId ->
+                    // notification types: wonLottery, lostLottery, reserveConfirm, reserveCancel, ownerNotif
+                    if (notifType == "wonLottery" && lotteryId != ""){
+                        navController.navigate("userWonSelection/$lotteryId")
+                    }
+                    else if((notifType == "reserveConfirm" || notifType == "reserveCancel") && reservationId != ""){
+                        navController.navigate("userReservationDetails/$reservationId")
+                    }
+                },
             )
         }
 

@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.Owner.Lotterylist
+package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
