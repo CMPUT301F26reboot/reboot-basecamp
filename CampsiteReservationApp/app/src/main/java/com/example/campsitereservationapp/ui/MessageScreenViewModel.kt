@@ -5,10 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.LogEntry
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
@@ -24,7 +26,7 @@ class MessageScreenViewModel: DatabaseModel() {
 
     var myChat = chatsRef.document()
     var messages = mutableStateListOf<Message>()
-    
+
 
     /**
      * sets up the viewmodel
@@ -38,32 +40,18 @@ class MessageScreenViewModel: DatabaseModel() {
     fun start(yourID: String, otherID: String){
         var ownerID = otherID
         var entrantID = yourID
-        if(idIsOwner(yourID)){
-            ownerID = yourID
-            entrantID = otherID
-        }
-        chatsRef
-            .whereEqualTo("ownerID", ownerID)
-            .whereEqualTo("entrantID", entrantID)
+        profilesRef                                     //checks if you are the owner or not
+            .document(yourID)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val temp = querySnapshot.documents.firstOrNull()?.reference
-                if(temp != null){
-                    myChat = temp
-                }else{
-                    var tempChat = Chat(ownerID, entrantID)
-                    tempChat.id = myChat.id
-                    myChat.set(tempChat)
+            .addOnSuccessListener { snapshot ->
+                val profile = snapshot.toObject(Profile::class.java)
+                if(profile != null && profile.role == "Owner"){
+                    ownerID = yourID
+                    entrantID = otherID
                 }
 
-                addChatListener()
-
+                configureChat(ownerID, entrantID)       //gets the right chat or makes a new one
             }
-
-
-
-
-
     }
 
     /**
@@ -97,15 +85,27 @@ class MessageScreenViewModel: DatabaseModel() {
         }
         return ""
     }
-    private fun idIsOwner(ID: String): Boolean{
-        for(profile in _profiles){
-            if(profile.id == ID && profile.role == "Owner"){
-                return true
-            }
-        }
-        return false
-    }
 
+
+    private fun configureChat(ownerID: String, entrantID: String){
+        chatsRef
+            .whereEqualTo("ownerID", ownerID)
+            .whereEqualTo("entrantID", entrantID)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val temp = querySnapshot.documents.firstOrNull()?.reference
+                if(temp != null){
+                    myChat = temp
+                }else{
+                    var tempChat = Chat(ownerID = ownerID, entrantID = entrantID)
+                    tempChat.id = myChat.id
+                    myChat.set(tempChat)
+                }
+
+                addChatListener()           //adds a listener for changes in the chat
+
+            }
+    }
 
     private fun getMessage(messageID: String): Message{
         for(message in _messages){
@@ -136,5 +136,5 @@ class MessageScreenViewModel: DatabaseModel() {
             }
         }
     }
-    
+
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -33,7 +34,18 @@ fun MessageScreen(
     onBack: () -> Unit,
     vm: MessageScreenViewModel = viewModel()
 ){
-    vm.start(yourID, otherID)
+    var listState = rememberLazyListState()
+
+    LaunchedEffect(Unit) {
+        vm.start(yourID, otherID)
+    }
+
+    LaunchedEffect(vm.messages.size) {
+        if (vm.messages.isNotEmpty()) {
+            listState.animateScrollToItem(vm.messages.lastIndex)
+        }
+    }
+
     var nextText by remember {mutableStateOf("")}
     Column(
         modifier = Modifier
@@ -60,7 +72,8 @@ fun MessageScreen(
         LazyColumn(modifier = Modifier
             .fillMaxSize()
             .weight(1f),
-            verticalArrangement = Arrangement.Bottom
+            verticalArrangement = Arrangement.Bottom,
+            state = listState
         ){
             items(vm.messages){ message ->
                 if(message.senderID == yourID)
@@ -77,14 +90,14 @@ fun MessageScreen(
             TextField(
                 value = nextText,
                 onValueChange = {nextText = it},
-                modifier = Modifier.fillMaxWidth(0.75f)
+                modifier = Modifier.fillMaxWidth(0.7f)
             )
             Button(onClick = {
                 vm.sendMessage(yourID, otherID, nextText)
                 nextText = ""
             },
                 modifier = Modifier.fillMaxWidth()
-                ){
+            ){
                 Text("Send")
             }
         }
