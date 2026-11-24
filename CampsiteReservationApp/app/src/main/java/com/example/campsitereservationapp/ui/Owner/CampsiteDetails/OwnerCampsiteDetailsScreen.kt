@@ -46,7 +46,7 @@ import java.time.YearMonth
 import java.util.Locale
 
 /**
- * Owner details page for a single campsite.
+ * Owner details page for a single campsite. (US 02.01.04, US 02.06.01)
  *
  * Shows "Listing not found" if [listingId] matches no loaded listing. Otherwise, it
  * lays out, top to bottom: header, details card, reservation calendar, filter buttons
