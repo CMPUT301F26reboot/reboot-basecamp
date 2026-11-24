@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
+import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
@@ -35,6 +37,7 @@ import java.util.Date
 
 // OWNER_ID is hardcoded for now since no owner signup/device setup yet.
 private const val OWNER_ID = "test-owner"
+private const val SIGN_UP_ROUTE = "userSignUp?listingId={listingId}"
 
 @Composable
 fun CampsiteReservationApp() {
@@ -62,12 +65,17 @@ fun CampsiteReservationApp() {
         // ------------------------ User/Entrant ------------------------- ///
 
         composable(
-            route = "userSignUp"
-        ){
+            route = SIGN_UP_ROUTE,
+            arguments = listOf(
+                navArgument("listingId") { type = NavType.StringType; nullable = true; defaultValue = null }
+            ),
+            deepLinks = listOf(navDeepLink { uriPattern = CampsiteQrLink.URI_PATTERN })
+        ){ entry ->
+            val scannedListingId = entry.arguments?.getString("listingId")
             UserSignUpScreen(
                 onSignedUp = {
-                    navController.navigate("userHome") {
-                        popUpTo("userSignUp") { inclusive = true }
+                    navController.navigate(scannedListingId?.let { "campsiteDetails/$it" } ?: "userHome") {
+                        popUpTo(SIGN_UP_ROUTE) { inclusive = true }
                     }
                 },
                 onOwnerSignUp = {

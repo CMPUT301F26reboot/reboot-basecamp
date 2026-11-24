@@ -6,6 +6,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Cha
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.google.firebase.Firebase
@@ -21,6 +22,7 @@ open class DatabaseModel :ViewModel() {
     protected var reservationsRef = db.collection("Reservations")
     protected var notificationsRef = db.collection("Notifications")
     protected var chatsRef = db.collection("Chats")
+    protected var messagesRef = db.collection("Messages")
 
     //Every local copy of each collection
     protected var _listings = mutableStateListOf<Listing>()
@@ -29,6 +31,7 @@ open class DatabaseModel :ViewModel() {
     protected var _reservations = mutableStateListOf<Reservation>()
     protected var _notifications = mutableStateListOf<Notifications>()
     protected var _chats = mutableStateListOf<Chat>()
+    protected var _messages = mutableStateListOf<Message>()
 
 
 
@@ -117,6 +120,20 @@ open class DatabaseModel :ViewModel() {
                 val chat = document.toObject(Chat::class.java)
                 if(chat != null){
                     _chats.add(chat)
+                }
+            }
+        }
+
+        messagesRef.addSnapshotListener{ snapshot, error ->
+            if(error != null){
+                return@addSnapshotListener
+            }
+
+            _messages.clear()
+            snapshot?.documents?.forEach{document ->
+                val message = document.toObject(Message::class.java)
+                if(message != null){
+                    _messages.add(message)
                 }
             }
         }
