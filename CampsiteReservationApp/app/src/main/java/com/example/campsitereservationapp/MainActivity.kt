@@ -13,8 +13,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CampsiteReservationTheme {
-//                CampsiteReservationApp()
-                MessageScreen(  "V1hnZFPqEJQ4B2xCdEHM","W8liJRiysiUFhsZHVpKs",{})
+                CampsiteReservationApp()
+                //MessageScreen(  "V1hnZFPqEJQ4B2xCdEHM","W8liJRiysiUFhsZHVpKs",{})
             }
         }
     }
