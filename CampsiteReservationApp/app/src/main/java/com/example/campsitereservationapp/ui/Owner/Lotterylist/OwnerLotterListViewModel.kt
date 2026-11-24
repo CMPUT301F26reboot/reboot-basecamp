@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.Owner.Lotterylist
+package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
