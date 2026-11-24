@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.ui.theme.Forest30
+import com.example.campsitereservationapp.ui.theme.Gray100
+import com.example.campsitereservationapp.ui.theme.Gray200
 import com.example.campsitereservationapp.ui.theme.Gray50
 
 
@@ -141,7 +143,7 @@ fun otherMessage(
                 .wrapContentSize()
                 .widthIn(5.dp, 300.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Gray50)
+                .background(Gray200)
         ){
             Text(message.text, color = Color.Black, modifier = Modifier.padding(10.dp))
         }
