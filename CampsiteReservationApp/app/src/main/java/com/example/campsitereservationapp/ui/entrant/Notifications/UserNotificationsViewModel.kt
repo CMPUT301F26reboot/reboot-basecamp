@@ -66,6 +66,8 @@ class UserNotificationsViewModel: DatabaseModel(){
                     _searchResults.add(notification)
             }
         }
+        // Sort by descending timestamp so that newest notifications show first
+        _searchResults.sortByDescending{ it.timestamp }
     }
 
     /**
