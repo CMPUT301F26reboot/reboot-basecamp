@@ -9,7 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
@@ -41,11 +43,14 @@ import java.util.Date
 private const val OWNER_ID = "test-owner"
 
 /**
- * Sign-up forwards at once when the device
- * already has a profile, so an admin with a profile goes straight to Admin Home and an admin
- * without one signs up first, so every admin has a profile before reaching the admin screens.
+ * Sign-up route. Sign-up forwards at once when the device already has a profile.
+ *  - next: where to go after sign-up. The Admin button passes next=adminHome, so an admin
+ *    without a profile signs up first and an admin with one goes straight to Admin Home.
+ *  - listingId: filled in by the campsite QR deep link (basecamp://campsite/{listingId}), so a
+ *    scanned code opens that campsite's details after the sign-up check.
+ * With neither, sign-up goes to userHome.
  */
-private const val SIGN_UP_ROUTE = "userSignUp?next={next}"
+private const val SIGN_UP_ROUTE = "userSignUp?next={next}&listingId={listingId}"
 
 @Composable
 fun CampsiteReservationApp() {
@@ -84,13 +89,19 @@ fun CampsiteReservationApp() {
         composable(
             route = SIGN_UP_ROUTE,
             arguments = listOf(
-                navArgument("next") { type = NavType.StringType; nullable = true; defaultValue = null }
-            )
+                navArgument("next") { type = NavType.StringType; nullable = true; defaultValue = null },
+                navArgument("listingId") { type = NavType.StringType; nullable = true; defaultValue = null }
+            ),
+            deepLinks = listOf(navDeepLink { uriPattern = CampsiteQrLink.URI_PATTERN })
         ){ entry ->
             val next = entry.arguments?.getString("next")
+            val scannedListingId = entry.arguments?.getString("listingId")
             UserSignUpScreen(
                 onSignedUp = {
-                    navController.navigate(next ?: "userHome") {
+                    val destination = next
+                        ?: scannedListingId?.let { "campsiteDetails/$it" }
+                        ?: "userHome"
+                    navController.navigate(destination) {
                         popUpTo(SIGN_UP_ROUTE) { inclusive = true }
                     }
                 },
