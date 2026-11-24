@@ -19,6 +19,8 @@ class Lottery(var dates: List<Date> = emptyList(),
 
     var lotteryWinners: Int? = null
 
+    var cancelled: Boolean = false
+
     /** Adds [entrant] to this lottery's waitlist.
      *
      * Takes the DeviceID of the entrant and adds it to the waiting list*/

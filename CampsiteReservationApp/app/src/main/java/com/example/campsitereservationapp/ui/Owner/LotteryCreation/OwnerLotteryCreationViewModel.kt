@@ -42,4 +42,49 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
 
     }
 
+    /** Returns the lottery with [lotteryId], or null until it has loaded (or if it was deleted). */
+    fun getLottery(lotteryId: String): Lottery? = _lotteries.firstOrNull { it.id == lotteryId }
+
+    /**
+     * Saves the edited fields onto the existing lottery [lotteryId]. Only the fields the form
+     * edits are changed, so the waitlist and drawn winners are kept.
+     * @param onSuccess event call after the lottery is saved
+     */
+    fun updateLottery(
+        lotteryId: String,
+        dates: List<Date>,
+        title: String,
+        start: Date,
+        end: Date,
+        campsiteIDs: List<String>,
+        winnersToDraw: Int,
+        waitlistCap: Int,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ) {
+        val changes = mapOf(
+            "title" to title,
+            "dates" to dates,
+            "start" to start,
+            "end" to end,
+            "campsiteIDs" to campsiteIDs,
+            "lotteryWinners" to winnersToDraw,
+            "waitlistCapacity" to waitlistCap
+        )
+        lotteriesRef.document(lotteryId).update(changes)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure() }
+    }
+
+    /**
+     * Cancels lottery [lotteryId] by marking it as cancelled. The lottery stays in Firestore and
+     * shows under the owner's Cancelled tab.
+     * @param onSuccess event call after the lottery is cancelled
+     */
+    fun cancelLottery(lotteryId: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
+        lotteriesRef.document(lotteryId).update("cancelled", true)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure() }
+    }
+
 }
