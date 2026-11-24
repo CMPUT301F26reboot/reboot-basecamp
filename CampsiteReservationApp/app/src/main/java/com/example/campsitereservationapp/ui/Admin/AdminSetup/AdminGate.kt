@@ -15,6 +15,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+/** What [AdminGate] shows: the loading spinner, the admin screen, or nothing (access denied). */
+enum class AdminGateState { Loading, Allowed, Denied }
+
+/**
+ * Decides what [AdminGate] shows from the admin check. Kept separate from the composable so it can
+ * be unit tested without a screen or Firestore.
+ *
+ * @param isChecking true while the `Admins` lookup is still running.
+ * @param isAdmin true if the lookup found this device in `Admins`.
+ * @return [AdminGateState.Loading] while checking, otherwise [AdminGateState.Allowed] for an admin
+ *  and [AdminGateState.Denied] for anyone else.
+ */
+fun adminGateState(isChecking: Boolean, isAdmin: Boolean): AdminGateState = when {
+    isChecking -> AdminGateState.Loading
+    isAdmin -> AdminGateState.Allowed
+    else -> AdminGateState.Denied
+}
+
 /**
  * Wraps an admin-only screen. Shows a spinner while [AdminAccessViewModel] checks the device, shows
  * [content] if the device is an admin, and calls [onDenied] otherwise. Used on every admin route so
@@ -36,13 +54,13 @@ fun AdminGate(
         viewModel.check(deviceId)
     }
 
-    val denied = !viewModel.isChecking && !viewModel.isAdmin
-    LaunchedEffect(denied) {
-        if (denied) onDenied()
+    val state = adminGateState(viewModel.isChecking, viewModel.isAdmin)
+    LaunchedEffect(state) {
+        if (state == AdminGateState.Denied) onDenied()
     }
 
-    when {
-        viewModel.isChecking -> Box(
+    when (state) {
+        AdminGateState.Loading -> Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
@@ -50,6 +68,7 @@ fun AdminGate(
         ) {
             CircularProgressIndicator()
         }
-        viewModel.isAdmin -> content()
+        AdminGateState.Allowed -> content()
+        AdminGateState.Denied -> Unit
     }
 }
