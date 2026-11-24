@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
@@ -299,7 +300,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("ownerCampDetails")
                 },
                 onDetails = { listing ->
-                    //navController.navigate("ownerCampUpdate/${listing.id}")
+                    navController.navigate("ownerCampView/${listing.id}")
                 },
                 onEdit = { listing ->
                     navController.navigate("ownerCampEdit/${listing.id}")
@@ -371,6 +372,22 @@ fun CampsiteReservationApp() {
                 onPublished = {
                     navController.popBackStack()
                 },
+            )
+        }
+        composable(
+            route = "ownerCampView/{listingId}",
+            arguments = listOf(
+                navArgument("listingId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+            OwnerCampsiteDetailsScreen(
+                listingId = entry.arguments?.getString("listingId").orEmpty(),
+                onBack = {
+                    navController.popBackStack()
+                },
+                onOpenReservation = {}
             )
         }
     }

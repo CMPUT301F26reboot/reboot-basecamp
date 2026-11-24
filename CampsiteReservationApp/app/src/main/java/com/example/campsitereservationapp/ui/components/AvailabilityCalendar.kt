@@ -74,6 +74,7 @@ import java.util.Date
  *        jumps to it, unless the user has already moved to another month.
  * @param firstDayOfWeek which weekday the columns start on.
  * @param showLegend shows the "Green: available · Grey: unavailable" caption.
+ * @param viewReservations shows the "Green: reserved nights · Grey: no reservation" caption.
  */
 @Composable
 fun AvailabilityCalendar(
@@ -84,7 +85,8 @@ fun AvailabilityCalendar(
     title: String? = null,
     initialMonth: YearMonth? = null,
     firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
-    showLegend: Boolean = false
+    showLegend: Boolean = false,
+    viewReservations: Boolean = false,
 ) {
     var shownMonth by rememberSaveable(stateSaver = YearMonthSaver) {
         mutableStateOf(initialMonth ?: YearMonth.now())
@@ -132,6 +134,14 @@ fun AvailabilityCalendar(
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = "Green: available · Grey: unavailable",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (viewReservations){
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Green: reserved nights · Grey: no reservation",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
