@@ -1,3 +1,6 @@
+/**
+ * UI Component of HomeScreen -> Top Back Button
+ */
 package com.example.campsitereservationapp.ui.Admin.HomeScreenComponents
 
 import androidx.compose.foundation.layout.Column

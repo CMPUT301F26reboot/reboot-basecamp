@@ -125,7 +125,7 @@ internal fun TempNavigationContent(
             }
         }
 
-        /*
+
         Spacer(Modifier.height(16.dp))
         SelectionContainer {
             Text(
@@ -134,7 +134,7 @@ internal fun TempNavigationContent(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        */
+
     }
 }
 

@@ -1,3 +1,6 @@
+/**
+ * Simply shows a "loading" UI when checking if a device is an admin
+ */
 package com.example.campsitereservationapp.ui.Admin.AdminSetup
 
 import androidx.compose.foundation.background

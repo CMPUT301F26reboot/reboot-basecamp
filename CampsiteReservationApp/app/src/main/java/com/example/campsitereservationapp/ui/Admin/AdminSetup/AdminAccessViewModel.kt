@@ -1,3 +1,6 @@
+/**
+ * Main Purpose, checks if device belongs to an Admin
+ */
 package com.example.campsitereservationapp.ui.Admin.AdminSetup
 
 import androidx.compose.runtime.getValue

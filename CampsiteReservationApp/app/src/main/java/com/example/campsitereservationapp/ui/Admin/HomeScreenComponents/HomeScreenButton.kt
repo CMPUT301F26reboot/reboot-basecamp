@@ -1,3 +1,6 @@
+/**
+ * UI Component of HomeScreen -> Main Buttons
+ */
 package com.example.campsitereservationapp.ui.Admin.HomeScreenComponents
 
 import androidx.compose.foundation.layout.PaddingValues

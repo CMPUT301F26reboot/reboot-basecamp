@@ -1,3 +1,6 @@
+/**
+ * Admin Home Screen, main purpose it to navigate to other screens
+ */
 package com.example.campsitereservationapp.ui.Admin
 
 import androidx.compose.animation.AnimatedVisibility
