@@ -14,5 +14,5 @@ import com.google.firebase.firestore.DocumentId
 class Chat (val ownerID: String = "", val entrantID: String = ""){
     @DocumentId
     var id = ""
-    var LogIDList = emptyList<String>() //list of LogEntry ids
+    var messageIDList = emptyList<String>() //list of LogEntry ids
 }

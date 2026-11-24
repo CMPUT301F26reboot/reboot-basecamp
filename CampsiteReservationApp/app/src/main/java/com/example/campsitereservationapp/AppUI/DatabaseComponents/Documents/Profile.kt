@@ -23,4 +23,5 @@ class Profile(var name: String = "",
     var phoneNumber = ""
     var profilePicture = "" //Base64 text, see PhotoUtils
     var notificationsEnabled = true
+    var role = ""           //either Entrant, Owner, or Admin for entrant, owner, and admin
 }
