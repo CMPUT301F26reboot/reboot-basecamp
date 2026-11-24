@@ -1,5 +1,6 @@
 /**
- * Simply shows a "loading" UI when checking if a device is an admin
+ * Gate for AdminAccessViewModel, shows a loading UI while checking, returns action if
+ * admin check returns failure
  */
 package com.example.campsitereservationapp.ui.Admin.AdminSetup
 
