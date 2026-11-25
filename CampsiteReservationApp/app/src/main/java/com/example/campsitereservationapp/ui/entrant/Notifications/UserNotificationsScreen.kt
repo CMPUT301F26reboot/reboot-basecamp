@@ -21,9 +21,7 @@
  *
  * Outstanding issues:
  *  - Filtering by date is not implemented yet (unsure if we will).
- *  - Exactly where certain notifications lead need to be worked through
- *  - Reservations screen currently do not load reservation status
- *  - Do not have CSV support
+ *  - Maybe impliment delete feature?
  */
 
 package com.example.campsitereservationapp.ui.entrant.Notifications

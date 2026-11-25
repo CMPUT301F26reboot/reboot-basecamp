@@ -7,10 +7,6 @@
  * ViewModel for the entrant's Notifications screen. Filters the live Notifications collection
  * (inherited from DatabaseModel) down to the current entrant, searches it by keyword, and
  * marks notifications as viewed.
- *
- * Outstanding issues:
- *  - markViewed sets one shared "viewed" field, so it marks the notification viewed for
- *    every recipient, not just the current entrant.
  */
 
 package com.example.campsitereservationapp.ui.entrant.Notifications;
