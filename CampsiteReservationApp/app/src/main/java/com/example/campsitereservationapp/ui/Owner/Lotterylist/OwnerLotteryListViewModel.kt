@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
  *  - No claim count for completed lotteries yet; winners can't book from a lottery until that
  *    flow exists - since also the winners automatically selected also is not implemented
  */
-class OwnerLotterListViewModel : DatabaseModel() {
+class OwnerLotteryListViewModel : DatabaseModel() {
 
     /** The filter tab currently selected. */
     var selectedFilter by mutableStateOf(LotteryFilter.ALL)

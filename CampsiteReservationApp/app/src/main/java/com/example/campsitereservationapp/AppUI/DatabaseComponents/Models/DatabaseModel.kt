@@ -24,6 +24,7 @@ open class DatabaseModel :ViewModel() {
     protected var reservationsRef = db.collection("Reservations")
     protected var logentriesRef = db.collection("LogEntries")
     protected var chatsRef = db.collection("Chats")
+    protected var adminsRef = db.collection("Admins")
     protected var messagesRef = db.collection("Messages")
 
     //Every local copy of each collection
