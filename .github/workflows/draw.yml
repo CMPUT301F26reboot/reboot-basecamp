@@ -9,7 +9,7 @@
 name: draw-lotteries
 on:
   schedule:
-    - cron: "0 * * * *"  # Runs every 60 minutes (hour)
+    - cron: "*/5 * * * *"  # Runs every 60 minutes (hour)
   workflow_dispatch:
 
 jobs:
