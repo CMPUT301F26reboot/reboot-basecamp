@@ -87,32 +87,10 @@ class MapViewModel : ViewModel() {
         }
     }
 
-    /** EVENT 2 trigger: the next tap on the map drops a pin. */
     fun startPinDrop() {
         isPinDropMode = true
     }
 
-    /** EVENT 1: moves the map to the device's current GPS position.
-     * Only call after location permission is granted (see MapScreenComponent). */
-    @SuppressLint("MissingPermission")
-    fun moveToCurrentLocation(context: Context) {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val provider = if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            LocationManager.GPS_PROVIDER
-        } else {
-            LocationManager.NETWORK_PROVIDER
-        }
-        LocationManagerCompat.getCurrentLocation(
-            locationManager,
-            provider,
-            CancellationSignal(),
-            ContextCompat.getMainExecutor(context) //result arrives on main thread, as MapCompose needs
-        ) { location ->
-            if (location != null) { //null when no fix (e.g. location turned off)
-                moveTo(location.latitude, location.longitude)
-            }
-        }
-    }
 
 
     //moves map center to new location and pins a marker there
@@ -160,7 +138,7 @@ class MapViewModel : ViewModel() {
 /** Connects to https://www.openstreetmap.org/ and returns specified tiles needed for map
  *
  */
-private fun makeTileStreamProvider() = TileStreamProvider { row, col, zoomLvl ->
+internal fun makeTileStreamProvider() = TileStreamProvider { row, col, zoomLvl ->
     runCatching {
         // 1. Creates URL object in memory (NO network activity yet)
         val url = URL("https://tile.openstreetmap.org/$zoomLvl/$col/$row.png")
@@ -181,7 +159,7 @@ private fun makeTileStreamProvider() = TileStreamProvider { row, col, zoomLvl ->
 /** Normalization function for viewmodel
  *
  */
-private fun latLonToNormalized(latitude: Double, longitude: Double): Pair<Double, Double> {
+internal fun latLonToNormalized(latitude: Double, longitude: Double): Pair<Double, Double> {
     //converts lat/lon (3D earth sphere) to normalized (2D tile)
     val x = (longitude + 180.0) / 360.0
     val latRad = Math.toRadians(latitude)
@@ -190,7 +168,7 @@ private fun latLonToNormalized(latitude: Double, longitude: Double): Pair<Double
 }
 
 /** Reverse of latLonToNormalized: normalized (2D tile) to lat/lon */
-private fun normalizedToLatLon(x: Double, y: Double): Pair<Double, Double> {
+internal fun normalizedToLatLon(x: Double, y: Double): Pair<Double, Double> {
     val longitude = x * 360.0 - 180.0
     val latitude = Math.toDegrees(atan(sinh(PI * (1.0 - 2.0 * y))))
     return Pair(latitude, longitude)
