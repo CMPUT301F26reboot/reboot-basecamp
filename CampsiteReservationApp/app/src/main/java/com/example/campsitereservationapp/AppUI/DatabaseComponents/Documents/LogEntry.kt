@@ -1,4 +1,7 @@
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
-class LogEntry { //TODO
+import com.google.firebase.firestore.DocumentId
+
+class LogEntry (
+){
 }

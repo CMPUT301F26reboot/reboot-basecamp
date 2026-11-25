@@ -30,6 +30,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
+import com.example.campsitereservationapp.qrcode.CampsiteQrDialog
 
 
 /**
@@ -47,8 +52,6 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.Listin
  * @param onDetails -> event -> navigate to details of selected campsite
  * @param modifier [Modifier] to be applied to the root composable of the screen layout.
  * Outstanding issues:
- *  - No edit icon to edit a listing yet.
- *  - No QR code icon yet.
  *  - Ratings aren't collected by the app yet; the number shown is just existing data hardcoded in to firebase.
  *  - Tapping Details doesn't open a campsite details view yet.
  */
@@ -75,8 +78,8 @@ fun OwnerListingsScreen(
 }
 
 /**
- * Pure UI for the campsite list. Stateless so it can be driven entirely by its parameters in a
- * Compose Preview, with no database involved.
+ * Pure UI for the campsite list. Driven entirely by its parameters in a Compose Preview, with no
+ * database involved. The only state it keeps is which campsite's QR code dialog is open.
  */
 @Composable
 fun OwnerListingsContent(
@@ -87,6 +90,8 @@ fun OwnerListingsContent(
     onEdit: (Listing) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var qrListing by remember { mutableStateOf<Listing?>(null) }
+
     Scaffold(
         modifier = modifier,
         bottomBar = {
@@ -131,10 +136,19 @@ fun OwnerListingsContent(
                 CampsiteCard(
                     listing = listing,
                     onDetailsClick = { onDetails(listing) },
-                    onEditClick = { onEdit(listing) }
+                    onEditClick = { onEdit(listing) },
+                    onQrCodeClick = { qrListing = listing }
                 )
             }
         }
+    }
+
+    qrListing?.let { listing ->
+        CampsiteQrDialog(
+            campsiteName = listing.name,
+            listingId = listing.id,
+            onDismiss = { qrListing = null }
+        )
     }
 }
 

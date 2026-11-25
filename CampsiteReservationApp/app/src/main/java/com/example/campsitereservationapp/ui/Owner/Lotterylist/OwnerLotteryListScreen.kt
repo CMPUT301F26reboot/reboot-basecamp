@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.Owner.Lotterylist
+package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,7 +30,7 @@ import java.util.Date
 
 /**
  * Lists the owner's lotteries with tabs to filter by status, and a button to create
- * a new lottery. Stateful wrapper that wires [OwnerLotterListViewModel] to
+ * a new lottery. Stateful wrapper that wires [OwnerLotteryListViewModel] to
  * [OwnerLotteryListContent].
  *
  * @param ownerId the current owner. Comes from device identification once that exists.
@@ -51,7 +51,7 @@ fun OwnerLotteryListScreen(
     onEditLottery: (String) -> Unit,
     onViewResults: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: OwnerLotterListViewModel = viewModel()
+    viewModel: OwnerLotteryListViewModel = viewModel()
 ) {
     OwnerLotteryListContent(
         lotteries = viewModel.ownerLotteries(ownerId),
