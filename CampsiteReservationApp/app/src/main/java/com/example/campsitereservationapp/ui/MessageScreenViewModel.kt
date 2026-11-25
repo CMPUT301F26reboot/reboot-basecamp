@@ -3,7 +3,6 @@ package com.example.campsitereservationapp.ui
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.LogEntry
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
