@@ -14,6 +14,9 @@ import com.google.firebase.firestore.DocumentId
  * @property phoneNumber the user's phone number, as they typed it.
  * @property profilePicture the user's photo as Base64 text, or empty if they haven't added one.
  * @property notificationsEnabled whether the user wants to receive notifications.
+ * @property role [ROLE_ENTRANT] or [ROLE_OWNER], chosen at sign up; decides which home screen the
+ *  app opens on. Admins are not a role: they are listed in the Admins collection, which users
+ *  cannot edit.
  */
 class Profile(var name: String = "",
               val deviceId: String = "") {
@@ -23,5 +26,10 @@ class Profile(var name: String = "",
     var phoneNumber = ""
     var profilePicture = "" //Base64 text, see PhotoUtils
     var notificationsEnabled = true
-    var role = ""           //either Entrant, Owner, or Admin for entrant, owner, and admin
+    var role = ROLE_ENTRANT
+
+    companion object {
+        const val ROLE_ENTRANT = "Entrant"
+        const val ROLE_OWNER = "Owner"
+    }
 }

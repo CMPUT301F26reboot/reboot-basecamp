@@ -18,16 +18,20 @@ open class ProfileCreatingViewModel : DatabaseModel() {
     fun readDeviceId(context: Context): String = getDeviceId(context)
 
     /**
-     * Passes true to [onResult] if [deviceId] already has a profile. Passes false if it doesn't or
-     * if the check fails, so that the user still gets the sign up form.
+     * Passes the role of [deviceId]'s profile to [onResult], or null if the device has no profile
+     * or the check fails, so that the user still gets the sign up form. A profile saved before
+     * roles existed has no role and counts as an entrant.
      *
      * @param deviceId the device to look for.
-     * @param onResult called with whether the device has a profile.
+     * @param onResult called with the profile's role, or null if there is no profile.
      */
-    protected fun profileExists(deviceId: String, onResult: (Boolean) -> Unit) {
+    protected fun findProfileRole(deviceId: String, onResult: (String?) -> Unit) {
         profilesRef.document(deviceId).get()
-            .addOnSuccessListener { document -> onResult(document.exists()) }
-            .addOnFailureListener { onResult(false) }
+            .addOnSuccessListener { document ->
+                if (!document.exists()) onResult(null)
+                else onResult(document.getString("role")?.takeIf { it.isNotBlank() } ?: Profile.ROLE_ENTRANT)
+            }
+            .addOnFailureListener { onResult(null) }
     }
 
     /**

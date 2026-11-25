@@ -1,8 +1,12 @@
 package com.example.campsitereservationapp
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,7 +20,7 @@ import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewMod
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
-import com.example.campsitereservationapp.ui.TempNavigationScreen
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.entrant.UserHomeScreen
 import com.example.campsitereservationapp.ui.entrant.SignUp.PoliciesScreen
@@ -46,9 +50,27 @@ import java.util.Date
  *    without a profile signs up first and an admin with one goes straight to Admin Home.
  *  - listingId: filled in by the campsite QR deep link (basecamp://campsite/{listingId}), so a
  *    scanned code opens that campsite's details after the sign-up check.
- * With neither, sign-up goes to userHome.
  */
-private const val SIGN_UP_ROUTE = "userSignUp?next={next}&listingId={listingId}"
+private const val SIGN_UP_ROUTE = "userSignUp?listingId={listingId}"
+
+/**
+ * Picks the screen to open once the device is signed in.
+ *  - A scanned campsite QR code opens that campsite's details.
+ *  - A device in the Admins collection opens Admin Home (Role Switch reaches the other homes).
+ *  - An owner profile opens Owner Home (manage campsites, manage lotteries).
+ *  - Anyone else opens User Home.
+ *
+ * @param isAdmin true if this device is in the Admins collection.
+ * @param role the profile's role, Profile.ROLE_ENTRANT or Profile.ROLE_OWNER.
+ * @param scannedListingId the listing from a scanned QR code, or null.
+ * @return the route to navigate to.
+ */
+internal fun homeRouteFor(isAdmin: Boolean, role: String, scannedListingId: String?): String = when {
+    scannedListingId != null -> "campsiteDetails/$scannedListingId"
+    isAdmin -> "adminHome"
+    role == Profile.ROLE_OWNER -> "ownerHome"
+    else -> "userHome"
+}
 
 @Composable
 fun CampsiteReservationApp() {
@@ -58,53 +80,44 @@ fun CampsiteReservationApp() {
     val context = LocalContext.current
     val deviceId = remember { getDeviceId(context) }
 
-    NavHost(navController = navController, startDestination = "tempNav") {
-        composable(
-            route = "tempNav"
-        ) {
-            val adminAccess: AdminAccessViewModel = viewModel()
-            LaunchedEffect(deviceId) {
-                adminAccess.check(deviceId)
-            }
+    // Home screens are the bottom of the stack, so their back button leaves the app unless an
+    // admin reached them through Role Switch.
+    val backOrExit: () -> Unit = {
+        if (navController.previousBackStackEntry != null) navController.popBackStack()
+        else (context as? Activity)?.finish()
+    }
 
-            TempNavigationScreen(
-                profileId = deviceId,
-                showAdmin = adminAccess.isAdmin,
-                onUser = {
-                    navController.navigate("userSignUp")
-                },
-                onOwner = {
-                    navController.navigate("userSignUp?next=ownerHome")
-                },
-                onAdmin = {
-                    navController.navigate("userSignUp?next=adminHome")
-                }
-            )
-        }
+    NavHost(navController = navController, startDestination = SIGN_UP_ROUTE) {
 
         // ------------------------ User/Entrant ------------------------- ///
 
         composable(
             route = SIGN_UP_ROUTE,
             arguments = listOf(
-                navArgument("next") { type = NavType.StringType; nullable = true; defaultValue = null },
                 navArgument("listingId") { type = NavType.StringType; nullable = true; defaultValue = null }
             ),
             deepLinks = listOf(navDeepLink { uriPattern = CampsiteQrLink.URI_PATTERN })
         ){ entry ->
-            val next = entry.arguments?.getString("next")
             val scannedListingId = entry.arguments?.getString("listingId")
-            UserSignUpScreen(
-                onSignedUp = {
-                    val destination = next
-                        ?: scannedListingId?.let { "campsiteDetails/$it" }
-                        ?: "userHome"
-                    navController.navigate(destination) {
+            val adminAccess: AdminAccessViewModel = viewModel()
+            LaunchedEffect(deviceId) {
+                adminAccess.check(deviceId)
+            }
+
+            // Wait for both the sign-up and the admin check before choosing the home screen.
+            var signedInRole by remember { mutableStateOf<String?>(null) }
+            LaunchedEffect(signedInRole, adminAccess.isChecking) {
+                val role = signedInRole
+                if (role != null && !adminAccess.isChecking) {
+                    navController.navigate(homeRouteFor(adminAccess.isAdmin, role, scannedListingId)) {
                         popUpTo(SIGN_UP_ROUTE) { inclusive = true }
                     }
-                },
-                onOwnerSignUp = {
-                    //navController.navigate("ownerSignUp")
+                }
+            }
+
+            UserSignUpScreen(
+                onSignedUp = { role ->
+                    signedInRole = role
                 },
                 onPolicies = {
                     navController.navigate("policies")
@@ -127,9 +140,7 @@ fun CampsiteReservationApp() {
         ){
             UserHomeScreen(
                 profileId = deviceId,
-                onBack = {
-                    navController.navigate("tempNav")
-                },
+                onBack = backOrExit,
                 onSearchCampsites = {
                     navController.navigate("userSearchCampsites")
                 },
@@ -167,7 +178,7 @@ fun CampsiteReservationApp() {
                 },
                 onDeleted = {
                     navController.navigate("userSignUp") {
-                        popUpTo("tempNav")
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 }
             )
@@ -309,9 +320,7 @@ fun CampsiteReservationApp() {
         ){
             OwnerHomeScreen(
                 profileId = deviceId,
-                onBack = {
-                    navController.navigate("tempNav")
-                },
+                onBack = backOrExit,
                 onManageLotteries = {
                     navController.navigate("ownerLotteries")
                 },
@@ -449,13 +458,13 @@ fun CampsiteReservationApp() {
             AdminGate(
                 deviceId = deviceId,
                 onDenied = {
-                    navController.popBackStack()
+                    navController.navigate("userHome") {
+                        popUpTo("adminHome") { inclusive = true }
+                    }
                 }
             ) {
                 AdminHomeScreen(
-                    onBack = {
-                        navController.popBackStack()
-                    },
+                    onBack = backOrExit,
                     onManageCampsites = {
                         //navController.navigate("adminCampsites")
                     },
