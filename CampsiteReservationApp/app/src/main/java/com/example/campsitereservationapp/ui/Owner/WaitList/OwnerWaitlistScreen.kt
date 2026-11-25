@@ -31,8 +31,10 @@ fun OwnerWaitlistScreen(
 ){
     //get needed information
     val lottery = viewModel.getLottery(lotteryID)
+    val registrationWindowDates = viewModel.getFormatedRegistrationWindowDates(lottery)
+    val bookingStayDates = viewModel.getFormatedBookingStayDatesDates(lottery)
     val waitlist = lottery?.waitlist ?: emptyList()
-
+    val selectedlist = lottery?.selectedlist?: emptyList()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,13 +51,15 @@ fun OwnerWaitlistScreen(
 
         LotteryInfoHeader(
             title = lottery?.title,
-            formatedDates = viewModel.getFormatedDates(lottery)
+            registrationWindowDates = registrationWindowDates,
+            bookingStayDates = bookingStayDates
+
         )
 
         Spacer(Modifier.height(24.dp))
 
         Text(
-            text = "People in waitlist (${waitlist.size})",
+            text = "Entrants (${waitlist.size + selectedlist.size})",
             style = TextStyle( // altered headline medium
                 fontFamily = FontFamily.Default,
                 fontWeight = FontWeight.SemiBold,
@@ -67,20 +71,30 @@ fun OwnerWaitlistScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // Populated LazyColumn:
+        //Entrant list
         LazyColumn(
             contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            itemsIndexed(waitlist) { index, entrantID ->
+            //show winners first
+            itemsIndexed(selectedlist) { index, entrantID ->
                 val name = viewModel.getEntrantName(entrantID)
                 WaitListCard(
                     position = index + 1,
+                    name = name,
+                    won = true
+                )
+            }
+            //rest of waitlist
+            itemsIndexed(waitlist) { index, entrantID ->
+                val name = viewModel.getEntrantName(entrantID)
+                WaitListCard(
+                    position = index + 1 + selectedlist.size,
                     name = name
                 )
             }
-        }
 
+        }
 
 
 

@@ -33,13 +33,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LotteryInfoHeader(
     title: String? = null,
-    formatedDates: String? = null,
-    modifier: Modifier = Modifier,
+    registrationWindowDates: String? = null,
+    bookingStayDates: String? = null,
+    ) {
 
-    ){
-    var showCalendar by rememberSaveable { mutableStateOf(false) }
-
-    OutlinedCard(modifier = modifier) {
+    OutlinedCard() {
         Column(modifier = Modifier.padding(16.dp)) {
             if (title != null) {
                 Text(
@@ -49,7 +47,33 @@ fun LotteryInfoHeader(
                 )
             }
             Spacer(Modifier.height(12.dp))
-            if (formatedDates != null) {
+            if (registrationWindowDates != null) {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
+                    ) {
+                        Text(
+                            text = "Registration Window:",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.weight(1f))
+                        Text(
+                            text = registrationWindowDates,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            if (bookingStayDates != null) {
                 Surface(
                     shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.surfaceVariant,
@@ -66,7 +90,7 @@ fun LotteryInfoHeader(
                         )
                         Spacer(Modifier.weight(1f))
                         Text(
-                            text = formatedDates,
+                            text = bookingStayDates,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -74,19 +98,7 @@ fun LotteryInfoHeader(
                 }
             }
         }
+
     }
-
 }
 
-
-//Preview of where each variable string goes
-@Preview(showBackground = true)
-@Composable
-fun LotteryInfoHeaderPreview(){
-    LotteryInfoHeader(
-        title = "Title of Lottery",
-        formatedDates = "Dates - Dates , Date"
-    )
-
-
-}

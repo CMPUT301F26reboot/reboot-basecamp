@@ -15,10 +15,16 @@ class OwnerWaitlistViewModel: DatabaseModel(){
 
     }
 
-    //uses date formater from OwnerLotteryCreationViewModel to get formated dates
-    fun getFormatedDates(lottery: Lottery?): String?{
+    //get registration dates in formated string
+    fun getFormatedRegistrationWindowDates(lottery: Lottery?): String?{
         if (lottery == null) {return null}
         return formatDateRange(listOf(lottery.start,lottery.end))
+    }
+
+    //get booking dates in formated string
+    fun getFormatedBookingStayDatesDates(lottery: Lottery?): String?{
+        if (lottery == null) {return null}
+        return formatDateRange(lottery.dates)
     }
 
     // gets  profile name by entrant ID

@@ -7,6 +7,7 @@
 
 package com.example.campsitereservationapp.ui.owner.WaitList
 
+import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,12 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.campsitereservationapp.ui.theme.Gray300
 import com.example.campsitereservationapp.ui.theme.Gray600
+import com.example.campsitereservationapp.ui.theme.RatingAmber
 
 @Composable
 fun WaitListCard(
     position: Int,
     name: String,
-    formatedDates: String? = null,
+    won: Boolean = false
 ) {
     Column {
         Row(
@@ -57,22 +60,27 @@ fun WaitListCard(
 
             Spacer(Modifier.width(12.dp))
 
-            // Name, with dates underneath if given
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-                if (formatedDates != null) {
-                    Text(
-                        text = formatedDates,
-                        fontSize = 13.sp,
-                        color = Gray600
-                    )
-                }
-            }
+            Text(
+                text = name,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
 
+            Spacer(Modifier.weight(1f))
+
+            if (won){
+                Text(
+                    text = "Won",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = RatingAmber
+                )
+            }else{
+                Text(
+                    text = "Waiting",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
         HorizontalDivider(color = Gray600)
     }
