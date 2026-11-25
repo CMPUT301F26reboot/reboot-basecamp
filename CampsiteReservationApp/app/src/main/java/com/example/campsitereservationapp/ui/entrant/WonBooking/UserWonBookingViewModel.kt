@@ -31,15 +31,12 @@ import java.util.Date
  * Holds the state for [UserWonBookingScreen]: which campsite and lottery are being shown, which
  * date the entrant picked, and whether they've accepted the rules. Also does the Firestore write
  * for declining an offer.
- *
- *
- * Outstanding issues:
- *  - reservedDays() does not check a reservation's status, so a cancelled reservation would still block that date.
  */
 class UserWonBookingViewModel : ListingViewModel() {
 
     private var lotteryId by mutableStateOf<String?>(null)
     private var campsiteName by mutableStateOf<String?>(null)
+    private var profileId by mutableStateOf<String?>(null)
 
     /** Dates the user has tapped in the calendar, before intersecting with [bookableDays]. */
     private var picked by mutableStateOf<Set<Date>>(emptySet())
@@ -100,10 +97,11 @@ class UserWonBookingViewModel : ListingViewModel() {
         get() = isValidSelection(selectedDays) && (findCampsite()?.rulesAcceptanceRequired != true || rulesAccepted)
 
     /** Call once from the screen with the ids passed through navigation. Safe to call repeatedly. */
-    fun start(lotteryId: String, campsiteName: String) {
+    fun start(lotteryId: String, campsiteName: String, profileId: String) {
         if (this.lotteryId == lotteryId && this.campsiteName == campsiteName) return
         this.lotteryId = lotteryId
         this.campsiteName = campsiteName
+        this.profileId = profileId
         picked = emptySet()
         rulesAccepted = false
         isFinished = false
@@ -121,8 +119,44 @@ class UserWonBookingViewModel : ListingViewModel() {
         rulesAccepted = accepted
     }
 
-    /** Called when the user confirms the Book dialog. Doesn't save anything yet (see Outstanding issues above). */
+    /** Called when the user confirms the Book dialog. Creates the reservation, then notifies the user */
     fun onBookClicked() {
+
+        val entrant = profileId ?: return
+        val site = campsite ?: return
+        val days = selectedDays.sorted()
+        if (days.isEmpty()) return
+
+        val newReservation = reservationsRef.document()
+        val reservationInfo = mapOf(
+            "campName" to site.name,
+            "campsiteID" to site.id,
+            "dates" to days,
+            "entrantID" to entrant,
+            "rated" to false,
+            "status" to "reserved"
+        )
+        newReservation.set(reservationInfo)
+            .addOnSuccessListener {
+                // NOTIFICATION: create notification for reservation confirmation
+                val notificationInfo = mapOf(
+                    "lotteryId" to "",
+                    "message" to "Your reservation ${site.name} has been booked. Please click this notification to view " +
+                            "the reservation or download the CSV",
+                    "recipientIds" to listOf(entrant),
+                    "reservationId" to newReservation.id,
+                    "senderId" to "",
+                    "subject" to "Reservation Confirmed",
+                    "timestamp" to Date(),
+                    "type" to "reserveConfirm",
+                    "viewedBy" to emptyList<String>()
+                )
+                notificationsRef.add(notificationInfo)
+                isFinished = true
+            }
+            .addOnFailureListener {
+                errorMessage = "Couldn't book. Please try again."
+            }
     }
 
     /**
@@ -168,7 +202,10 @@ class UserWonBookingViewModel : ListingViewModel() {
     /** Days already booked at the campsite with id [campsiteId]. */
     private fun reservedDays(campsiteId: String): Set<Date> =
         _reservations
-            .filter { it.campsiteID == campsiteId }
+            .filter {
+                it.campsiteID == campsiteId &&
+                it.status == "reserved"
+            }
             .flatMap { it.dates }
             .toSet()
 
