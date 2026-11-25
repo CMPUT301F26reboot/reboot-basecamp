@@ -9,7 +9,7 @@
 name: draw-lotteries
 on:
   schedule:
-    - cron: "*/60 * * * *"  # Runs every 60 minutes (hour)
+    - cron: "0 * * * *"  # Runs every 60 minutes (hour)
   workflow_dispatch:
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew run
+      - run: bash ./gradlew run
         working-directory: automation
         env: 
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
