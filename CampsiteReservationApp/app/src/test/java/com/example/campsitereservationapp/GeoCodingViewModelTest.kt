@@ -1,5 +1,7 @@
 /**
  * Test file for GeoCodingViewModel, compares if lat/long is the same when searching on openstreetmap.org
+ *
+ *  AI Reference: AI Use Logs - Jacob/Claude-Chat-Log_2026-11-25_P3-requirments.md
  */
 package com.example.campsitereservationapp
 

@@ -7,7 +7,7 @@
  * - test moveTo by asserting if mapstate location is at the new coordinates
  * - test tile stream provider and make sure it returns a tile
  *
- * AI Refrence: AI Use Logs - Jacob/Claude-Chat-Log_2026-11-25_P3-requirments.md
+ * AI Reference: AI Use Logs - Jacob/Claude-Chat-Log_2026-11-25_P3-requirments.md
  */
 package com.example.campsitereservationapp
 

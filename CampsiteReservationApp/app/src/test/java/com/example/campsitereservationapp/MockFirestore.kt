@@ -37,7 +37,7 @@ class MockFirestore {
 
     /** Makes `Firebase.firestore` return the mocked database. */
     fun install() {
-        listOf("Listings", "Lotteries", "Profiles", "Reservations", "LogEntries", "Chats").forEach { name ->
+        listOf("Listings", "Lotteries", "Profiles", "Reservations", "LogEntries", "Chats", "Messages").forEach { name ->
             val ref = mockk<CollectionReference>(relaxed = true)
             every { ref.addSnapshotListener(any<EventListener<QuerySnapshot>>()) } answers {
                 listeners[name] = firstArg()
