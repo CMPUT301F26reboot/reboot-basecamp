@@ -3,15 +3,19 @@
  */
 package com.example.campsitereservationapp.ui.owner.WaitList
 
+import android.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -70,7 +74,7 @@ fun OwnerWaitlistScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        Text(
+        Text(//Header for name list -> Entrants (#of people)
             text = "Entrants (${waitlist.size + selectedlist.size})",
             style = TextStyle( // altered headline medium
                 fontFamily = FontFamily.Default,
@@ -81,7 +85,25 @@ fun OwnerWaitlistScreen(
             )
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ){
+            Text(
+                text = "User name",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = "Status",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
 
         //Entrant list
         LazyColumn(
