@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -200,8 +201,11 @@ fun OwnerCampsiteDetailsScreen(
                                 ReservationRow(
                                     reservation = reservation,
                                     guestName = viewModel.getGuestName(reservation.entrantID),
-                                    onClick = { onOpenReservation(reservation) }
+                                    onClick = { onOpenReservation(reservation) },
+                                    cancelled = reservation.status.equals("cancelled", ignoreCase = true)
                                 )
+
+
                                 HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                             }
                         }
@@ -303,7 +307,8 @@ private fun CampsiteDetailsCard(listing: Listing) {
 private fun ReservationRow(
     reservation: Reservation,
     guestName: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    cancelled: Boolean = false
 ) {
     val dateFormatter = SimpleDateFormat("MMM d", Locale.getDefault())
     val startDate = reservation.dates.firstOrNull()
@@ -342,10 +347,20 @@ private fun ReservationRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+        if (cancelled){
+            Text(
+                text = "Cancelled",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontStyle = FontStyle.Italic
+            )
 
-        Text(
-            text = "$nights nights",
-            style = MaterialTheme.typography.bodyMedium
-        )
+        }else{
+            Text(
+                text = "$nights nights",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
     }
 }
