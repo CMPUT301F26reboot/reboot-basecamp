@@ -1,8 +1,10 @@
 package com.example.campsitereservationapp.ui.entrant.ReservationDetails
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +17,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Dangerous
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +44,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
+import com.example.campsitereservationapp.ui.theme.Emerald10
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import com.example.campsitereservationapp.ui.theme.RatingAmber
 import com.example.campsitereservationapp.ui.theme.PillShape
+import com.example.campsitereservationapp.ui.theme.Red10
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * Detail screen for a single reservation.
@@ -156,6 +169,80 @@ fun ReservationDetailScreen(
             }
         }
 
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp)
+        ) {
+            Column(Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.Top) {
+                    // reservation info
+                    Icon(
+                        imageVector = if(reservation.status == "reserved") {
+                            Icons.Filled.CheckCircle
+                        } else Icons.Filled.Dangerous,
+                        contentDescription = "Checkmark",
+                        tint = if(reservation.status == "reserved") {Emerald10} else Red10,
+                        modifier = Modifier
+                            .size(46.dp)
+                            .padding(horizontal = 6.dp)
+                    )
+                    Column(Modifier
+                        .weight(1f)
+                        .padding(vertical = 3.dp)) {
+
+                        Text(
+                            text = if(reservation.status == "reserved") {
+                                "Reservation Booked"
+                            } else "Reservation Cancelled",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(Modifier.height(8.dp))
+
+                        Text(
+                            text = if(reservation.status == "reserved") {
+                                "Your stay at ${listing.name} has been confirmed.You will also receive a notification " +
+                                        "for additional confirmation."
+                            } else{
+                                "Your stay at ${listing.name} has been cancelled.You will also receive a notification " +
+                                        "for additional confirmation."
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+
+                        Spacer(Modifier.height(12.dp))
+
+                        Button(
+                            onClick = { /* Downloads a CSV of all the reservation info */ },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                contentColor = MaterialTheme.colorScheme.inverseSurface
+                            ),
+                            contentPadding = PaddingValues(vertical = 4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Row(){
+                                Icon(
+                                    imageVector = Icons.Filled.Download,
+                                    contentDescription = "Download",
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .padding(horizontal = 6.dp)
+                                )
+                                Text("Download CSV", fontWeight = FontWeight.Bold)
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
         AvailabilityCalendar(
             availableDays = emptySet(),
             selectedDays = reservation.dates.toSet(),

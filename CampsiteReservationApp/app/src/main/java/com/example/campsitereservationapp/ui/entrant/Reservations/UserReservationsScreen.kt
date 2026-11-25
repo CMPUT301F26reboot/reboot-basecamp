@@ -124,7 +124,7 @@ fun UserReservationContent(
     onFilterChange: (ReservationFilter) -> Unit,
     onBack: () -> Unit,
     onOpen: (String) -> Unit,
-    onCancel: (String) -> Unit,
+    onCancel: (Reservation) -> Unit,
     onDismissCancel: () -> Unit,
     onConfirmCancel: () -> Unit,
     onLeaveReview: (String) -> Unit,
@@ -297,7 +297,7 @@ fun UserReservationContent(
                         isPast = past,
                         isCancelling = isCancelling,
                         onOpen = { onOpen(reservation.id) },
-                        onCancel = { onCancel(reservation.id) },
+                        onCancel = { onCancel(reservation) },
                         onLeaveReview = { onLeaveReview(reservation.id) }
                     )
                 }
