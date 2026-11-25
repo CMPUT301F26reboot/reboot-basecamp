@@ -25,7 +25,8 @@ import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
-import com.example.campsitereservationapp.ui.entrant.WonBooking.toDayOnly
+import com.example.campsitereservationapp.utils.endOfDay
+import com.example.campsitereservationapp.utils.toDayOnly
 import com.google.firebase.firestore.FieldValue
 import java.text.SimpleDateFormat
 import java.time.YearMonth
@@ -102,7 +103,7 @@ class UserCampsiteDetailsViewModel : ListingViewModel() {
         val now = Date()
         return _lotteries
             .filter { id in it.campsiteIDs && !it.cancelled }
-            .filter { now in it.start..it.end}
+            .filter { now in it.start.toDayOnly()..it.end.endOfDay() }
             .filter { overlapsSearch(it) }
             .filter { profileId !in it.waitlist}
             .map {it.toCardInfo()}

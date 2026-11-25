@@ -36,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.utils.decodeBase64Image
+import com.example.campsitereservationapp.utils.toDayOnly
 import com.example.campsitereservationapp.ui.theme.RatingAmber
 import com.example.campsitereservationapp.ui.theme.PillShape
 
@@ -158,7 +159,7 @@ fun ReservationDetailScreen(
 
         AvailabilityCalendar(
             availableDays = emptySet(),
-            selectedDays = reservation.dates.toSet(),
+            selectedDays = reservation.dates.map { it.toDayOnly() }.toSet(),
             onDayClick = {},
             title = "Your Booked Dates",
             initialMonth = null
