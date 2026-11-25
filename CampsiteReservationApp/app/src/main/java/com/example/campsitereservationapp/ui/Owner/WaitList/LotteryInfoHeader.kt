@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.Owner.WaitList
+package com.example.campsitereservationapp.ui.owner.WaitList
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
