@@ -11,7 +11,7 @@ package com.example.campsitereservationapp
 import android.content.Context
 import android.net.Uri
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDetailsViewModel
+import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampsiteRegistrationViewModel
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -39,17 +39,17 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Mock tests for [OwnerCampDetailsViewModel], the controller behind the owner's Register Campsite
+ * Mock tests for [OwnerCampsiteRegistrationViewModel], the controller behind the owner's Register Campsite
  * screen (US 02.01.01). Firestore is mocked with MockK so the ViewModel can be created on the JVM.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class OwnerCampDetailsViewModelTest {
+class OwnerCampsiteRegistrationViewModelTest {
 
     private val ownerId = "owner-device-7f3a91c2"
     private val context = mockk<Context>(relaxed = true)
 
     private lateinit var listingsRef: CollectionReference
-    private lateinit var viewModel: OwnerCampDetailsViewModel
+    private lateinit var viewModel: OwnerCampsiteRegistrationViewModel
 
     @Before
     fun setUp() {
@@ -60,7 +60,7 @@ class OwnerCampDetailsViewModelTest {
         mockkStatic("com.google.firebase.firestore.FirestoreKt")
         every { Firebase.firestore } returns db
 
-        viewModel = OwnerCampDetailsViewModel()
+        viewModel = OwnerCampsiteRegistrationViewModel()
     }
 
     @After
