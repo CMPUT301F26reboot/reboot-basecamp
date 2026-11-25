@@ -1,3 +1,6 @@
+/**
+ * Screen to view entrants in waitlist and entrants who won
+ */
 package com.example.campsitereservationapp.ui.owner.WaitList
 
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,6 +24,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.ui.Admin.HomeScreenComponents.HomeScreenButton
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
 
+
+/**
+ * Displays Some Lottery Information and entrants, also if an entrant is in the waitlist
+ * or won the booking
+ * @param lotteryID ID of whatever lottery is to be shown
+ * @param onBack navigate to previous screen
+ * @param onSendNotification event call to send notifications to all entrants
+ * @param viewModel, do not change, calles OwnerWaitlistViewModel
+ */
 @Composable
 fun OwnerWaitlistScreen(
     lotteryID: String,

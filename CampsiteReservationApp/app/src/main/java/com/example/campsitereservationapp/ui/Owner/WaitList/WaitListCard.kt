@@ -1,13 +1,12 @@
 /**
  * The UI card to display the name of people in the waitlist
  *
- * AI Reference: AI Use Logs - Jacob/ Claude-Chat-Log_2026-11-24_OwnerWaitList.md
+ * AI Reference: AI Use Logs - Jacob/ Claude-Chat-Log_2026-11-24_OwnerWaitList.md (mostly scrapped but
+ * used as starting code)
  */
-
 
 package com.example.campsitereservationapp.ui.owner.WaitList
 
-import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +30,12 @@ import com.example.campsitereservationapp.ui.theme.Gray300
 import com.example.campsitereservationapp.ui.theme.Gray600
 import com.example.campsitereservationapp.ui.theme.RatingAmber
 
+/**
+ * Reused UI card for list of entrants
+ * @param position number in circle shown on left side of card, calculated in Screen
+ * @param name name of entrant
+ * @param won [Boolean] status of entrant, either they won or is waiting
+ */
 @Composable
 fun WaitListCard(
     position: Int,

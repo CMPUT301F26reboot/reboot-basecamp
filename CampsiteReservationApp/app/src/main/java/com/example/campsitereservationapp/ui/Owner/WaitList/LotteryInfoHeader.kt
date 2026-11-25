@@ -1,3 +1,6 @@
+/**
+ * UI Component of Waitlist Screen, displays name, registration period and booking period
+ */
 package com.example.campsitereservationapp.ui.owner.WaitList
 
 import androidx.compose.foundation.layout.Column
@@ -11,25 +14,18 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
 /**
- * A reusable input composable for getting a range of dates from the user.
- * The caller owns the dates: this composable reads them and reports each tapped day.
- *
- * @param title title of lottery
- * @param formatedDates [String] already formated dates of the lottery
+ * Shows information of lottery specified to OwnerWaitlistScreen
+ * @param title name of lottery
+ * @param registrationWindowDates formated string of registration dates
+ * @param bookingStayDates formated string of booking dates
  */
-
 @Composable
 fun LotteryInfoHeader(
     title: String? = null,
