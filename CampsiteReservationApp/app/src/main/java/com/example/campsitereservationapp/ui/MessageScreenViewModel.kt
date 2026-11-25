@@ -1,18 +1,12 @@
 package com.example.campsitereservationapp.ui
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.LogEntry
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.tasks.await
-import java.time.LocalDate
 
 /**
  * View Model for the message screen

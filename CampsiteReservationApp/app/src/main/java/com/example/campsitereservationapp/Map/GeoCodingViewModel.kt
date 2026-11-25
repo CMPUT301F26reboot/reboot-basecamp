@@ -1,3 +1,28 @@
+/**
+ * This file contains the GeoCoding class, it's the map's address search bar, is uses
+ * Nominatim API to search for an existing address and return its latitude and longitude
+ *
+ *
+ * ## Credit
+ * Geocoding is provided by [Nominatim](https://nominatim.org), the search engine for
+ * OpenStreetMap data, through the public server run by the OpenStreetMap Foundation
+ * at `https://nominatim.openstreetmap.org`.
+ *
+ * ## License and attribution
+ * Results contain OpenStreetMap data, © OpenStreetMap contributors, licensed under the
+ * Open Database License (ODbL) 1.0. See https://www.openstreetmap.org/copyright.
+ * The ODbL requires the app to show visible attribution wherever this data is displayed:
+ * "© OpenStreetMap contributors", linked to https://www.openstreetmap.org/copyright.
+ *
+ * ## Usage policy
+ * The public server's usage policy (https://operations.osmfoundation.org/policies/nominatim/)
+ * requires that apps:
+ * - Send **no more than 1 request per second** in total. This is an absolute maximum.
+ * - Identify the app with a custom `User-Agent` header. Default library user agents are blocked.
+ * - Cache results and never send the same query twice.
+ * - Not implement client-side autocomplete (search-as-you-type).
+ * - Not send bulk or systematic queries.
+ */
 package com.example.campsitereservationapp.Map
 
 import androidx.lifecycle.ViewModel
@@ -19,26 +44,6 @@ import java.net.URLEncoder
 
 /** Generated with Claude, log under "AI Use Logs\Jacob\Claude-Chat-Log_2026-11-05_GeoCodingForMap.md"
  * ViewModel that geocodes addresses with the Nominatim API.
- *
- * ## Credit
- * Geocoding is provided by [Nominatim](https://nominatim.org), the search engine for
- * OpenStreetMap data, through the public server run by the OpenStreetMap Foundation
- * at `https://nominatim.openstreetmap.org`.
- *
- * ## License and attribution
- * Results contain OpenStreetMap data, © OpenStreetMap contributors, licensed under the
- * Open Database License (ODbL) 1.0. See https://www.openstreetmap.org/copyright.
- * The ODbL requires the app to show visible attribution wherever this data is displayed:
- * "© OpenStreetMap contributors", linked to https://www.openstreetmap.org/copyright.
- *
- * ## Usage policy
- * The public server's usage policy (https://operations.osmfoundation.org/policies/nominatim/)
- * requires that apps:
- * - Send **no more than 1 request per second** in total. This is an absolute maximum.
- * - Identify the app with a custom `User-Agent` header. Default library user agents are blocked.
- * - Cache results and never send the same query twice.
- * - Not implement client-side autocomplete (search-as-you-type).
- * - Not send bulk or systematic queries.
  *
  * Breaking the policy can get the app's requests blocked without warning.
  */

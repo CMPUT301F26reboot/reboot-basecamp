@@ -1,3 +1,6 @@
+/**
+ * This file hold the Listing data class, it stores all information about a Listing/Campsitre
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import android.location.Location

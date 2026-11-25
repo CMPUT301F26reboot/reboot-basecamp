@@ -1,18 +1,18 @@
+/**
+ * This file is the main database class. It interacts with firebase and almost all ViewModels inherit it
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import androidx.compose.runtime.mutableStateOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.LogEntry
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import kotlin.math.log
 
 open class DatabaseModel :ViewModel() {
     protected var db = Firebase.firestore
@@ -32,7 +32,6 @@ open class DatabaseModel :ViewModel() {
     protected var _lotteries = mutableStateListOf<Lottery>()
     protected var _profiles = mutableStateListOf<Profile>()
     protected var _reservations = mutableStateListOf<Reservation>()
-    protected var _logentries = mutableStateListOf<LogEntry>()
     protected var _chats = mutableStateListOf<Chat>()
     protected var _messages = mutableStateListOf<Message>()
 
@@ -95,20 +94,6 @@ open class DatabaseModel :ViewModel() {
                 val reservation = document.toObject(Reservation::class.java)
                 if(reservation != null){
                     _reservations.add(reservation)
-                }
-            }
-        }
-
-        logentriesRef.addSnapshotListener{ snapshot, error ->
-            if(error != null){
-                return@addSnapshotListener
-            }
-
-            _logentries.clear()
-            snapshot?.documents?.forEach{document ->
-                val logentry = document.toObject(LogEntry::class.java)
-                if(logentry != null){
-                    _logentries.add(logentry)
                 }
             }
         }

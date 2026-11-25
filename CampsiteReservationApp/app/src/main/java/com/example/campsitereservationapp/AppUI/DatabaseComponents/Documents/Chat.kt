@@ -1,3 +1,6 @@
+/**
+ * This file hold the chat data class for holding chat information
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import android.devicelock.DeviceId

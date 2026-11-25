@@ -8,7 +8,6 @@ package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.LogEntry
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile

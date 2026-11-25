@@ -1,3 +1,4 @@
+
 package com.example.campsitereservationapp.Map
 
 import androidx.compose.foundation.layout.size
@@ -87,6 +88,7 @@ class MapViewModel : ViewModel() {
         }
     }
 
+    /** */
     fun startPinDrop() {
         isPinDropMode = true
     }

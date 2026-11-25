@@ -1,3 +1,7 @@
+/**
+ * This file hold the MapScreenComponent. It's the UI Component that can be reused in other screens
+ * See Map Implementation Example.kt for an example on how to use it
+ */
 package com.example.campsitereservationapp.Map
 
 import androidx.compose.foundation.layout.Arrangement
@@ -6,29 +10,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ovh.plrapps.mapcompose.ui.MapUI
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddLocation
-import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.Icon
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
-
 
 /** Map UI for other screens. Needs to be bounded in another component (or it will take up whole screen)
  * Credit:

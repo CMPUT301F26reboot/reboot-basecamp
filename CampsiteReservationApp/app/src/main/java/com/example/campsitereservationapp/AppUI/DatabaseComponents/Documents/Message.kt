@@ -1,3 +1,7 @@
+/**
+ * This file is for the message data class, it holds the data for a message, who it's sent by,
+ * a timestamp, and who it's sent to
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import com.google.firebase.Timestamp

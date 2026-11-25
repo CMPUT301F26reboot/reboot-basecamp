@@ -1,3 +1,6 @@
+/**
+ * This file hold the lottery data class, it hold all information for a lottery
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import com.google.firebase.firestore.DocumentId
