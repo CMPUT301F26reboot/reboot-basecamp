@@ -74,6 +74,7 @@ import com.example.campsitereservationapp.ui.components.datesBetween
  * form starts filled with the lottery's values, a summary card is shown at the top, and a Danger
  * section below the fields lets the owner cancel the lottery.
  * @param onCreate event call after the lottery is created or saved and the dialog is closed
+ * @param ownerID the device ID of the owner, used to list only their campsites
  * @param lotteryId the lottery to edit, or null to create a new one
  * @param onCancelled event call after the lottery has been cancelled
  */
@@ -82,7 +83,7 @@ fun OwnerLotteryCreationScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     onCreate: () -> Unit = {},
-    ownerID: String = "test-owner",
+    ownerID: String,
     lotteryId: String? = null,
     onCancelled: () -> Unit = {},
     viewModel: OwnerLotteryCreationViewModel = viewModel()

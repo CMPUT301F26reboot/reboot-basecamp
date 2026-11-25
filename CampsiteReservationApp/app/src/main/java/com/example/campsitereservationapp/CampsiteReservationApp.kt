@@ -39,8 +39,6 @@ import java.util.Date
 // They are just commented there as placeholders, the route name may change depending on
 // what the respective composable route name is.
 
-// OWNER_ID is hardcoded for now since no owner signup/device setup yet.
-private const val OWNER_ID = "test-owner"
 
 /**
  * Sign-up route. Sign-up forwards at once when the device already has a profile.
@@ -76,7 +74,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("userSignUp")
                 },
                 onOwner = {
-                    navController.navigate("ownerHome")
+                    navController.navigate("userSignUp?next=ownerHome")
                 },
                 onAdmin = {
                     navController.navigate("userSignUp?next=adminHome")
@@ -310,7 +308,7 @@ fun CampsiteReservationApp() {
             route = "ownerHome"
         ){
             OwnerHomeScreen(
-                profileId = OWNER_ID,
+                profileId = deviceId,
                 onBack = {
                     navController.navigate("tempNav")
                 },
@@ -333,7 +331,7 @@ fun CampsiteReservationApp() {
             route = "ownerListings"
         ){
             OwnerListingsScreen(
-                ownerId = OWNER_ID,
+                ownerId = deviceId,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -353,7 +351,7 @@ fun CampsiteReservationApp() {
             route = "ownerLotteries"
         ){
             OwnerLotteryListScreen(
-                ownerId = OWNER_ID,
+                ownerId = deviceId,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -382,7 +380,7 @@ fun CampsiteReservationApp() {
                 onCreate = {
                     navController.popBackStack()
                 },
-                ownerID = OWNER_ID,
+                ownerID = deviceId,
             )
         }
 
@@ -401,7 +399,7 @@ fun CampsiteReservationApp() {
                 onCreate = {
                     navController.popBackStack()
                 },
-                ownerID = OWNER_ID,
+                ownerID = deviceId,
                 lotteryId = entry.arguments?.getString("lotteryId").orEmpty(),
                 onCancelled = {
                     navController.popBackStack()
@@ -413,7 +411,7 @@ fun CampsiteReservationApp() {
             route = "ownerCampDetails"
         ){
             OwnerCampDetailsScreen(
-                ownerId= OWNER_ID,
+                ownerId= deviceId,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -432,7 +430,7 @@ fun CampsiteReservationApp() {
             )
         ){ entry ->
             OwnerCampDetailsScreen(
-                ownerId = OWNER_ID,
+                ownerId = deviceId,
                 listingId = entry.arguments?.getString("listingId").orEmpty(),
                 onBack = {
                     navController.popBackStack()
