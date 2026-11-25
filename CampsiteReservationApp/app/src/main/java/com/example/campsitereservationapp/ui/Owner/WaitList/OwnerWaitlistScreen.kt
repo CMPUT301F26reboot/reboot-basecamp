@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.ui.Admin.HomeScreenComponents.HomeScreenButton
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
 
 @Composable
@@ -73,6 +74,7 @@ fun OwnerWaitlistScreen(
 
         //Entrant list
         LazyColumn(
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -97,10 +99,11 @@ fun OwnerWaitlistScreen(
         }
 
         //notification button
-
-
-
-
+        HomeScreenButton(
+            text = "Send Notifications to Entrants",
+            darkened = true,
+            onClick = onSendNotification
+        )
 
     }
 
