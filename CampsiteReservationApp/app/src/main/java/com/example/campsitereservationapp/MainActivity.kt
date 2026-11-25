@@ -14,11 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CampsiteReservationTheme {
-                OwnerWaitlistScreen(
-                    lotteryID = "LrSMsIImq9MfiZC1tRE3",
-                    onBack = {},
-                    onSendNotification = { },
-                )
+                CampsiteReservationApp()
             }
         }
     }
