@@ -3,11 +3,11 @@
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
+import com.example.campsitereservationapp.utils.appCalendar
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.util.Calendar
 import java.util.Date
 
 /**

@@ -94,7 +94,7 @@ class UserReservationsViewModelTest {
     @Test
     fun confirmCancel_shouldMarkReservationCancelledAndCloseDialog() {
         val doc = reservationDoc("reservation-upcoming")
-        viewModel.onCancelClicked("reservation-upcoming")
+        viewModel.onCancelClicked(upcoming)
 
         viewModel.confirmCancel()
 
@@ -105,7 +105,7 @@ class UserReservationsViewModelTest {
     @Test
     fun dismissCancelDialog_shouldNotCancelAnything() {
         val doc = reservationDoc("reservation-upcoming")
-        viewModel.onCancelClicked("reservation-upcoming")
+        viewModel.onCancelClicked(upcoming)
 
         viewModel.dismissCancelDialog()
         viewModel.confirmCancel()

@@ -1,11 +1,11 @@
 /*
- * This file tests the user notifications viewmodel
+ * This file tests the user notifications view model
  *
  * AI use:
  * Claude Opus 5.5, 2026/11/26
  *
- * Q. "I have attached an example of the viewModel tests we have. Please create some mock notifications
- *  in a similar way and a setup function for me to create some tests for UserNotificationsViewModelTests"
+ * Q. "I have attached an example of the viewModel tests we have, as well as the schema for Notifications document.
+ * Please create some mock notifications in a similar way and a setup function for me to create some tests for UserNotificationsViewModelTests"
  */
 package com.example.campsitereservationapp
 
@@ -25,12 +25,12 @@ import org.junit.Test
  */
 class UserNotificationsViewModelTests {
 
-    private val entrantId = "entrant-device"
-    private val otherEntrantId = "entrant-device"
+    private val entrantId1 = "entrant-device1"
+    private val entrantId2 = "entrant-device2"
 
     private val wonLottery = Notifications(
         senderId = "",
-        recipientIds = listOf(entrantId),
+        recipientIds = listOf(entrantId1),
         type = "wonLottery",
         subject = "You won the lottery!",
         message = "You won the Mid-May Lakeside Week lottery. Tap to choose your dates.",
@@ -40,7 +40,7 @@ class UserNotificationsViewModelTests {
 
     private val reservationCancelled = Notifications(
         senderId = "",
-        recipientIds = listOf(entrantId),
+        recipientIds = listOf(entrantId1),
         type = "reserveCancel",
         subject = "Reservation Cancelled",
         message = "Your reservation at Lakehouse was cancelled.",
@@ -51,7 +51,7 @@ class UserNotificationsViewModelTests {
     // Owner broadcast sent to both entrants
     private val ownerBroadcast = Notifications(
         senderId = "owner-device-7f3a91c2",
-        recipientIds = listOf(entrantId, otherEntrantId),
+        recipientIds = listOf(entrantId1, entrantId2),
         type = "ownerNotif",
         subject = "Fire ban update",
         message = "Campfires are not allowed at Lakehouse until further notice.",
@@ -61,7 +61,7 @@ class UserNotificationsViewModelTests {
     // Sent only to someone else, so it should never show up for entrantId
     private val someoneElses = Notifications(
         senderId = "",
-        recipientIds = listOf(otherEntrantId),
+        recipientIds = listOf(entrantId2),
         type = "lostLottery",
         subject = "Lottery results",
         message = "You were not selected for the Early May Getaway lottery.",
@@ -91,7 +91,7 @@ class UserNotificationsViewModelTests {
 
     @Test
     fun doSearch_emptyKeywordShouldShowAllOfThisEntrantsNotifications() {
-        viewModel.doSearch("", entrantId)
+        viewModel.doSearch("", entrantId1)
 
         val shown = viewModel._searchResults.map { it.id }.toSet()
         assertEquals(setOf("notif-won", "notif-cancelled", "notif-broadcast"), shown)
@@ -99,21 +99,21 @@ class UserNotificationsViewModelTests {
 
     @Test
     fun doSearch_shouldNeverShowNotificationsSentToSomeoneElse() {
-        viewModel.doSearch("", entrantId)
+        viewModel.doSearch("", entrantId1)
 
         assertTrue(viewModel._searchResults.none { it.id == "notif-other" })
     }
 
     @Test
     fun doSearch_keywordMatchesSubjectShouldShowOnlyMatchingNotifications() {
-        viewModel.doSearch("Reservation", entrantId)
+        viewModel.doSearch("Reservation", entrantId1)
 
         assertEquals(listOf("notif-cancelled"), viewModel._searchResults.map { it.id })
     }
 
     @Test
     fun doSearch_keywordIgnoresCaseShouldStillMatch() {
-        viewModel.doSearch("fire ban", entrantId)
+        viewModel.doSearch("fire ban", entrantId1)
 
         assertEquals(listOf("notif-broadcast"), viewModel._searchResults.map { it.id })
     }
@@ -124,7 +124,7 @@ class UserNotificationsViewModelTests {
             firestore.collection("Notifications").document("notif-broadcast").update(any<String>(), any())
         } returns MockTask<Void?>().task
 
-        viewModel.markViewed("notif-broadcast", entrantId)
+        viewModel.markViewed("notif-broadcast", entrantId1)
 
         verify {
             firestore.collection("Notifications").document("notif-broadcast").update("viewedBy", any())
