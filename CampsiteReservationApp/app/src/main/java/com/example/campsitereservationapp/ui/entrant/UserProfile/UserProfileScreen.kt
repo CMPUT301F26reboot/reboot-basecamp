@@ -29,6 +29,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -77,8 +78,9 @@ import com.example.campsitereservationapp.ui.theme.DeleteRed
 
 
 /**
- * Shows the user's profile and lets them change their details (US 01.07.03), delete their profile
- * (US 01.08.01), turn notifications on or off (US 01.10.01), and view the policies (US 01.11.01).
+ * Shows the user's profile and lets them change their details (US 01.07.03), add, change or remove
+ * their picture (US 01.08.02), delete their profile (US 01.08.01), turn notifications on or off
+ * (US 01.10.01), and view the policies (US 01.11.01).
  *
  * @param profileId the Firestore document ID of the user's profile, which is their device ID.
  * @param onBack called when the user taps the back button.
@@ -145,6 +147,7 @@ fun UserProfileScreen(
         onEditPicture = {
             pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         },
+        onRemovePicture = viewModel::removeProfilePicture,
         onDelete = viewModel::deleteProfile,
         onBack = onBack,
         onPolicies = onPolicies,
@@ -168,7 +171,8 @@ fun UserProfileScreen(
  * @param onEdit called with a field when the user taps its pencil.
  * @param onSaveEdit called when the user confirms their edit.
  * @param onNotificationsChange called with the new setting when the user taps the toggle.
- * @param onEditPicture called when the user taps "Edit Profile Picture".
+ * @param onEditPicture called when the user taps "Add Photo" or "Change Photo".
+ * @param onRemovePicture called once the user has confirmed that they want to remove their photo.
  * @param onDelete called once the user has confirmed that they want to delete their profile.
  * @param onBack called when the user taps the back button.
  * @param onPolicies called when the user taps "Policies & Guidelines".
@@ -189,6 +193,7 @@ internal fun UserProfileContent(
     onSaveEdit: () -> Unit,
     onNotificationsChange: (Boolean) -> Unit,
     onEditPicture: () -> Unit,
+    onRemovePicture: () -> Unit,
     onDelete: () -> Unit,
     onBack: () -> Unit,
     onPolicies: () -> Unit,
@@ -196,6 +201,17 @@ internal fun UserProfileContent(
     isAdmin: Boolean = false
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showRemovePictureDialog by remember { mutableStateOf(false) }
+
+    if (showRemovePictureDialog) {
+        RemovePictureDialog(
+            onConfirm = {
+                showRemovePictureDialog = false
+                onRemovePicture()
+            },
+            onDismiss = { showRemovePictureDialog = false }
+        )
+    }
 
     if (showDeleteDialog) {
         DeleteProfileDialog(
@@ -231,7 +247,12 @@ internal fun UserProfileContent(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            ProfilePictureRow(profilePicture, isSaving, onEditPicture)
+            ProfilePictureRow(
+                profilePicture = profilePicture,
+                isSaving = isSaving,
+                onEditPicture = onEditPicture,
+                onRemovePicture = { showRemovePictureDialog = true }
+            )
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
@@ -308,14 +329,21 @@ internal fun UserProfileContent(
 }
 
 /**
- * The profile picture, or a placeholder if there isn't one, and the button that changes it.
+ * The profile picture, or a placeholder if there isn't one, with buttons to add, change or remove
+ * it (US 01.08.02). "Remove" only shows when there is a photo to remove.
  *
  * @param profilePicture the user's photo as Base64 text, or empty if they haven't added one.
- * @param isSaving true while a change is being written, which disables the button.
- * @param onEditPicture called when the user taps "Edit Profile Picture".
+ * @param isSaving true while a change is being written, which disables the buttons.
+ * @param onEditPicture called when the user taps "Add Photo" or "Change Photo".
+ * @param onRemovePicture called when the user taps "Remove".
  */
 @Composable
-private fun ProfilePictureRow(profilePicture: String, isSaving: Boolean, onEditPicture: () -> Unit) {
+private fun ProfilePictureRow(
+    profilePicture: String,
+    isSaving: Boolean,
+    onEditPicture: () -> Unit,
+    onRemovePicture: () -> Unit
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
@@ -341,22 +369,39 @@ private fun ProfilePictureRow(profilePicture: String, isSaving: Boolean, onEditP
             }
         }
         Spacer(modifier = Modifier.width(16.dp))
-        Button(
-            onClick = onEditPicture,
-            enabled = !isSaving,
-            shape = MaterialTheme.shapes.small,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
-        ) {
-            Icon(
-                imageVector = Icons.Filled.PhotoCamera,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Edit Profile Picture", fontWeight = FontWeight.SemiBold)
+        Column {
+            Button(
+                onClick = onEditPicture,
+                enabled = !isSaving,
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PhotoCamera,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (profilePicture.isEmpty()) "Add Photo" else "Change Photo",
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            if (profilePicture.isNotEmpty()) {
+                TextButton(onClick = onRemovePicture, enabled = !isSaving) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = null,
+                        tint = DeleteRed,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Remove Photo", color = DeleteRed, fontWeight = FontWeight.SemiBold)
+                }
+            }
         }
     }
 }
@@ -470,6 +515,31 @@ private fun DeleteProfileDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text(text = "Delete", color = DeleteRed)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+/**
+ * Asks the user to confirm before their profile picture is removed.
+ *
+ * @param onConfirm called when the user taps "Remove".
+ * @param onDismiss called when the user taps "Cancel" or closes the dialog.
+ */
+@Composable
+private fun RemovePictureDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Remove Profile Picture?") },
+        text = { Text("Your profile will show the default picture instead.") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(text = "Remove", color = DeleteRed)
             }
         },
         dismissButton = {
