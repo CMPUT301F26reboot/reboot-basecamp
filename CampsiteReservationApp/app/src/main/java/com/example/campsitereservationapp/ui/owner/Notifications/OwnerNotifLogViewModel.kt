@@ -31,7 +31,7 @@ class OwnerNotifLogViewModel: DatabaseModel(){
     /** Gets the lottery name */
     fun getLotName(lotteryId: String): String{
         val lottery =  allLotteries.find {it.id == lotteryId}
-        return lottery?.title ?: ""
+        return lottery?.title ?: "No lottery found"
     }
 
 
