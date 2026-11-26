@@ -14,6 +14,8 @@
  */
 package com.example.campsitereservationapp.ui.components
 
+import com.example.campsitereservationapp.utils.APP_TIME_ZONE
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +60,6 @@ import java.text.DateFormat
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle as DateTextStyle
-import com.example.campsitereservationapp.utils.DateFormatter
 import java.util.Calendar
 import java.util.Date
 
@@ -209,7 +210,6 @@ private fun MonthGrid(
     selectedDays: Set<Date>,
     onDayClick: (Date) -> Unit
 ) {
-    val formatter = DateFormatter()
     val daysInMonth = month.lengthOfMonth()
     val leadingBlanks = firstWeekdayOffset(month, firstDayOfWeek)
     val rows = (leadingBlanks + daysInMonth + 6) / 7
@@ -226,7 +226,7 @@ private fun MonthGrid(
                         contentAlignment = Alignment.Center
                     ) {
                         if (dayOfMonth in 1..daysInMonth) {
-                            val date = formatter.formatDate(dateOf(month.year, month.monthValue, dayOfMonth))
+                            val date = dateOf(month.year, month.monthValue, dayOfMonth)
                             val state = when {
                                 date in selectedDays -> DayState.Selected
                                 date in availableDays -> DayState.Available
@@ -270,7 +270,7 @@ private fun DayCell(
     }
     val locale = LocalConfiguration.current.locales[0]
     val description =
-        "${DateFormat.getDateInstance(DateFormat.LONG, locale).format(date)}, $spokenState"
+        "${DateFormat.getDateInstance(DateFormat.LONG, locale).apply { timeZone = APP_TIME_ZONE }.format(date)}, $spokenState"
 
     Box(
         modifier = Modifier
@@ -304,7 +304,7 @@ private val YearMonthSaver = Saver<YearMonth, String>(
 
 /** Weekday index (0 = [firstDayOfWeek]) of the 1st of [month], computed with [Calendar] instead of `LocalDate`. */
 private fun firstWeekdayOffset(month: YearMonth, firstDayOfWeek: DayOfWeek): Int {
-    val cal = Calendar.getInstance()
+    val cal = appCalendar()
     cal.clear()
     cal.set(month.year, month.monthValue - 1, 1)
     // Calendar.DAY_OF_WEEK is Sunday=1..Saturday=7; convert to ISO Monday=1..Sunday=7.
@@ -314,7 +314,7 @@ private fun firstWeekdayOffset(month: YearMonth, firstDayOfWeek: DayOfWeek): Int
 
 /** Builds a [Date] for [year]-[month]-[day] at midnight local time, with no time-of-day component. */
 internal fun dateOf(year: Int, month: Int, day: Int): Date {
-    val cal = Calendar.getInstance()
+    val cal = appCalendar()
     cal.clear()
     cal.set(year, month - 1, day, 0, 0, 0)
     return cal.time

@@ -15,6 +15,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             CampsiteReservationTheme {
                 CampsiteReservationApp()
+                //MessageScreen(  "V1hnZFPqEJQ4B2xCdEHM","W8liJRiysiUFhsZHVpKs",{})
+                //ui.Owner.CampsiteDetails.dateViewer()
             }
         }
     }

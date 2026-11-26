@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp.ui.entrant.Reservations
 
+import com.example.campsitereservationapp.utils.endOfDay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,12 +44,12 @@ class UserReservationsViewModel : ReservationsViewModel() {
 
             ReservationFilter.Reserved -> all.filter {
                 val lastDate = it.dates.maxOrNull()
-                lastDate == null || lastDate.after(today)
+                lastDate == null || !lastDate.endOfDay().before(today)
             }
 
             ReservationFilter.Past -> all.filter {
                 val lastDate = it.dates.maxOrNull()
-                lastDate != null && lastDate.before(today)
+                lastDate != null && lastDate.endOfDay().before(today)
             }
             else -> all
         }

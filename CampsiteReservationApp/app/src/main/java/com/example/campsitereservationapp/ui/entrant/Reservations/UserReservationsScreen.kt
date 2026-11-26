@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp.ui.entrant.Reservations
 
+import com.example.campsitereservationapp.utils.endOfDay
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -509,7 +510,7 @@ private fun ReservationCard(
 /** True if the reservation's last booked date is before today. */
 private fun isPast(r: Reservation): Boolean {
     val last = r.dates.maxOrNull() ?: return false
-    return last.before(Date())
+    return last.endOfDay().before(Date())
 }
 
 /**

@@ -14,12 +14,14 @@
  */
 package com.example.campsitereservationapp.ui.entrant.WonBooking
 
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
+import com.example.campsitereservationapp.utils.toDayOnly
 import com.google.firebase.firestore.FieldValue
 import java.time.YearMonth
 import java.util.Calendar
@@ -83,7 +85,7 @@ class UserWonBookingViewModel : ListingViewModel() {
     /** Month the calendar should open on: the earliest bookable day, if any. */
     val initialMonth: YearMonth?
         get() = bookableDays.minOrNull()?.let { date ->
-            val cal = Calendar.getInstance()
+            val cal = appCalendar()
             cal.time = date
             YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
         }
@@ -111,7 +113,8 @@ class UserWonBookingViewModel : ListingViewModel() {
     }
 
     /** Select or unselect a date. Dates that can't be booked are ignored. */
-    fun toggleDay(day: Date) {
+    fun toggleDay(tapped: Date) {
+        val day = tapped.toDayOnly()
         if (day !in bookableDays) return
         picked = if (day in picked) picked - day else picked + day
     }
@@ -170,12 +173,13 @@ class UserWonBookingViewModel : ListingViewModel() {
         _reservations
             .filter { it.campsiteID == campsiteId }
             .flatMap { it.dates }
+            .map { it.toDayOnly() }
             .toSet()
 
     /** Days [lottery] offers for [campsite], minus days already reserved there. */
     private fun bookableDays(lottery: Lottery, campsite: Listing): Set<Date> {
         if (campsite.id !in lottery.campsiteIDs) return emptySet()
-        val lotteryDays = lottery.dates.toSet()
+        val lotteryDays = lottery.dates.map { it.toDayOnly() }.toSet()
         return computeBookableDays(lotteryDays, reservedDays(campsite.id))
     }
 
@@ -185,17 +189,6 @@ class UserWonBookingViewModel : ListingViewModel() {
     private companion object {
         const val DECLINED_FIELD = "declinedProfileIds"
     }
-}
-
-/** Normalizes [Date] to midnight local time, so two Dates on the same calendar day compare equal. */
-internal fun Date.toDayOnly(): Date {
-    val cal = Calendar.getInstance()
-    cal.time = this
-    cal.set(Calendar.HOUR_OF_DAY, 0)
-    cal.set(Calendar.MINUTE, 0)
-    cal.set(Calendar.SECOND, 0)
-    cal.set(Calendar.MILLISECOND, 0)
-    return cal.time
 }
 
 /** Days the lottery offers, minus days already reserved at the campsite. */

@@ -4,6 +4,7 @@
  */
 package com.example.campsitereservationapp
 
+import com.example.campsitereservationapp.utils.appCalendar
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -24,7 +25,7 @@ class ReservationTest {
     private lateinit var reservation: Reservation
 
     private fun date(year: Int, month: Int, day: Int): Date {
-        val cal = Calendar.getInstance()
+        val cal = appCalendar()
         cal.clear()
         cal.set(year, month - 1, day)
         return cal.time

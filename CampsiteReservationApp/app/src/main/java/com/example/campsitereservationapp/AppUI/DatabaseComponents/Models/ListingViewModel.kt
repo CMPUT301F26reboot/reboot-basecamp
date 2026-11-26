@@ -2,6 +2,7 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import androidx.compose.runtime.mutableStateListOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.utils.toDayOnly
 import java.util.Date
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
@@ -21,7 +22,7 @@ open class ListingViewModel: DatabaseModel() {
         for (lot in _lotteries){
             if(listing.id in lot.campsiteIDs){
                 for(date in lot.dates){
-                    dates.add(date)
+                    dates.add(date.toDayOnly())
                 }
             }
         }
