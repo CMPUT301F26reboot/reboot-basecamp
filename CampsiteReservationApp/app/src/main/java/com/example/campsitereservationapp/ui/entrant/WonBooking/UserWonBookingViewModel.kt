@@ -119,12 +119,14 @@ class UserWonBookingViewModel : ListingViewModel() {
         rulesAccepted = accepted
     }
 
-    /** Called when the user confirms the Book dialog. Creates the reservation, then notifies the user */
+    /** Called when the user confirms the Book dialog. Creates the reservation,
+     * removes them from selectedlist (so that it no longer appears as a lottery), then notifies the user */
     fun onBookClicked() {
 
         val entrant = profileId ?: return
         val site = campsite ?: return
         val days = selectedDays.sorted()
+        val lotId = lotteryId ?: return
         if (days.isEmpty()) return
 
         val newReservation = reservationsRef.document()
@@ -138,6 +140,10 @@ class UserWonBookingViewModel : ListingViewModel() {
         )
         newReservation.set(reservationInfo)
             .addOnSuccessListener {
+
+                lotteriesRef.document(lotId)
+                    .update(SELECTED_FIELD, FieldValue.arrayRemove(entrant))
+
                 // NOTIFICATION: create notification for reservation confirmation
                 val notificationInfo = mapOf(
                     "lotteryId" to "",
@@ -161,7 +167,7 @@ class UserWonBookingViewModel : ListingViewModel() {
 
     /**
      * Called when the user confirms the Decline dialog (US 01.04.03).
-     * Records the decline by adding [profileId] to the lottery's declined-ids field, and sets
+     * Removes the user from selectedlist, and sets
      * [isFinished] once the write succeeds so the screen can navigate away.
      */
     fun declineOffer(profileId: String) {
@@ -171,7 +177,7 @@ class UserWonBookingViewModel : ListingViewModel() {
         errorMessage = null
 
         lotteriesRef.document(id)
-            .update(DECLINED_FIELD, FieldValue.arrayUnion(profileId))
+            .update(SELECTED_FIELD, FieldValue.arrayRemove(profileId))
             .addOnSuccessListener {
                 isDeclining = false
                 isFinished = true
@@ -220,8 +226,9 @@ class UserWonBookingViewModel : ListingViewModel() {
     private fun isValidSelection(days: Set<Date>): Boolean = days.isNotEmpty()
 
     private companion object {
-        const val DECLINED_FIELD = "declinedProfileIds"
+        const val SELECTED_FIELD = "selectedlist"
     }
+
 }
 
 /** Normalizes [Date] to midnight local time, so two Dates on the same calendar day compare equal. */
