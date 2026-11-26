@@ -15,6 +15,7 @@ import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
+import com.example.campsitereservationapp.ui.owner.Notifications.OwnerNotifLogScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
@@ -343,7 +344,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("ownerListings")
                 },
                 onNotificationHistory = {
-                    //navController.navigate("ownerNotificationHistory")
+                    navController.navigate("ownerNotifLog")
                 },
                 onProfile = {
                     //navController.navigate("ownerProfile")
@@ -492,6 +493,21 @@ fun CampsiteReservationApp() {
                 },
                 onSendNotification = { /* TODO */},
             )
+        }
+
+        composable(
+            route = "ownerNotifLog"
+        ){ 
+            OwnerNotifLogScreen(
+                profileId = OWNER_ID,
+                onBack = {
+                    navController.navigate("ownerHome")
+                },
+                onOpenNotif = { lotteryId ->
+                    navController.navigate( "/* TODO */")
+                }
+            )
+
         }
 
         // ------------------------ Admin ------------------------- ///

@@ -19,9 +19,6 @@
  * the ViewModel, and [UserNotificationsContent] is the UI version that just takes
  * values and callbacks.
  *
- * Outstanding issues:
- *  - Filtering by date is not implemented yet (unsure if we will).
- *  - Maybe impliment delete feature?
  */
 
 package com.example.campsitereservationapp.ui.entrant.Notifications
@@ -99,8 +96,6 @@ fun UserNotificationsScreen(
  * @param onOpenNotif called with a notification's type, reservation ID, and lottery ID when tapped.
  * @param profileId the current entrant's profile ID, used when searching.
  * @param viewModel provides the search results and runs searches.
- *
- * TODO: filtering by dates (maybe)
  */
 @Composable
 fun UserNotificationsContent(
@@ -147,10 +142,8 @@ fun UserNotificationsContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // TODO: add filter by date feature here
-
             Spacer(Modifier.height(8.dp))
-            //if no reservations
+            //if no notifications
             if (viewModel._searchResults.isEmpty()) {
                 Box(
                     Modifier
@@ -212,7 +205,7 @@ private fun NotificationCard(
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.Top) {
-                // campsite details
+                // notification details
                 Column(Modifier.weight(1f)) {
                     Text(
                         notification.subject,
