@@ -27,7 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.ui.components.CustomDialogScreenComponent
 import com.example.campsitereservationapp.ui.theme.PillShape
 import java.util.Calendar
 import java.util.Date
@@ -42,6 +49,9 @@ import java.util.Date
  * @param onViewEntrants event -> navigate to the entrants of the lottery with the given ID.
  * @param onEditLottery event -> navigate to editing the lottery with the given ID.
  * @param onViewResults event -> navigate to the draw results of the lottery with the given ID.
+ *
+ * Also shows invitations from other owners to add this owner's campsites to their lotteries,
+ * and asks for confirmation before the owner withdraws their campsites from a lottery they joined.
  */
 @Composable
 fun OwnerLotteryListScreen(
@@ -54,6 +64,10 @@ fun OwnerLotteryListScreen(
     modifier: Modifier = Modifier,
     viewModel: OwnerLotteryListViewModel = viewModel()
 ) {
+    var isSaving by remember { mutableStateOf(false) }
+    var withdrawing by remember { mutableStateOf<OwnerLotteryItem?>(null) }
+    var errorTitle by remember { mutableStateOf<String?>(null) }
+
     OwnerLotteryListContent(
         lotteries = viewModel.ownerLotteries(ownerId),
         selectedFilter = viewModel.selectedFilter,
@@ -63,7 +77,74 @@ fun OwnerLotteryListScreen(
         onViewEntrants = onViewEntrants,
         onEditLottery = onEditLottery,
         onViewResults = onViewResults,
-        modifier = modifier
+        modifier = modifier,
+        invitations = viewModel.invitations(ownerId),
+        invitesEnabled = !isSaving,
+        onAcceptInvite = { invite ->
+            isSaving = true
+            viewModel.acceptInvite(
+                invite.lotteryId, invite.campsiteId,
+                onSuccess = { isSaving = false },
+                onFailure = { isSaving = false; errorTitle = "Couldn't accept the invitation" }
+            )
+        },
+        onDeclineInvite = { invite ->
+            isSaving = true
+            viewModel.declineInvite(
+                invite.lotteryId, invite.campsiteId,
+                onSuccess = { isSaving = false },
+                onFailure = { isSaving = false; errorTitle = "Couldn't decline the invitation" }
+            )
+        },
+        onWithdraw = { lottery -> withdrawing = lottery }
+    )
+
+    withdrawing?.let { lottery ->
+        WithdrawCampsiteDialog(
+            lotteryTitle = lottery.title,
+            onConfirm = {
+                withdrawing = null
+                viewModel.withdrawCampsites(
+                    lottery.id, lottery.myCampsiteIDs,
+                    onSuccess = {},
+                    onFailure = { errorTitle = "Couldn't withdraw your campsite" }
+                )
+            },
+            onDismiss = { withdrawing = null }
+        )
+    }
+    errorTitle?.let { title ->
+        CustomDialogScreenComponent(
+            onDismissRequest = { errorTitle = null },
+            title = title,
+            description = "Please try again."
+        )
+    }
+}
+
+/**
+ * Asks the owner to confirm withdrawing their campsites from another owner's lottery.
+ * Entrants already on the waitlist stay on it.
+ */
+@Composable
+private fun WithdrawCampsiteDialog(lotteryTitle: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Withdraw your campsite?") },
+        text = {
+            Text(
+                "Your campsites will be removed from \"$lotteryTitle\". Entrants already on the " +
+                    "waitlist stay in the lottery for the other campsites."
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Withdraw", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Keep Campsite") } },
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = MaterialTheme.shapes.extraLarge
     )
 }
 
@@ -72,6 +153,9 @@ fun OwnerLotteryListScreen(
  * Compose Preview, with no database involved.
  *
  * @param lotteries every lottery the owner has; the tabs filter this list.
+ * @param invitations invitations waiting for the owner's answer, shown above the tabs.
+ * @param invitesEnabled false while an answer is being saved.
+ * @param onWithdraw event call when the owner taps Withdraw on a lottery they joined.
  */
 @Composable
 fun OwnerLotteryListContent(
@@ -83,7 +167,12 @@ fun OwnerLotteryListContent(
     onViewEntrants: (String) -> Unit,
     onEditLottery: (String) -> Unit,
     onViewResults: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    invitations: List<LotteryInvite> = emptyList(),
+    invitesEnabled: Boolean = true,
+    onAcceptInvite: (LotteryInvite) -> Unit = {},
+    onDeclineInvite: (LotteryInvite) -> Unit = {},
+    onWithdraw: (OwnerLotteryItem) -> Unit = {}
 ) {
     val counts = LotteryFilter.entries.associateWith { filter -> lotteries.count(filter::matches) }
     val shown = lotteries.filter(selectedFilter::matches)
@@ -112,6 +201,25 @@ fun OwnerLotteryListContent(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
+            if (invitations.isNotEmpty()) {
+                item {
+                    Text(
+                        "Invitations (${invitations.size})",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                items(invitations, key = { "invite-${it.lotteryId}-${it.campsiteId}" }) { invite ->
+                    LotteryInvitationCard(
+                        invite = invite,
+                        enabled = invitesEnabled,
+                        onAccept = { onAcceptInvite(invite) },
+                        onDecline = { onDeclineInvite(invite) },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
             item {
                 LotteryFilterTabs(
                     selected = selectedFilter,
@@ -128,6 +236,7 @@ fun OwnerLotteryListContent(
                     onViewEntrants = { onViewEntrants(lottery.id) },
                     onEdit = { onEditLottery(lottery.id) },
                     onViewResults = { onViewResults(lottery.id) },
+                    onWithdraw = { onWithdraw(lottery) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }

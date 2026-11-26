@@ -49,6 +49,9 @@ import java.util.Date
  *    buttons.
  *  - Completed: stay and draw results, with Entrants and Results buttons.
  *  - Cancelled: only the title, campsite and "Cancelled" badge.
+ *
+ * On a lottery the owner joined from another owner's invitation, the details also say who hosts
+ * it, and the Edit icon is replaced by a Withdraw button, since only the creator can edit.
  */
 @Composable
 fun OwnerLotteryCard(
@@ -56,7 +59,8 @@ fun OwnerLotteryCard(
     onViewEntrants: () -> Unit,
     onEdit: () -> Unit,
     onViewResults: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onWithdraw: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -73,7 +77,14 @@ fun OwnerLotteryCard(
                 LotteryStatus.ACTIVE -> {
                     ActiveDetails(lottery)
                     EntrantsJoinedRow(lottery.entrantCount, lottery.waitlistCap)
-                    ActiveActions(lottery.entrantCount, onViewEntrants, onEdit)
+                    if (lottery.isCreator) {
+                        ActiveActions(lottery.entrantCount, onViewEntrants, onEdit)
+                    } else {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            SecondaryButton("View Entrants (${lottery.entrantCount})", onViewEntrants, Modifier.weight(1f))
+                            SecondaryButton("Withdraw Campsite", onWithdraw, Modifier.weight(1f))
+                        }
+                    }
                 }
                 LotteryStatus.COMPLETED -> {
                     CompletedDetails(lottery)
@@ -138,6 +149,7 @@ private fun LotteryStatusBadge(lottery: OwnerLotteryItem) {
 @Composable
 private fun ActiveDetails(lottery: OwnerLotteryItem) {
     DetailsBox {
+        if (!lottery.isCreator) DetailRow("Hosted by:", lottery.hostName)
         DetailRow("Registration Window:", formatDateSpan(lottery.registrationStart, lottery.registrationEnd))
         DetailRow("Booking Stay:", formatStay(lottery))
         DetailRow("Draw Rule:", drawRule(lottery.winnersToDraw, lottery.waitlistCap))
@@ -153,6 +165,7 @@ private fun CompletedDetails(lottery: OwnerLotteryItem) {
         "${winnerCount(lottery.winnersDrawn)} from ${lottery.entrantCount} entries"
     }
     DetailsBox {
+        if (!lottery.isCreator) DetailRow("Hosted by:", lottery.hostName)
         DetailRow("Booking Stay:", formatStay(lottery))
         DetailRow("Draw Results:", results)
     }
