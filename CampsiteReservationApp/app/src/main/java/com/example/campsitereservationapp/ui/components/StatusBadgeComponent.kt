@@ -1,3 +1,6 @@
+/**
+ * This file holds a reusable UI that displays the status of the profile
+ */
 package com.example.campsitereservationapp.ui.components
 
 import androidx.compose.foundation.BorderStroke

@@ -1,3 +1,7 @@
+/**
+ * This file hold a reusable UI component, specifically the back button
+ * title and header used in many screens
+ */
 package com.example.campsitereservationapp.ui.components
 
 import androidx.compose.foundation.BorderStroke

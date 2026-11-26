@@ -1,5 +1,7 @@
 /**
- * Model for a user's account, stored in the Profiles collection with the device ID as the document ID.
+ * This class hold the profile data class, it contains all information about the profile
+ * and also settings (right now it's only if notification are on or not)
+ *
  */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 

@@ -1,3 +1,6 @@
+/**
+ * This file contains the tests for the UserWonBooking
+ */
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.utils.appCalendar

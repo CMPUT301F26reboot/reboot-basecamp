@@ -1,3 +1,6 @@
+/**
+ * TO BE DELETED, a temporary files for the lottery screen until it's setup
+ */
 package com.example.campsitereservationapp.ui.entrant
 
 import androidx.compose.foundation.layout.Arrangement

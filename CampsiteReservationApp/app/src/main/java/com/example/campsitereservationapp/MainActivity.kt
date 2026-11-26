@@ -1,3 +1,5 @@
+/** This file contains the application creation and runs the app navigation CampsiteReservationApp*/
+
 package com.example.campsitereservationapp
 
 import android.os.Build

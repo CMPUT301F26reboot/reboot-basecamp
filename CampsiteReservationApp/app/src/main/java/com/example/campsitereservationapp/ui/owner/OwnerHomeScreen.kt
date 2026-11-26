@@ -1,3 +1,7 @@
+/**
+ * This file contains the Owner Home Screen UI, it doesn't have a viewmodel
+ * because it's just navigation functionality
+ */
 package com.example.campsitereservationapp.ui.owner
 
 import androidx.compose.foundation.Image

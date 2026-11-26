@@ -1,4 +1,4 @@
-/*
+/** This file contains separated UI component of Campsite Registration Screen
  * AI use:
  * - Q: What do I need from the Map folder to add the map to the register screen?
  *   A: Three things: GeocodingViewModel for the address search (onQueryChange, onAddressSelected,

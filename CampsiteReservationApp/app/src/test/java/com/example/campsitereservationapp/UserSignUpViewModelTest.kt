@@ -1,5 +1,5 @@
 /**
- * Unit tests for UserSignUpViewModel, covering returning devices, form validation, and saving a new profile.
+ * This file contains the unit tests for UserSignUpViewModel, covering returning devices, form validation, and saving a new profile.
  */
 package com.example.campsitereservationapp
 

@@ -1,3 +1,8 @@
+/** Example/Demo on how to add to Screen:
+ * Has 2 Parts:
+ *  MapCompose: Shows map based on coordinate input, also has button to drop pin and get geolcation
+ *  SomeTextField + DropDown Menu = search for address and move map to there
+ */
 package com.example.campsitereservationapp.Map
 
 import androidx.compose.foundation.layout.Box
@@ -26,12 +31,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.firestore.GeoPoint
 import java.util.Locale
 
-/** Example/Demo on how to add to Screen:
- * Has 2 Parts:
- *  MapCompose: Shows map based on coordinate input, also has button to drop pin and get geolcation
- *  SomeTextField + DropDown Menu = search for address and move map to there
- *
- *
+
+/**
+ * Just a small example on how to implement map into other screens
  */
 @Composable
 fun MapImplementationExample(

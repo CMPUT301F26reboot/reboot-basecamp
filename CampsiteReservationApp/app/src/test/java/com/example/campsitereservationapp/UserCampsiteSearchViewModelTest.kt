@@ -1,4 +1,6 @@
-/*
+/**
+ * This file tests UserCampsiteSearchViewModel
+ *
  * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
  * - Q: How do I test ViewModels that connect to Firebase when they're created?
  *   A: Plain JUnit for the models; MockK to mock Firebase.firestore for the ViewModels.
