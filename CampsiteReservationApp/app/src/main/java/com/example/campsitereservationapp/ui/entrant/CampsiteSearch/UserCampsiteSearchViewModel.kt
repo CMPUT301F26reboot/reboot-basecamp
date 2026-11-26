@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp.ui.entrant.CampsiteSearch
 
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateSetOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
@@ -88,7 +89,7 @@ class UserCampsiteSearchViewModel: ListingViewModel() {
 
     /** Today and the next 364 days, each at local midnight, which the search calendar can offer. */
     internal fun get365Dates(): Set<Date>{
-        val calendar = Calendar.getInstance() // Starts at today
+        val calendar = appCalendar() // Starts at today
         val dates = mutableSetOf<Date>()
 
         for (i in 1..365) {

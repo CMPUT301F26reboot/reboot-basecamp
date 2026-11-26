@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp
 
+import com.example.campsitereservationapp.utils.appCalendar
 import com.example.campsitereservationapp.ui.entrant.WonBooking.computeBookableDays
 import com.example.campsitereservationapp.utils.toDayOnly
 import org.junit.Assert.assertEquals
@@ -12,7 +13,7 @@ class UserWonBookingTest {
 
     // Makes a Date for the given day at midnight
     private fun date(year: Int, month: Int, day: Int): Date {
-        val cal = Calendar.getInstance()
+        val cal = appCalendar()
         cal.clear()
         cal.set(year, month - 1, day)
         return cal.time
@@ -20,7 +21,7 @@ class UserWonBookingTest {
 
     // Makes a Date for the given day and time
     private fun dateTime(year: Int, month: Int, day: Int, hour: Int, minute: Int): Date {
-        val cal = Calendar.getInstance()
+        val cal = appCalendar()
         cal.clear()
         cal.set(year, month - 1, day, hour, minute)
         return cal.time

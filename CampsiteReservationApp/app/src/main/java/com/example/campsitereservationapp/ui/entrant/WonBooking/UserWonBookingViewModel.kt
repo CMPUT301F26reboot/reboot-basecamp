@@ -14,6 +14,7 @@
  */
 package com.example.campsitereservationapp.ui.entrant.WonBooking
 
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -84,7 +85,7 @@ class UserWonBookingViewModel : ListingViewModel() {
     /** Month the calendar should open on: the earliest bookable day, if any. */
     val initialMonth: YearMonth?
         get() = bookableDays.minOrNull()?.let { date ->
-            val cal = Calendar.getInstance()
+            val cal = appCalendar()
             cal.time = date
             YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
         }
