@@ -45,7 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
-import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationFilter
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
 import java.util.Date
 import com.example.campsitereservationapp.ui.theme.PillShape
 import androidx.compose.foundation.shape.ZeroCornerSize

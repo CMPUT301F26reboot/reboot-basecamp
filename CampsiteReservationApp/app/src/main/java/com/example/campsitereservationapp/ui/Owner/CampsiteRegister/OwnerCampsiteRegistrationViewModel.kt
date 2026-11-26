@@ -1,4 +1,5 @@
 /*
+* ViewModel/ non UI functionality for OwnerCampsiteRegistration
  * AI use:
  * - Q: How do I keep Publish disabled until the form is valid?
  *   A: A computed canPublish (name and address filled, not already publishing) bound to enabled.
@@ -28,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class OwnerCampDetailsViewModel : DatabaseModel() {
+class OwnerCampsiteRegistrationViewModel : DatabaseModel() {
 
     var editingListingId by mutableStateOf<String?>(null)
         private set

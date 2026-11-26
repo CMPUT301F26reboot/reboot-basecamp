@@ -1,13 +1,12 @@
-package com.example.campsitereservationapp.ui.entrant.ReservationDetails
+package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 
-enum class ReservationFilter { All, Reserved, Past }
+enum class ReservationFilter { All, Reserved, Past, Cancelled }
 
 /**
  * Backs the User Reservations screen (US 01.06.01, 01.06.02, 01.07.01).
