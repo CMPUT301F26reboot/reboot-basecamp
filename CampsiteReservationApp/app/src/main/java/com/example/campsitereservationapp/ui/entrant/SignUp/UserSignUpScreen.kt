@@ -1,3 +1,6 @@
+/**
+ * Sign up screen shown on first launch, signs a known device in automatically or shows the form to create a profile.
+ */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 
 import androidx.compose.foundation.BorderStroke

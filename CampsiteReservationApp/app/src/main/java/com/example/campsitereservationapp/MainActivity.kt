@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.campsitereservationapp.ui.MessageScreen
+import com.example.campsitereservationapp.ui.owner.WaitList.OwnerWaitlistScreen
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationTheme
 
 class MainActivity : ComponentActivity() {

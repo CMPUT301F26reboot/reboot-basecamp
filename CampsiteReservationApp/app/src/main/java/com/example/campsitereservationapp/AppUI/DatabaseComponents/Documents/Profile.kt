@@ -1,3 +1,6 @@
+/**
+ * Model for a user's account, stored in the Profiles collection with the device ID as the document ID.
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import android.companion.DeviceId
