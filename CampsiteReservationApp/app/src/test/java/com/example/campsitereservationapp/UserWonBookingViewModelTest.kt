@@ -9,6 +9,7 @@
  */
 package com.example.campsitereservationapp
 
+import com.example.campsitereservationapp.utils.appCalendar
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
@@ -78,7 +79,7 @@ class UserWonBookingViewModelTest {
 
     /** A date at [hour]:00, like a Firestore timestamp. [month] is 1-based. */
     private fun at(year: Int, month: Int, day: Int, hour: Int = 0): Date {
-        val cal = Calendar.getInstance()
+        val cal = appCalendar()
         cal.clear()
         cal.set(year, month - 1, day, hour, 0)
         return cal.time

@@ -3,6 +3,7 @@
  */
 package com.example.campsitereservationapp.ui.owner
 
+import com.example.campsitereservationapp.utils.endOfDay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -249,7 +250,7 @@ fun OwnerLotteryCreationScreen(
                             title = lotteryName,
                             dates = dates.toList(),
                             start = lotteryDates[0],
-                            end = lotteryDates[lotteryDates.lastIndex],
+                            end = lotteryDates[lotteryDates.lastIndex].endOfDay(),
                             campsiteIDs = selectedListingIDs,
                             winnersToDraw = winnersToDraw,
                             waitlistCap = waitlistCap,
@@ -261,7 +262,7 @@ fun OwnerLotteryCreationScreen(
                             title = lotteryName,
                             dates = dates.toList(),
                             start = lotteryDates[0],
-                            end = lotteryDates[lotteryDates.lastIndex],
+                            end = lotteryDates[lotteryDates.lastIndex].endOfDay(),
                             campsiteIDs = selectedListingIDs,
                             winnersToDraw = winnersToDraw,
                             waitlistCap = waitlistCap,

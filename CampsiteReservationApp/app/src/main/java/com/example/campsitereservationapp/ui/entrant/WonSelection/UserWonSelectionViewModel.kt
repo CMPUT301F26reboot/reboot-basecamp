@@ -3,11 +3,10 @@
  */
 package com.example.campsitereservationapp.ui.entrant.WonSelection
 
+import com.example.campsitereservationapp.utils.appDateFormat
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 
 /**
@@ -26,9 +25,9 @@ class UserWonSelectionViewModel(
 
     /** Takes a lottery as input and returns start and end date as a formatted string */
     fun lotteryDatesToString(lottery: Lottery): String {
-        val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
-        val dayFormat = SimpleDateFormat("d", Locale.getDefault())
-        val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
+        val monthFormat = appDateFormat("MMM")
+        val dayFormat = appDateFormat("d")
+        val yearFormat = appDateFormat("yyyy")
 
         val startMonth = monthFormat.format(lottery.start)
         val endMonth = monthFormat.format(lottery.end)

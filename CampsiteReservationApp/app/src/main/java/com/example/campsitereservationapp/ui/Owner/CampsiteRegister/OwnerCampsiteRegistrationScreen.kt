@@ -45,7 +45,7 @@ import com.google.firebase.firestore.GeoPoint
 
 /**
  * Lets an owner register a new campsite listing (US 02.01.01). Stateful wrapper that wires
- * [OwnerCampDetailsViewModel] to [OwnerCampDetailsContent]; navigates back via [onPublished] once
+ * [OwnerCampsiteRegistrationViewModel] to [OwnerCampDetailsContent]; navigates back via [onPublished] once
  * the listing has been written to Firestore.
  *
  * @param ownerId the current owner. Comes from device identification once that exists.
@@ -57,7 +57,7 @@ fun OwnerCampDetailsScreen(
     onPublished: () -> Unit,
     modifier: Modifier = Modifier,
     listingId: String? = null,
-    viewModel: OwnerCampDetailsViewModel = viewModel()
+    viewModel: OwnerCampsiteRegistrationViewModel = viewModel()
 ) {
     LaunchedEffect(listingId) {
         listingId?.let(viewModel::loadListing)

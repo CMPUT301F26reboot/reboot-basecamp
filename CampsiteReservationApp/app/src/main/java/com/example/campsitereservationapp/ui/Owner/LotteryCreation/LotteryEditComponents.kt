@@ -3,6 +3,8 @@
  */
 package com.example.campsitereservationapp.ui.owner
 
+import com.example.campsitereservationapp.utils.toDayOnly
+import com.example.campsitereservationapp.utils.endOfDay
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -120,8 +122,8 @@ internal fun LotterySummaryCard(
 private fun LotteryStateBadge(lottery: Lottery, now: Date) {
     val colors = MaterialTheme.colorScheme
     val (text, container, content) = when {
-        now.after(lottery.end) -> Triple("Closed", colors.surfaceVariant, colors.onSurfaceVariant)
-        now.before(lottery.start) -> Triple("Upcoming", colors.tertiaryContainer, colors.onTertiaryContainer)
+        now.after(lottery.end.endOfDay()) -> Triple("Closed", colors.surfaceVariant, colors.onSurfaceVariant)
+        now.before(lottery.start.toDayOnly()) -> Triple("Upcoming", colors.tertiaryContainer, colors.onTertiaryContainer)
         else -> Triple("Active Draw", colors.secondaryContainer, colors.onSecondaryContainer)
     }
     StatusBadge(text = text, containerColor = container, contentColor = content)

@@ -5,6 +5,7 @@
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.utils.toDayOnly
 import java.util.Date
 
 
@@ -26,7 +27,7 @@ open class ListingViewModel: DatabaseModel() {
         for (lot in _lotteries){
             if(listing.id in lot.campsiteIDs){
                 for(date in lot.dates){
-                    dates.add(date)
+                    dates.add(date.toDayOnly())
                 }
             }
         }

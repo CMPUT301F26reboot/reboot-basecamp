@@ -29,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class OwnerCampDetailsViewModel : DatabaseModel() {
+class OwnerCampsiteRegistrationViewModel : DatabaseModel() {
 
     var editingListingId by mutableStateOf<String?>(null)
         private set

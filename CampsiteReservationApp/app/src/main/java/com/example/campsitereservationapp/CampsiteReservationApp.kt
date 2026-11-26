@@ -18,6 +18,7 @@ import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
+import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.UserCampsiteDetailsScreen
@@ -345,7 +346,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("ownerCampDetails")
                 },
                 onDetails = { listing ->
-                    //navController.navigate("ownerCampUpdate/${listing.id}")
+                    navController.navigate("ownerCampView/${listing.id}")
                 },
                 onEdit = { listing ->
                     navController.navigate("ownerCampEdit/${listing.id}")
@@ -444,6 +445,22 @@ fun CampsiteReservationApp() {
                 onPublished = {
                     navController.popBackStack()
                 },
+            )
+        }
+        composable(
+            route = "ownerCampView/{listingId}",
+            arguments = listOf(
+                navArgument("listingId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+            OwnerCampsiteDetailsScreen(
+                listingId = entry.arguments?.getString("listingId").orEmpty(),
+                onBack = {
+                    navController.popBackStack()
+                },
+                onOpenReservation = {}
             )
         }
 
