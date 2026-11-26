@@ -57,17 +57,17 @@ import com.example.campsitereservationapp.R
 /**
  * Shown when the device is not recognized (US 01.09.01). A device that already has a profile is
  * signed in automatically; otherwise the user fills in their details to create a profile tied to
- * this device. Links to the owner sign up and to the policies (US 01.11.01).
+ * this device. The "here" link switches the form to creating a camp owner account instead. Links
+ * to the policies (US 01.11.01).
  *
- * @param onSignedUp called once this device has a profile, either from before or just created.
- * @param onOwnerSignUp called when the user taps "here" to create a camp owner account.
+ * @param onSignedUp called once this device has a profile, either from before or just created,
+ *  with the profile's role (Profile.ROLE_ENTRANT or Profile.ROLE_OWNER).
  * @param onPolicies called when the user taps "Policies & Guidelines".
  * @param viewModel holds the form and creates the profile.
  */
 @Composable
 fun UserSignUpScreen(
-    onSignedUp: () -> Unit,
-    onOwnerSignUp: () -> Unit,
+    onSignedUp: (role: String) -> Unit,
     onPolicies: () -> Unit,
     viewModel: UserSignUpViewModel = viewModel()
 ) {
@@ -79,7 +79,8 @@ fun UserSignUpScreen(
     }
 
     LaunchedEffect(viewModel.isSignedUp) {
-        if (viewModel.isSignedUp) onSignedUp()
+        val role = viewModel.role
+        if (viewModel.isSignedUp && role != null) onSignedUp(role)
     }
 
     LaunchedEffect(viewModel.errorMessage) {
@@ -113,7 +114,8 @@ fun UserSignUpScreen(
         phoneNumberError = viewModel.phoneNumberError,
         isSaving = viewModel.isSaving,
         onCreateAccount = { viewModel.signUp(viewModel.readDeviceId(context)) },
-        onOwnerSignUp = onOwnerSignUp,
+        isOwnerSignUp = viewModel.isOwnerSignUp,
+        onToggleOwnerSignUp = viewModel::toggleOwnerSignUp,
         onPolicies = onPolicies,
         snackbarHostState = snackbarHostState
     )
@@ -137,7 +139,8 @@ fun UserSignUpScreen(
  * @param phoneNumberError the message to show under the Phone Number field, or null if there isn't one.
  * @param isSaving true while the profile is being written, which disables the button.
  * @param onCreateAccount called when the user taps "Create Account".
- * @param onOwnerSignUp called when the user taps "here" to create a camp owner account.
+ * @param isOwnerSignUp true when the form creates a camp owner account.
+ * @param onToggleOwnerSignUp called when the user taps the link to switch account type.
  * @param onPolicies called when the user taps "Policies & Guidelines".
  * @param snackbarHostState shows the message when an account can't be created.
  */
@@ -154,7 +157,8 @@ internal fun UserSignUpContent(
     phoneNumberError: String?,
     isSaving: Boolean,
     onCreateAccount: () -> Unit,
-    onOwnerSignUp: () -> Unit,
+    isOwnerSignUp: Boolean,
+    onToggleOwnerSignUp: () -> Unit,
     onPolicies: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
@@ -212,7 +216,11 @@ internal fun UserSignUpContent(
                             .height(44.dp)
                     ) {
                         Text(
-                            text = if (isSaving) "Creating Account..." else "Create Account",
+                            text = when {
+                                isSaving -> "Creating Account..."
+                                isOwnerSignUp -> "Create Owner Account"
+                                else -> "Create Account"
+                            },
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Medium
                         )
@@ -223,11 +231,12 @@ internal fun UserSignUpContent(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Looking to create a camp owner account? Create ",
+                            text = if (isOwnerSignUp) "Not a camp owner? Sign up as a camper "
+                                   else "Looking to create a camp owner account? Create ",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        SignUpLink("here", MaterialTheme.typography.bodySmall, onOwnerSignUp)
+                        SignUpLink("here", MaterialTheme.typography.bodySmall, onToggleOwnerSignUp)
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     SignUpLink("Policies & Guidelines", MaterialTheme.typography.bodyMedium, onPolicies)

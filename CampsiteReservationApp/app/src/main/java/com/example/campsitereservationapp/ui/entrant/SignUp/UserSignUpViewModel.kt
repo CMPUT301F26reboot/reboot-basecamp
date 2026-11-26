@@ -13,7 +13,8 @@ import com.example.campsitereservationapp.utils.isValidPhoneNumber
 
 /**
  * ViewModel of UserSignUpScreen. Recognizes returning devices, holds the form, validates it, and
- * stores the new profile.
+ * stores the new profile. The same form signs up entrants and, after the owner link is tapped,
+ * camp owners; the profile's role decides which home screen the app opens on.
  *
  * Outstanding issues:
  *  - Firestore doesn't fail a save while offline, so [isSaving] stays true until the device
@@ -51,9 +52,22 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
     var isSaving by mutableStateOf(false)
         private set
 
+    /** True when the form creates a camp owner account instead of an entrant account. */
+    var isOwnerSignUp by mutableStateOf(false)
+        private set
+
     /** True once this device has a profile, either from before or just created. */
     var isSignedUp by mutableStateOf(false)
         private set
+
+    /** The signed-in profile's role (Profile.ROLE_ENTRANT or ROLE_OWNER), or null before sign in. */
+    var role by mutableStateOf<String?>(null)
+        private set
+
+    /** Switches the form between creating an entrant account and a camp owner account. */
+    fun toggleOwnerSignUp() {
+        isOwnerSignUp = !isOwnerSignUp
+    }
 
     /** Message to show in a snackbar, or null if there's nothing to report. */
     var errorMessage by mutableStateOf<String?>(null)
@@ -70,14 +84,18 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
      * @param deviceId the ID of this device.
      */
     fun checkDevice(deviceId: String) {
-        profileExists(deviceId) { exists ->
+        findProfileRole(deviceId) { existingRole ->
             isCheckingDevice = false
-            if (exists) isSignedUp = true
+            if (existingRole != null) {
+                role = existingRole
+                isSignedUp = true
+            }
         }
     }
 
     /**
-     * Validates the form and, if it is valid, creates a profile for [deviceId].
+     * Validates the form and, if it is valid, creates a profile for [deviceId], as a camp owner if
+     * [isOwnerSignUp] is on and as an entrant otherwise.
      *
      * @param deviceId the ID of this device, which also becomes the ID of the profile.
      */
@@ -88,11 +106,13 @@ class UserSignUpViewModel : ProfileCreatingViewModel() {
         val profile = Profile(name = name.trim(), deviceId = deviceId)
         profile.email = email.trim()
         profile.phoneNumber = phoneNumber.trim()
+        profile.role = if (isOwnerSignUp) Profile.ROLE_OWNER else Profile.ROLE_ENTRANT
 
         saveProfile(
             profile,
             onSuccess = {
                 isSaving = false
+                role = profile.role
                 isSignedUp = true
             },
             onFailure = {

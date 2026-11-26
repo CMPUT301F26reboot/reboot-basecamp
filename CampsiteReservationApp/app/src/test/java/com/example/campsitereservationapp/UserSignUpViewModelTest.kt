@@ -107,17 +107,45 @@ class UserSignUpViewModelTest {
         assertEquals(deviceId, viewModel.readDeviceId(mockk<Context>(relaxed = true)))
     }
 
+    /** A stored profile document with the given [role] field (null = saved before roles existed). */
+    private fun existingProfile(role: String?) = mockk<DocumentSnapshot> {
+        every { exists() } returns true
+        every { getString("role") } returns role
+    }
+
     @Test
     fun checkDevice_existingProfile_signsInAutomatically() {
         val read = stubRead()
-        val snapshot = mockk<DocumentSnapshot> { every { exists() } returns true }
 
         viewModel.checkDevice(deviceId)
         assertTrue(viewModel.isCheckingDevice)
-        read.onSuccess!!.onSuccess(snapshot)
+        read.onSuccess!!.onSuccess(existingProfile(Profile.ROLE_ENTRANT))
 
         assertFalse(viewModel.isCheckingDevice)
         assertTrue(viewModel.isSignedUp)
+        assertEquals(Profile.ROLE_ENTRANT, viewModel.role)
+    }
+
+    @Test
+    fun checkDevice_existingOwner_signsInAsOwner() {
+        val read = stubRead()
+
+        viewModel.checkDevice(deviceId)
+        read.onSuccess!!.onSuccess(existingProfile(Profile.ROLE_OWNER))
+
+        assertTrue(viewModel.isSignedUp)
+        assertEquals(Profile.ROLE_OWNER, viewModel.role)
+    }
+
+    @Test
+    fun checkDevice_profileWithoutRole_signsInAsEntrant() {
+        val read = stubRead()
+
+        viewModel.checkDevice(deviceId)
+        read.onSuccess!!.onSuccess(existingProfile(null))
+
+        assertTrue(viewModel.isSignedUp)
+        assertEquals(Profile.ROLE_ENTRANT, viewModel.role)
     }
 
     @Test
@@ -244,6 +272,31 @@ class UserSignUpViewModelTest {
         assertFalse(viewModel.isSaving)
         assertTrue(viewModel.isSignedUp)
         assertNull(viewModel.errorMessage)
+        assertEquals(Profile.ROLE_ENTRANT, viewModel.role)
+    }
+
+    @Test
+    fun signUp_ownerMode_savesOwnerRole() {
+        val write = stubWrite()
+        val saved = slot<Profile>()
+        every { document.set(capture(saved)) } returns write.task
+        fillInValidForm()
+
+        viewModel.toggleOwnerSignUp()
+        viewModel.signUp(deviceId)
+        write.onSuccess!!.onSuccess(null)
+
+        assertEquals(Profile.ROLE_OWNER, saved.captured.role)
+        assertEquals(Profile.ROLE_OWNER, viewModel.role)
+    }
+
+    @Test
+    fun toggleOwnerSignUp_twice_backToEntrant() {
+        viewModel.toggleOwnerSignUp()
+        assertTrue(viewModel.isOwnerSignUp)
+
+        viewModel.toggleOwnerSignUp()
+        assertFalse(viewModel.isOwnerSignUp)
     }
 
     @Test
