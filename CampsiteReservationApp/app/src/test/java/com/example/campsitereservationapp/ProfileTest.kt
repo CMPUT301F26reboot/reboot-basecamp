@@ -1,3 +1,6 @@
+/**
+ * Unit tests for the Profile model's default values and the fields saved to Firestore.
+ */
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile

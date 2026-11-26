@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp.ui.entrant.Reservations
 
+import com.example.campsitereservationapp.utils.endOfDay
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,7 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
-import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationFilter
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
 import java.util.Date
 import com.example.campsitereservationapp.ui.theme.PillShape
 import androidx.compose.foundation.shape.ZeroCornerSize
@@ -509,7 +510,7 @@ private fun ReservationCard(
 /** True if the reservation's last booked date is before today. */
 private fun isPast(r: Reservation): Boolean {
     val last = r.dates.maxOrNull() ?: return false
-    return last.before(Date())
+    return last.endOfDay().before(Date())
 }
 
 /**

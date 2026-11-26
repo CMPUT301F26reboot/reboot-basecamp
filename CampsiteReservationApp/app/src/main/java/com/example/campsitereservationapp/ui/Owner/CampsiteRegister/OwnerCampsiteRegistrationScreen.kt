@@ -1,4 +1,5 @@
-/*
+/**
+ * UI for registering a campsite or editing a campsite also
  * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
  * - Q: Should screens connect to Firebase directly, or use getters and setters? I was worried my
  *      changes might crash Firebase (it hasn't happened).
@@ -44,7 +45,7 @@ import com.google.firebase.firestore.GeoPoint
 
 /**
  * Lets an owner register a new campsite listing (US 02.01.01). Stateful wrapper that wires
- * [OwnerCampDetailsViewModel] to [OwnerCampDetailsContent]; navigates back via [onPublished] once
+ * [OwnerCampsiteRegistrationViewModel] to [OwnerCampDetailsContent]; navigates back via [onPublished] once
  * the listing has been written to Firestore.
  *
  * @param ownerId the current owner. Comes from device identification once that exists.
@@ -56,7 +57,7 @@ fun OwnerCampDetailsScreen(
     onPublished: () -> Unit,
     modifier: Modifier = Modifier,
     listingId: String? = null,
-    viewModel: OwnerCampDetailsViewModel = viewModel()
+    viewModel: OwnerCampsiteRegistrationViewModel = viewModel()
 ) {
     LaunchedEffect(listingId) {
         listingId?.let(viewModel::loadListing)

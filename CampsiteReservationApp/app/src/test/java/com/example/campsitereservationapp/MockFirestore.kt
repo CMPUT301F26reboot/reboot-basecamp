@@ -8,6 +8,7 @@
  */
 package com.example.campsitereservationapp
 
+import com.example.campsitereservationapp.utils.appCalendar
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -86,7 +87,7 @@ class MockTask<T> {
 
 /** Midnight on the given day. [month] is 1-based. */
 fun day(year: Int, month: Int, day: Int): Date {
-    val cal = Calendar.getInstance()
+    val cal = appCalendar()
     cal.clear()
     cal.set(year, month - 1, day)
     return cal.time
@@ -94,7 +95,7 @@ fun day(year: Int, month: Int, day: Int): Date {
 
 /** A date [days] from now (negative for the past), for tests that compare against today. */
 fun daysFromNow(days: Int): Date {
-    val cal = Calendar.getInstance()
+    val cal = appCalendar()
     cal.add(Calendar.DAY_OF_YEAR, days)
     return cal.time
 }

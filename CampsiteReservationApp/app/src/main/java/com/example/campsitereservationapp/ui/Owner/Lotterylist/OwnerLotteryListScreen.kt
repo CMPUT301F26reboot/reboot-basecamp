@@ -1,5 +1,6 @@
-package com.example.campsitereservationapp.ui.Owner.Lotterylist
+package com.example.campsitereservationapp.ui.owner.Lotterylist
 
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +31,7 @@ import java.util.Date
 
 /**
  * Lists the owner's lotteries with tabs to filter by status, and a button to create
- * a new lottery. Stateful wrapper that wires [OwnerLotterListViewModel] to
+ * a new lottery. Stateful wrapper that wires [OwnerLotteryListViewModel] to
  * [OwnerLotteryListContent].
  *
  * @param ownerId the current owner. Comes from device identification once that exists.
@@ -51,7 +52,7 @@ fun OwnerLotteryListScreen(
     onEditLottery: (String) -> Unit,
     onViewResults: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: OwnerLotterListViewModel = viewModel()
+    viewModel: OwnerLotteryListViewModel = viewModel()
 ) {
     OwnerLotteryListContent(
         lotteries = viewModel.ownerLotteries(ownerId),
@@ -172,7 +173,7 @@ private fun CreateLotteryButton(onClick: () -> Unit, modifier: Modifier = Modifi
 
 /** Date [daysFromToday] days from now, at the current time of day. Used by the preview. */
 private fun previewDate(daysFromToday: Int, hours: Int = 0): Date =
-    Calendar.getInstance().apply {
+    appCalendar().apply {
         add(Calendar.DAY_OF_YEAR, daysFromToday)
         add(Calendar.HOUR_OF_DAY, hours)
     }.time

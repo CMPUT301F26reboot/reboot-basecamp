@@ -19,19 +19,20 @@
 
 package com.example.campsitereservationapp.ui.entrant.CampsiteDetails
 
+import com.example.campsitereservationapp.utils.appDateFormat
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
-import com.example.campsitereservationapp.ui.entrant.WonBooking.toDayOnly
+import com.example.campsitereservationapp.utils.endOfDay
+import com.example.campsitereservationapp.utils.toDayOnly
 import com.google.firebase.firestore.FieldValue
-import java.text.SimpleDateFormat
 import java.time.YearMonth
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 /**
  * UserCampsiteDetailsViewModel:
@@ -102,7 +103,7 @@ class UserCampsiteDetailsViewModel : ListingViewModel() {
         val now = Date()
         return _lotteries
             .filter { id in it.campsiteIDs && !it.cancelled }
-            .filter { now in it.start..it.end}
+            .filter { now in it.start.toDayOnly()..it.end.endOfDay() }
             .filter { overlapsSearch(it) }
             .filter { profileId !in it.waitlist}
             .map {it.toCardInfo()}
@@ -146,7 +147,7 @@ class UserCampsiteDetailsViewModel : ListingViewModel() {
     /** calendar opens on the month the search starts in */
     val initialMonth: YearMonth?
         get() = (searchStart ?: lotteryDays.minOrNull())?.let { date ->
-            val cal = Calendar.getInstance()
+            val cal = appCalendar()
             cal.time = date
             YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
         }
@@ -199,7 +200,7 @@ class UserCampsiteDetailsViewModel : ListingViewModel() {
 internal fun formatDateRange(dates: List<Date>): String {
     val first = dates.minOrNull() ?: return "No dates found"
     val last = dates.max()
-    val format = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+    val format = appDateFormat("MMM d, yyyy")
     return if (first == last) format.format(first)
         else "${format.format(first)} - ${format.format(last)}"
 }
@@ -214,7 +215,7 @@ internal fun formatDateRange(dates: List<Date>): String {
  */
 internal fun parseRouteDate(text: String?): Date? {
     if (text == null) return null
-    val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val format = appDateFormat("yyyy-MM-dd")
     format.isLenient = false
     return runCatching { format.parse(text) }.getOrNull()
 }

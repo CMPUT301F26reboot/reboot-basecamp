@@ -12,6 +12,8 @@
 * Q: "Can we generate the script for Kotlin rather than node.js?"
 *
 * Q: "Please generate KDocs for the updated file Draw.kt file"
+*
+* Note: did not have access to firebase or project scheme, so many changes were made from the original.
 */
 
 /**
@@ -71,7 +73,6 @@ fun main() {
         .whereLessThanOrEqualTo("end", now)
         .get().get()
 
-    // This section was almost completely changed from original Claude output (by me)
     for (lot in due.documents) {
         db.runTransaction { tx ->
             val snap = tx.get(lot.reference).get()

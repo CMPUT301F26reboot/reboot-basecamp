@@ -1,3 +1,6 @@
+/**
+ * Model for a user's account, stored in the Profiles collection with the device ID as the document ID.
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents
 
 import android.companion.DeviceId
@@ -23,4 +26,5 @@ class Profile(var name: String = "",
     var phoneNumber = ""
     var profilePicture = "" //Base64 text, see PhotoUtils
     var notificationsEnabled = true
+    var role = ""           //either Entrant, Owner, or Admin for entrant, owner, and admin
 }

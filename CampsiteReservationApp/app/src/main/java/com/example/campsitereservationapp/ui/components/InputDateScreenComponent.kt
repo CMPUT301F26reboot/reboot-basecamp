@@ -1,5 +1,7 @@
 package com.example.campsitereservationapp.ui.components
 
+import com.example.campsitereservationapp.utils.appDateFormat
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,13 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.campsitereservationapp.ui.entrant.WonBooking.toDayOnly
+import com.example.campsitereservationapp.utils.toDayOnly
 import com.example.campsitereservationapp.ui.theme.PillShape
-import java.text.SimpleDateFormat
 import java.time.YearMonth
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 
 /**
@@ -253,7 +253,7 @@ internal fun nextDateRange(dates: List<Date>, tapped: Date): List<Date> {
 /** Every calendar day from [start] to [end], including both, at midnight. */
 internal fun datesBetween(start: Date, end: Date): List<Date> {
     val days = mutableListOf<Date>()
-    val calendar = Calendar.getInstance()
+    val calendar = appCalendar()
     calendar.time = start.toDayOnly()
     val lastDay = end.toDayOnly()
     while (!calendar.time.after(lastDay)) {
@@ -273,7 +273,7 @@ internal fun formatDateRange(dates: List<Date>): String {
 
 /** Every day from today to [MAX_DAYS_AHEAD] days ahead, minus [removedDates]. */
 private fun selectableDays(removedDates: List<Date>? = null): Set<Date> {
-    val calendar = Calendar.getInstance()
+    val calendar = appCalendar()
     calendar.add(Calendar.DAY_OF_MONTH, MAX_DAYS_AHEAD)
     val allDays = datesBetween(Date(), calendar.time)
     val unavailable = removedDates?.map { it.toDayOnly() }?.toSet().orEmpty()
@@ -282,10 +282,10 @@ private fun selectableDays(removedDates: List<Date>? = null): Set<Date> {
 
 /** Formats a date like "May 1, 2027". */
 private fun formatDate(date: Date): String =
-    SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(date)
+    appDateFormat("MMM d, yyyy").format(date)
 
 private fun Date.toYearMonth(): YearMonth {
-    val calendar = Calendar.getInstance()
+    val calendar = appCalendar()
     calendar.time = this
     return YearMonth.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1)
 }

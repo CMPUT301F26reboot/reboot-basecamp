@@ -39,6 +39,9 @@ internal val Gray50 = Color(0xFFF9FAFB)
 internal val Gray100 = Color(0xFFF3F4F6)
 internal val Gray150 = Color(0xFFEEF0F2)
 internal val Gray200 = Color(0xFFE5E7EB)
+
+internal val Gray300 = Color(0xFFD1D5DB)
+
 internal val Gray500 = Color(0xFF6B7280)
 internal val Gray600 = Color(0xFF757575)
 internal val Gray800 = Color(0xFF1F2937)

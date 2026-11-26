@@ -1,5 +1,7 @@
-package com.example.campsitereservationapp.ui.Owner.Lotterylist
+package com.example.campsitereservationapp.ui.owner.Lotterylist
 
+import com.example.campsitereservationapp.utils.toDayOnly
+import com.example.campsitereservationapp.utils.endOfDay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,7 +21,7 @@ import java.util.concurrent.TimeUnit
  *  - No claim count for completed lotteries yet; winners can't book from a lottery until that
  *    flow exists - since also the winners automatically selected also is not implemented
  */
-class OwnerLotterListViewModel : DatabaseModel() {
+class OwnerLotteryListViewModel : DatabaseModel() {
 
     /** The filter tab currently selected. */
     var selectedFilter by mutableStateOf(LotteryFilter.ALL)
@@ -105,7 +107,7 @@ internal fun toOwnerLotteryItem(
 ): OwnerLotteryItem {
     val status = when {
         lottery.cancelled -> LotteryStatus.CANCELLED
-        now.after(lottery.end) -> LotteryStatus.COMPLETED
+        now.after(lottery.end.endOfDay()) -> LotteryStatus.COMPLETED
         else -> LotteryStatus.ACTIVE
     }
     val campsiteNames = lottery.campsiteIDs.mapNotNull { ownerListings[it]?.name }
@@ -127,7 +129,7 @@ internal fun toOwnerLotteryItem(
         waitlistCap = lottery.waitlistCapacity,
         entrantCount = enrolledCount(lottery),
         winnersDrawn = lottery.selectedlist.size,
-        timeLeftLabel = timeLeftLabel(lottery.start, lottery.end, now)
+        timeLeftLabel = timeLeftLabel(lottery.start.toDayOnly(), lottery.end.endOfDay(), now)
     )
 }
 

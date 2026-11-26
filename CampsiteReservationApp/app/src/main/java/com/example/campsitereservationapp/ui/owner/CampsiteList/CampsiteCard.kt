@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,8 +51,7 @@ import com.example.campsitereservationapp.ui.theme.RatingAmber
  * One row in the owner's campsite list: thumbnail, name, address, guests, rating, Details
  * button, and Edit/QR code buttons.
  *
- * Outstanding issue: onEditClick and onQrCodeClick don't go anywhere yet; no edit or QR
- * screens exist.
+ * The QR code button opens the campsite's promotional QR code (US 02.02.01).
  */
 @Composable
 fun CampsiteCard(
@@ -100,7 +99,7 @@ fun CampsiteCard(
                         Text("Details")
                     }
                     SquareIconButton(icon = Icons.Filled.Edit, contentDescription = "Edit", onClick = onEditClick)
-                    SquareIconButton(icon = Icons.Filled.GridView, contentDescription = "QR code", onClick = onQrCodeClick)
+                    SquareIconButton(icon = Icons.Filled.QrCode, contentDescription = "QR code", onClick = onQrCodeClick)
                 }
             }
         }

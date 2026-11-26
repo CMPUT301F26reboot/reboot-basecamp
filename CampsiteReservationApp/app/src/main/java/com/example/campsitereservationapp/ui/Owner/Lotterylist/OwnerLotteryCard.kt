@@ -1,5 +1,7 @@
-package com.example.campsitereservationapp.ui.Owner.Lotterylist
+package com.example.campsitereservationapp.ui.owner.Lotterylist
 
+import com.example.campsitereservationapp.utils.appDateFormat
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,10 +36,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.campsitereservationapp.ui.components.StatusBadge
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 /**
  * One lottery in the owner's list. Every card shows the title, campsite and a status badge, then
@@ -299,10 +299,10 @@ private fun formatStay(lottery: OwnerLotteryItem): String {
 internal fun formatDateSpan(start: Date, end: Date): String {
     val sameYear = yearOf(start) == yearOf(end)
     val startPattern = if (sameYear) "MMM d" else "MMM d, yyyy"
-    val startText = SimpleDateFormat(startPattern, Locale.getDefault()).format(start)
-    val endText = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(end)
+    val startText = appDateFormat(startPattern).format(start)
+    val endText = appDateFormat("MMM d, yyyy").format(end)
     return "$startText – $endText"
 }
 
 /** The calendar year [date] falls in. */
-private fun yearOf(date: Date): Int = Calendar.getInstance().apply { time = date }.get(Calendar.YEAR)
+private fun yearOf(date: Date): Int = appCalendar().apply { time = date }.get(Calendar.YEAR)
