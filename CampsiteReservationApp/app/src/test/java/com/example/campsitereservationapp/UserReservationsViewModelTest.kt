@@ -10,7 +10,7 @@ package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
-import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationFilter
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
 import com.example.campsitereservationapp.ui.entrant.Reservations.UserReservationsViewModel
 import com.google.firebase.firestore.DocumentReference
 import io.mockk.every
@@ -23,7 +23,7 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Mock tests for [UserReservationsViewModel] and the [com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationsViewModel]
+ * Mock tests for [UserReservationsViewModel] and the [com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationsViewModel]
  * it extends: listing an entrant's reservations (US 01.06.01), cancelling (US 01.07.01) and rating a stay.
  */
 class UserReservationsViewModelTest {

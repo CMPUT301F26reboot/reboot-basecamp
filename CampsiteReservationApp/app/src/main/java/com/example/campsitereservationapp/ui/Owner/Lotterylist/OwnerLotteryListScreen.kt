@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp.ui.owner.Lotterylist
 
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -172,7 +173,7 @@ private fun CreateLotteryButton(onClick: () -> Unit, modifier: Modifier = Modifi
 
 /** Date [daysFromToday] days from now, at the current time of day. Used by the preview. */
 private fun previewDate(daysFromToday: Int, hours: Int = 0): Date =
-    Calendar.getInstance().apply {
+    appCalendar().apply {
         add(Calendar.DAY_OF_YEAR, daysFromToday)
         add(Calendar.HOUR_OF_DAY, hours)
     }.time

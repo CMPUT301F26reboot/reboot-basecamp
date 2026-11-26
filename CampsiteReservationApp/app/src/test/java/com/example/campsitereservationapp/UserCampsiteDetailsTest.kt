@@ -1,5 +1,6 @@
 package com.example.campsitereservationapp
 
+import com.example.campsitereservationapp.utils.appCalendar
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.formatDateRange
 import com.example.campsitereservationapp.ui.entrant.CampsiteDetails.parseRouteDate
 import org.junit.Assert.assertEquals
@@ -12,7 +13,7 @@ class UserCampsiteDetailsTest {
 
     // Makes a Date for the given day
     private fun date(year: Int, month: Int, day: Int): Date {
-        val cal = Calendar.getInstance()
+        val cal = appCalendar()
         cal.clear()
         cal.set(year, month - 1, day)
         return cal.time

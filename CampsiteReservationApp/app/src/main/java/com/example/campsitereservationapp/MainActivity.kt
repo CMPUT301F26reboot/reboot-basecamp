@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.campsitereservationapp.ui.MessageScreen
+import com.example.campsitereservationapp.ui.owner.WaitList.OwnerWaitlistScreen
 import com.example.campsitereservationapp.ui.entrant.Notifications.LocalNotifier
 import com.example.campsitereservationapp.ui.entrant.Notifications.NotificationWatcher
 import com.example.campsitereservationapp.ui.theme.CampsiteReservationTheme
@@ -38,6 +40,7 @@ class MainActivity : ComponentActivity() {
             CampsiteReservationTheme {
                 CampsiteReservationApp()
                 //MessageScreen(  "V1hnZFPqEJQ4B2xCdEHM","W8liJRiysiUFhsZHVpKs",{})
+                //ui.Owner.CampsiteDetails.dateViewer()
             }
         }
     }

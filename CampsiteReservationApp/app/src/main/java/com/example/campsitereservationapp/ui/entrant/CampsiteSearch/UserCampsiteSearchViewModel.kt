@@ -1,11 +1,12 @@
 package com.example.campsitereservationapp.ui.entrant.CampsiteSearch
 
+import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateSetOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
-import com.example.campsitereservationapp.utils.DateFormatter
+import com.example.campsitereservationapp.utils.toDayOnly
 import java.util.Calendar
 import java.util.Date
 
@@ -78,8 +79,7 @@ class UserCampsiteSearchViewModel: ListingViewModel() {
      * @param [date] is a date that should be toggled. If it's already in _selectedDates, it should be removed and vice versa
      */
     fun toggleDate(rawdate: Date){
-        val formatter = DateFormatter()
-        val date = formatter.formatDate(rawdate)
+        val date = rawdate.toDayOnly()
         if(date in _selectedDates){
             _selectedDates.remove(date)
         }else{
@@ -87,16 +87,16 @@ class UserCampsiteSearchViewModel: ListingViewModel() {
         }
     }
 
+    /** Today and the next 364 days, each at local midnight, which the search calendar can offer. */
     internal fun get365Dates(): Set<Date>{
-        val formatter = DateFormatter()
-        val calendar = Calendar.getInstance() // Starts at today
-        val dates = mutableStateListOf<Date>()
+        val calendar = appCalendar() // Starts at today
+        val dates = mutableSetOf<Date>()
 
         for (i in 1..365) {
-            dates.add(formatter.formatDate(calendar.time))
+            dates.add(calendar.time.toDayOnly())
             calendar.add(Calendar.DAY_OF_YEAR, 1) // Move to the next day
         }
 
-        return dates.toSet()
+        return dates
     }
 }

@@ -1,3 +1,6 @@
+/**
+ * Unit tests for UserSignUpViewModel, covering returning devices, form validation, and saving a new profile.
+ */
 package com.example.campsitereservationapp
 
 import android.content.Context

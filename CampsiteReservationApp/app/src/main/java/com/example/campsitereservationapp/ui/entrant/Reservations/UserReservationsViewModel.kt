@@ -1,12 +1,13 @@
 package com.example.campsitereservationapp.ui.entrant.Reservations
 
+import com.example.campsitereservationapp.utils.endOfDay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
-import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationFilter
-import com.example.campsitereservationapp.ui.entrant.ReservationDetails.ReservationsViewModel
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationsViewModel
 import java.util.Date
 import kotlin.math.round
 
@@ -40,17 +41,17 @@ class UserReservationsViewModel : ReservationsViewModel() {
                 it.entrantID == entrantId && it.status != "cancelled"
             }
         return when (filter) {
-            ReservationFilter.All -> all
 
             ReservationFilter.Reserved -> all.filter {
                 val lastDate = it.dates.maxOrNull()
-                lastDate == null || lastDate.after(today)
+                lastDate == null || !lastDate.endOfDay().before(today)
             }
 
             ReservationFilter.Past -> all.filter {
                 val lastDate = it.dates.maxOrNull()
-                lastDate != null && lastDate.before(today)
+                lastDate != null && lastDate.endOfDay().before(today)
             }
+            else -> all
         }
     }
 
