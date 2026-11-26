@@ -49,10 +49,6 @@ import java.util.Date
  *    buttons.
  *  - Completed: stay and draw results, with Entrants and Results buttons.
  *  - Cancelled: only the title, campsite and "Cancelled" badge.
- *
- * Outstanding issues:
- *  - The buttons only call their callbacks; the entrants, results and edit screens don't exist
- *    yet.
  */
 @Composable
 fun OwnerLotteryCard(

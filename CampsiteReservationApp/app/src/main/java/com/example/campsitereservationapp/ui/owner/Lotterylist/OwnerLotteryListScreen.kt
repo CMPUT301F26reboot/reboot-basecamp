@@ -42,9 +42,6 @@ import java.util.Date
  * @param onViewEntrants event -> navigate to the entrants of the lottery with the given ID.
  * @param onEditLottery event -> navigate to editing the lottery with the given ID.
  * @param onViewResults event -> navigate to the draw results of the lottery with the given ID.
- *
- * Outstanding issues:
- *  - The entrants, results and edit screens don't exist yet, so those buttons do nothing.
  */
 @Composable
 fun OwnerLotteryListScreen(
