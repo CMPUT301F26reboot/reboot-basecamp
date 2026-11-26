@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI for the User Profile Screen
+ */
 package com.example.campsitereservationapp.ui.entrant.UserProfile
 
 import android.net.Uri

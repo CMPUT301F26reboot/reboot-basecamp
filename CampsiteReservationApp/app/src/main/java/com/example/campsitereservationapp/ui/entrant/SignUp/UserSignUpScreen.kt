@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI of the User Sign Up Screen
+ */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 
 import androidx.compose.foundation.BorderStroke

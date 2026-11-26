@@ -1,3 +1,6 @@
+/**
+ * This file contains the test for the profile class
+ */
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile

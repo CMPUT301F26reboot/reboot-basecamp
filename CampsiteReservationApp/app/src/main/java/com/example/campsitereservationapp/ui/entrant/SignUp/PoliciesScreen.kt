@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI and hardcoded policies and rules of the app
+ */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 
 import androidx.compose.foundation.layout.Column

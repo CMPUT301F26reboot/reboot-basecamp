@@ -1,4 +1,4 @@
-/*
+/** Test for Lottery
  * AI use:
  * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
  */

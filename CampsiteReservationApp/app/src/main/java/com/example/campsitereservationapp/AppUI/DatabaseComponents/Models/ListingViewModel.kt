@@ -8,6 +8,9 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 import java.util.Date
 
 
+/**
+ * Simply gets available dates of a listing, has only one method
+ */
 open class ListingViewModel: DatabaseModel() {
     //Read only list of Listings for screens
     val listings: List<Listing> get() = _listings

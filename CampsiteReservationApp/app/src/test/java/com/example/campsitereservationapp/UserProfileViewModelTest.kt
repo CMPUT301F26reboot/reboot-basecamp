@@ -1,3 +1,6 @@
+/**
+ * This file contains the tests for UserProfileViewModel
+ */
 package com.example.campsitereservationapp
 
 import android.content.Context

@@ -30,7 +30,6 @@ class DatabaseModelTest {
         val listings: List<Listing> get() = _listings
         val lotteries: List<Lottery> get() = _lotteries
         val profiles: List<Profile> get() = _profiles
-        val logEntries: List<LogEntry> get() = _logentries
         val chats: List<Chat> get() = _chats
         val messages: List<Message> get() = _messages
     }
@@ -117,14 +116,6 @@ class DatabaseModelTest {
         assertEquals(listOf(reservation), model.reservations)
     }
 
-    @Test
-    fun logEntries_deliveredLogEntriesAreRetrieved() {
-        val logEntry = LogEntry()
-
-        firestore.deliver("LogEntries", LogEntry::class.java, listOf(logEntry))
-
-        assertEquals(listOf(logEntry), model.logEntries)
-    }
 
     @Test
     fun chats_deliveredChatsAreRetrieved() {

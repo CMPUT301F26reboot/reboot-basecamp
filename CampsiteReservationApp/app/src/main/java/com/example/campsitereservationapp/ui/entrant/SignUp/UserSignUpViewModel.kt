@@ -1,3 +1,6 @@
+/**
+ * This file contrains the ViewModel for the User Sign Up Screen
+ */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 
 import androidx.compose.runtime.getValue

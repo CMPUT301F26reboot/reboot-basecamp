@@ -1,3 +1,6 @@
+/**
+ * This file holds the User CampsiteSearchScreen and any other small helper UI
+ */
 package com.example.campsitereservationapp.ui.entrant.CampsiteSearch
 
 import androidx.compose.foundation.BorderStroke

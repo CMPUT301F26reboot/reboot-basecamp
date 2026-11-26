@@ -14,6 +14,11 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Res
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
+
+/**
+ * Main database, hold all data classes, classes that interact with firebase inherit this class
+ *
+ */
 open class DatabaseModel :ViewModel() {
     protected var db = Firebase.firestore
 

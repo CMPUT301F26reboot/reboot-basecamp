@@ -1,3 +1,6 @@
+/**
+ * This file contains all the tools for profiles
+ */
 package com.example.campsitereservationapp.utils
 
 import android.annotation.SuppressLint

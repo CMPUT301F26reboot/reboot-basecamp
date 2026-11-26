@@ -1,16 +1,16 @@
+/**
+ * This file holds the ViewModel for User Current Lotteries
+ */
 package com.example.campsitereservationapp.ui.entrant.CurrentLotteries
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.provider.Settings
+
 import androidx.compose.runtime.mutableStateListOf
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.google.firebase.firestore.FieldValue
 
 /**
- * Provieds data and functionality to UserCurrentLotteriesScreen
+ * Provides data and functionality to UserCurrentLotteriesScreen
  *
  * Manages a list of ongoing and won lotteries.
  * Also provides functions to get an image for a lottery and to leave a lottery

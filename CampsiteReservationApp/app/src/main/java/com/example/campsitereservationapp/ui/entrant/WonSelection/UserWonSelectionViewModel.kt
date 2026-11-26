@@ -1,3 +1,6 @@
+/**
+ * This file contains the ViewModel for the UserWonSelectionScreen
+ */
 package com.example.campsitereservationapp.ui.entrant.WonSelection
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing

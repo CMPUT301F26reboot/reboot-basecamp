@@ -1,3 +1,6 @@
+/**
+ * This file contains the Owner Lottery List View Model
+ */
 package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import androidx.compose.runtime.getValue

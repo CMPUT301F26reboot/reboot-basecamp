@@ -32,6 +32,9 @@ import com.google.firebase.firestore.GeoPoint
 import java.util.Locale
 
 
+/**
+ * Just a small example on how to implement map into other screens
+ */
 @Composable
 fun MapImplementationExample(
     geocodingViewModel: GeocodingViewModel = viewModel(),

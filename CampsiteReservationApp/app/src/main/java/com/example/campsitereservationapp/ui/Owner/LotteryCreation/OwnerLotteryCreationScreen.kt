@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI Screen for the Owner Lottery Creation Screen
+ */
 package com.example.campsitereservationapp.ui.owner
 
 import androidx.compose.runtime.Composable

@@ -1,3 +1,6 @@
+/**
+ * This file holds the User ReservationDetailScreen and any other small helper UI
+ */
 package com.example.campsitereservationapp.ui.entrant.ReservationDetails
 
 import androidx.compose.foundation.layout.Arrangement

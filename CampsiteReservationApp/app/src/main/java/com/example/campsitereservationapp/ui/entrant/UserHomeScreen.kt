@@ -1,3 +1,7 @@
+/**
+ * This file contains the Home Scren for the User, has no viewmodel because all it
+ * does is navigate and doesn't touch db
+ */
 package com.example.campsitereservationapp.ui.entrant
 
 import androidx.compose.foundation.Image
@@ -12,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications

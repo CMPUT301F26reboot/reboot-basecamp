@@ -1,4 +1,7 @@
-
+/**
+ * This file contains the map UI viewModel, it needs GeoCodingViewModel to get lattitude
+ * and longitude
+ */
 package com.example.campsitereservationapp.Map
 
 import androidx.compose.foundation.layout.size
@@ -27,15 +30,9 @@ import ovh.plrapps.mapcompose.api.scale
 import ovh.plrapps.mapcompose.api.scrollTo
 import ovh.plrapps.mapcompose.core.TileStreamProvider
 import ovh.plrapps.mapcompose.ui.state.MapState
-import android.annotation.SuppressLint
-import android.content.Context
-import android.location.LocationManager
-import android.os.CancellationSignal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
-import androidx.core.location.LocationManagerCompat
 import ovh.plrapps.mapcompose.api.onTap
 import kotlin.math.atan
 import kotlin.math.sinh

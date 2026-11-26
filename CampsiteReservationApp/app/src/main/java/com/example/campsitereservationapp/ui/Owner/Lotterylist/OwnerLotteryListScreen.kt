@@ -1,3 +1,6 @@
+/**
+ * This file contains the Owner Lottery List Screen UI
+ */
 package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import androidx.compose.foundation.layout.Arrangement

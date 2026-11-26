@@ -1,4 +1,5 @@
-/*
+/**
+ * This file contains the test for Reservation Class
  * AI use
  * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
  */

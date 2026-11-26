@@ -1,3 +1,6 @@
+/**
+ * This file contains the View Model functionality for the MessagesScreen
+ */
 package com.example.campsitereservationapp.ui
 
 import androidx.compose.runtime.mutableStateListOf

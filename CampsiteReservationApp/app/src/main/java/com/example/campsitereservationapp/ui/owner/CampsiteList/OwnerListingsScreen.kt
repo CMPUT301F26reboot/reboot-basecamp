@@ -1,4 +1,7 @@
-/*
+/**
+ * This file is the UI component of the Owner Listing Screen
+ * it uses the ListingViewModel as it's viewModel
+ *
  * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
  * - Q: How do I find only this owner's campsites?
  *   A: Filter by ownerID, or query Firestore with whereEqualTo("ownerID", id).

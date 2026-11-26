@@ -1,4 +1,4 @@
-/*
+/* This file handles the calendar used in the app,
  * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
  * - Claude also helped write the screen code and the KDoc comments.
  * - Q: Is there documentation for an availability calendar in Compose?

@@ -27,8 +27,8 @@ import androidx.compose.material3.Icon
  *  - and https://www.openstreetmap.org/#map=5/59.98/-116.32
  *  - mixture of CLAUDE and GEMINI was used to derive implementation
  * @param modifier The [Modifier] to be applied to this component.
- * @param latitude [double] The lattitude of GPS Location
- * @param longitude [double] The longitude of GPS Location
+ * @param latitude [Double] The lattitude of GPS Location
+ * @param longitude [Double] The longitude of GPS Location
  * */
 @Composable
 fun MapScreenComponent(

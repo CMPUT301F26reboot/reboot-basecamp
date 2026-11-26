@@ -13,6 +13,8 @@ import com.google.firebase.firestore.DocumentId
  * Keeps track of messages between an owner to an entrant to be displayed
  * Has functionality to add a message
  *
+ * @param OwnerID [String] ID of owner
+ * @param entrantID [String] ID of entrant
  */
 class Chat (val ownerID: String = "", val entrantID: String = ""){
     @DocumentId

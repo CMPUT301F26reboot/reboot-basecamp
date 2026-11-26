@@ -1,3 +1,6 @@
+/**
+ * This file contains the test for the User SignUpViewModel
+ */
 package com.example.campsitereservationapp
 
 import android.content.Context

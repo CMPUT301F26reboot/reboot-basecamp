@@ -1,3 +1,6 @@
+/**
+ * This file contains the ViewModel of the Owner Lottery Creation Screen
+ */
 package com.example.campsitereservationapp.ui.owner
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing

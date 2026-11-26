@@ -1,3 +1,6 @@
+/**
+ * This file contrains the viewModel for the User Profile Screen
+ */
 package com.example.campsitereservationapp.ui.entrant.UserProfile
 
 import android.content.Context
