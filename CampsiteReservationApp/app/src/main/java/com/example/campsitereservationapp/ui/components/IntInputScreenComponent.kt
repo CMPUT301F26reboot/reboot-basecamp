@@ -1,3 +1,6 @@
+/**
+ * This file holds the UI component to input an integer
+ */
 package com.example.campsitereservationapp.ui.components
 
 import androidx.compose.foundation.BorderStroke

@@ -1,3 +1,6 @@
+/**
+ * This file contains the navigation of the app
+ */
 package com.example.campsitereservationapp
 
 import androidx.compose.runtime.Composable

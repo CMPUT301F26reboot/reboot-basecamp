@@ -1,3 +1,6 @@
+/**
+ * This file holds the ViewModel for UserReservationsScreen
+ */
 package com.example.campsitereservationapp.ui.entrant.Reservations
 
 import com.example.campsitereservationapp.utils.endOfDay

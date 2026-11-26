@@ -1,3 +1,7 @@
+/**
+ * This file contains the tests the formatDateRange and parseRouteDate in the User
+ * Campsite Details Screen file
+ */
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.utils.appCalendar

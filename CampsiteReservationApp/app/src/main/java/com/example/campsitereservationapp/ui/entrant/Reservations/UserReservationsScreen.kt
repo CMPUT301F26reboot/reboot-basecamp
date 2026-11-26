@@ -1,3 +1,6 @@
+/**
+ * This file holds the User UserReservationsScreen and any other small helper UI
+ */
 package com.example.campsitereservationapp.ui.entrant.Reservations
 
 import com.example.campsitereservationapp.utils.endOfDay

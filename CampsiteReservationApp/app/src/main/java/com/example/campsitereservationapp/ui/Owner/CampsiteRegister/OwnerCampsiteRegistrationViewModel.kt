@@ -1,5 +1,5 @@
-/*
-* ViewModel/ non UI functionality for OwnerCampsiteRegistration
+/**
+ * This file contains the viewModel for the Campsite Details View Model
  * AI use:
  * - Q: How do I keep Publish disabled until the form is valid?
  *   A: A computed canPublish (name and address filled, not already publishing) bound to enabled.

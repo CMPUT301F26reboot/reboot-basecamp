@@ -1,3 +1,7 @@
+/**
+ * This file holds a UI to input a date, the used clicks on the input
+ * a popup/dialog of the calendar shows up, and it displays the dates chosen
+ */
 package com.example.campsitereservationapp.ui.components
 
 import com.example.campsitereservationapp.utils.appDateFormat
@@ -52,7 +56,6 @@ import java.util.Date
  * @param removedDates OPTIONAL - list of dates that aren't available for selection (default: dates before
  * current aren't available)
  */
-
 @Composable
 fun InputDateScreenComponent(
     title: String? = null,

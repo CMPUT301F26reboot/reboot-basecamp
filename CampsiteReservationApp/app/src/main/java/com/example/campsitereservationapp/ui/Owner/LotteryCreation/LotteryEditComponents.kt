@@ -1,3 +1,6 @@
+/**
+ * This file contains the seperated UI components of the lottery creation screen
+ */
 package com.example.campsitereservationapp.ui.owner
 
 import com.example.campsitereservationapp.utils.toDayOnly
