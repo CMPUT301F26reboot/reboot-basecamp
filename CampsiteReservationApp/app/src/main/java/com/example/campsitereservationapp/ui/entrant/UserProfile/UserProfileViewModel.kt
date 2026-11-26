@@ -1,5 +1,5 @@
 /**
- * This file contrains the viewModel for the User Profile Screen
+ * This file contains the viewModel for the profile screen, loads the user's profile and saves their changes to Firestore.
  */
 package com.example.campsitereservationapp.ui.entrant.UserProfile
 

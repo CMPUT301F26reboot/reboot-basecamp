@@ -1,5 +1,5 @@
 /**
- * This file contains the UI of the User Sign Up Screen
+ * This file contains the user sign up screen shown on first launch, signs a known device in automatically or shows the form to create a profile.
  */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 

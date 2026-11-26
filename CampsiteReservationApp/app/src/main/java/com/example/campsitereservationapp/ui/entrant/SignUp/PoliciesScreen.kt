@@ -1,5 +1,5 @@
 /**
- * This file contains the UI and hardcoded policies and rules of the app
+ * Screen that shows the app's policies and guidelines, can be opened from sign up and the profile screen.
  */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 

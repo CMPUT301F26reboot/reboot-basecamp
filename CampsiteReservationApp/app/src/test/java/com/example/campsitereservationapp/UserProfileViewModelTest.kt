@@ -1,5 +1,5 @@
 /**
- * This file contains the tests for UserProfileViewModel
+ * This file contains the unit tests for UserProfileViewModel, covering loading, editing, the photo, the notification setting, and deleting the profile.
  */
 package com.example.campsitereservationapp
 

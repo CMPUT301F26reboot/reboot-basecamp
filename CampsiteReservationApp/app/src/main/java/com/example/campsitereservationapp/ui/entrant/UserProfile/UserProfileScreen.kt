@@ -1,5 +1,5 @@
 /**
- * This file contains the UI for the User Profile Screen
+ * This file contains the profile screen where the user can edit their details and photo, toggle notifications on or off, and delete their profile.
  */
 package com.example.campsitereservationapp.ui.entrant.UserProfile
 
