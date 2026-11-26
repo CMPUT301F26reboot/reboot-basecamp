@@ -1,4 +1,5 @@
-/*
+/**
+ * This file contains separated UI component of Campsite Registration Screen
  * AI use:
  * - Q: What's the easiest way to let the owner pick photos?
  *   A: The Photo Picker (PickMultipleVisualMedia); no storage permission needed.

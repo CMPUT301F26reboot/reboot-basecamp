@@ -1,5 +1,5 @@
 /**
- * ViewModel for the sign-up screen, holds and validates the form and creates the profile for this device.
+ * This file contains the ViewModel for the sign-up screen, holds and validates the form and creates the profile for this device.
  */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 

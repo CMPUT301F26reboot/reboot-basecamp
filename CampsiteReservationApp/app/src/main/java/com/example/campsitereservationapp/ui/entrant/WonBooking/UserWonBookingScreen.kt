@@ -1,4 +1,6 @@
-/*
+/**
+ * This file contains the User Won Booking Screen UI
+ *
  * AI use:
  * - Claude helped me write the KDoc comments.
  * - Q: How do I find the days a winner can still book?

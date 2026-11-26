@@ -1,3 +1,6 @@
+/**
+ * This file contains the UI for the User Won Selection Screen
+ */
 package com.example.campsitereservationapp.ui.entrant.WonSelection
 
 import androidx.compose.foundation.BorderStroke

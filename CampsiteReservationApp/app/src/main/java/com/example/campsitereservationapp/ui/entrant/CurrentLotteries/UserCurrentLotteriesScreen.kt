@@ -1,3 +1,6 @@
+/**
+ * This file holds the User UserCurrentLotteriesScreen and any other small helper UI
+ */
 package com.example.campsitereservationapp.ui.entrant.CurrentLotteries
 
 import android.R

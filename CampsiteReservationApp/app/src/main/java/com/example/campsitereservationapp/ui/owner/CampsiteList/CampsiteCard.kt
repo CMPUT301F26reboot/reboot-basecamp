@@ -1,4 +1,5 @@
-/*
+/**
+ * This file contrains the reused CampsiteCard for OwnerListingScreen
  * AI use:
  * - Q: I can't find edit and QR code icons in the normal icons. Where are they?
  *   A: The default set (material-icons-core) is small. Add material-icons-extended, which has

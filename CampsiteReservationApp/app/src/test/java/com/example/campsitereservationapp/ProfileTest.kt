@@ -1,5 +1,5 @@
 /**
- * Unit tests for the Profile model's default values and the fields saved to Firestore.
+ * This file contains the test for the profile class
  */
 package com.example.campsitereservationapp
 
