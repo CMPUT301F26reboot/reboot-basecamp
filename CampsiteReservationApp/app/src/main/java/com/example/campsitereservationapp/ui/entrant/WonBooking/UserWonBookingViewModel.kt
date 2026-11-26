@@ -1,4 +1,5 @@
-/*
+/**
+ * This file contains the viewModel for the UserWonBooking Screen
  * AI use:
  * - Claude also helped me in terms of what i need to write the model file(all the variables) and the KDoc comments.
  * - Q: How do I find the days a winner can still book?

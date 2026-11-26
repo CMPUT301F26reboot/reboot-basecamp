@@ -1,3 +1,6 @@
+/**
+ * This file contains the Owner Lottery List View Model
+ */
 package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import com.example.campsitereservationapp.utils.toDayOnly
@@ -16,10 +19,6 @@ import java.util.concurrent.TimeUnit
  * Supplies the owner's lotteries to [OwnerLotteryListScreen] and remembers which filter tab is
  * selected. A lottery belongs to the owner when it runs on at least one of the owner's campsites,
  * since [Lottery] has no owner ID of its own.
- *
- * Outstanding issues:
- *  - No claim count for completed lotteries yet; winners can't book from a lottery until that
- *    flow exists - since also the winners automatically selected also is not implemented
  */
 class OwnerLotteryListViewModel : DatabaseModel() {
 

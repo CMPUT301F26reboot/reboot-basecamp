@@ -1,12 +1,17 @@
+/**
+ * This file contains the ListingViewModel, it has a single function that returns the
+ * availability of a listing
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
-import androidx.compose.runtime.mutableStateListOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.utils.toDayOnly
 import java.util.Date
-import androidx.compose.runtime.snapshots.SnapshotStateList
 
 
+/**
+ * Simply gets available dates of a listing, has only one method
+ */
 open class ListingViewModel: DatabaseModel() {
     //Read only list of Listings for screens
     val listings: List<Listing> get() = _listings

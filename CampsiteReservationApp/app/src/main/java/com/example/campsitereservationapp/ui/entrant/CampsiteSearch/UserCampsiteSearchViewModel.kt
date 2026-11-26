@@ -1,10 +1,12 @@
+/**
+ * This file holds the ViewModel for User Campsite Search
+ */
 package com.example.campsitereservationapp.ui.entrant.CampsiteSearch
 
 import com.example.campsitereservationapp.utils.appCalendar
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateSetOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ListingViewModel
 import com.example.campsitereservationapp.utils.toDayOnly
 import java.util.Calendar

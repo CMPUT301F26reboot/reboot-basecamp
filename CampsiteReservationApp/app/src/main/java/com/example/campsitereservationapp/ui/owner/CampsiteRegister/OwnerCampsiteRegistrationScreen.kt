@@ -1,5 +1,5 @@
-/**
- * UI for registering a campsite or editing a campsite also
+/** This file contains the UI Screen for campsite details
+ *
  * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
  * - Q: Should screens connect to Firebase directly, or use getters and setters? I was worried my
  *      changes might crash Firebase (it hasn't happened).

@@ -1,4 +1,6 @@
-/*
+/**
+ * This file contains the tests for UserCurrentLotteriesViewModel
+ *
  * AI use (full log: "AI Use Logs - Jeel/AI-Use-Log_Jeel.md"):
   * -This mock tests were written using Claude's output.
  */

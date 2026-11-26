@@ -1,5 +1,5 @@
 /**
- * Base ViewModel for sign up, checks if this device already has a profile and saves new profiles to Firestore.
+ * This file holds the ProfileCreatingViewModel, it handles the functionality for creating a profile
  */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 

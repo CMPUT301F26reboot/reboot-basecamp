@@ -1,4 +1,5 @@
-/*
+/**
+ *  This file contains separated UI component of Campsite Registration Screen
  * AI use:
  * - Q: Where do I find what makes a box slightly rounded or more square?
  *   A: RoundedCornerShape(x.dp) from androidx.compose.foundation.shape. A smaller value is more

@@ -1,4 +1,5 @@
-/*
+/**
+ * This file contains the tests for UserwonSelectionViewModel
  * AI use:
  * - Q: How do I test ViewModels that connect to Firebase when they're created?
  *   A: Plain JUnit for the models; MockK to mock Firebase.firestore for the ViewModels.

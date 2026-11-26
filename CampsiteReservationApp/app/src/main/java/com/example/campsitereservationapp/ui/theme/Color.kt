@@ -4,9 +4,6 @@
  *
  * The palette comes from the colors the screens already used: the forest green from sign up and
  * profile, the gray text and border shades, and the green, amber and red status colors.
- *
- * Outstanding issues:
- *  - Most screens still hardcode their own colors and need to be moved onto these.
  */
 package com.example.campsitereservationapp.ui.theme
 

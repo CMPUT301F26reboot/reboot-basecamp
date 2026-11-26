@@ -1,3 +1,6 @@
+/**
+ * This file holds the ViewModel for ReservationDetailScreen
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import androidx.compose.runtime.getValue

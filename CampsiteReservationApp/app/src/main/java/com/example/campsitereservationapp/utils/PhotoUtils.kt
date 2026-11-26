@@ -1,4 +1,5 @@
-/*
+/**
+ * This file contains all the tools for handling photos
  * AI use:
  * - Written fully by Claude. I couldn't find documentation online for resizing photos and storing
  *   them as Base64 inside a Firestore document, so I asked Claude to write it and i would review it.

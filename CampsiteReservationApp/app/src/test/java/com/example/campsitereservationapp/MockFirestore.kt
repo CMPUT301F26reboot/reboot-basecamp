@@ -1,4 +1,4 @@
-/*
+/* This holds the mock Firestore database to be used in testing
  * AI use:
  * - Q: How do I test ViewModels that connect to Firebase when they're created?
  *   A: Plain JUnit for the models; MockK to mock Firebase.firestore for the ViewModels.
@@ -38,7 +38,7 @@ class MockFirestore {
 
     /** Makes `Firebase.firestore` return the mocked database. */
     fun install() {
-        listOf("Listings", "Lotteries", "Profiles", "Reservations", "Notifications", "Chats").forEach { name ->
+        listOf("Listings", "Lotteries", "Profiles", "Reservations", "Notifications", "Chats", "Messages").forEach { name ->
             val ref = mockk<CollectionReference>(relaxed = true)
             every { ref.addSnapshotListener(any<EventListener<QuerySnapshot>>()) } answers {
                 listeners[name] = firstArg()

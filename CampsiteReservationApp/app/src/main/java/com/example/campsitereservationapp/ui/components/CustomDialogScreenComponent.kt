@@ -1,3 +1,6 @@
+/**
+ * This file holds the reusable popup/dialog UI
+ */
 package com.example.campsitereservationapp.ui.components
 
 import androidx.compose.foundation.layout.Column

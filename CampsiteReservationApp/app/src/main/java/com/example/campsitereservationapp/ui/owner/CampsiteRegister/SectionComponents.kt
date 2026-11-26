@@ -1,4 +1,5 @@
-/*
+/**
+ * This file contains separated UI component of Campsite Registration Screen
  * AI use:
  * - AI code assist in Android Studio was used while coding, mainly tab autocomplete.
  */

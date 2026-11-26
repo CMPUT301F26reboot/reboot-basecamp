@@ -1,3 +1,6 @@
+/**
+ * This file contains a separated UI component for OwnerLotteryListScreen
+ */
 package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import androidx.compose.foundation.clickable
