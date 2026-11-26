@@ -37,6 +37,11 @@ class Lottery(var dates: List<Date> = emptyList(),
 
     var cancelled: Boolean = false
 
+    /** Owner who created the lottery. Only they can edit or cancel it. */
+    var ownerID: String = ""
+
+    var pendingCampsiteIDs: List<String> = emptyList()
+
     /** Adds [entrant] to this lottery's waitlist.
      *
      * Takes the DeviceID of the entrant and adds it to the waiting list*/
