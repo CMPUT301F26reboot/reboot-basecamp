@@ -1,3 +1,6 @@
+/**
+ * Screen that shows the app's policies and guidelines, can be opened from sign up and the profile screen.
+ */
 package com.example.campsitereservationapp.ui.entrant.SignUp
 
 import androidx.compose.foundation.layout.Column

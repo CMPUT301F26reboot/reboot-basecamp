@@ -1,3 +1,6 @@
+/**
+ * Base ViewModel for sign up, checks if this device already has a profile and saves new profiles to Firestore.
+ */
 package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import android.content.Context

@@ -1,3 +1,6 @@
+/**
+ * Helper functions for profiles, gets the device ID and checks email and phone number formats.
+ */
 package com.example.campsitereservationapp.utils
 
 import android.annotation.SuppressLint

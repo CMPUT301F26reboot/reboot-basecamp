@@ -33,6 +33,7 @@ import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDet
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
 import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryListScreen
+import com.example.campsitereservationapp.ui.owner.WaitList.OwnerWaitlistScreen
 import com.example.campsitereservationapp.utils.getDeviceId
 import java.util.Date
 
@@ -362,7 +363,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("createLottery")
                 },
                 onViewEntrants = { lotteryId ->
-                    //navController.navigate("lotteryEntrants/$lotteryId")
+                    navController.navigate("ownerWaitlist/$lotteryId")
                 },
                 onEditLottery = { lotteryId ->
                     navController.navigate("editLottery/$lotteryId")
@@ -457,6 +458,19 @@ fun CampsiteReservationApp() {
                     navController.popBackStack()
                 },
                 onOpenReservation = {}
+            )
+        }
+
+        composable(
+            route = "ownerWaitlist/{lotteryId}"
+        ){ entry ->
+            OwnerWaitlistScreen(
+                lotteryID = entry.arguments?.getString("lotteryId").orEmpty()
+                ,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onSendNotification = { /* TODO */},
             )
         }
 
