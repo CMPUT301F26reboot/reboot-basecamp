@@ -19,8 +19,8 @@ private val AppColorScheme = lightColorScheme(
 
     secondary = Emerald40,
     onSecondary = Gray0,
-    secondaryContainer = Emerald90,
-    onSecondaryContainer = Emerald10,
+    secondaryContainer = Gray0,
+    onSecondaryContainer = commonButtonColour,
 
     tertiary = Amber40,
     onTertiary = Gray0,
