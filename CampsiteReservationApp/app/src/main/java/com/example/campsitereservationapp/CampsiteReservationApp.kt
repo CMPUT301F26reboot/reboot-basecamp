@@ -521,7 +521,7 @@ fun CampsiteReservationApp() {
                 profileId = OWNER_ID,
                 lotteryId = entry.arguments?.getString("lotteryId").orEmpty(),
                 onBack = {
-                    navController.navigate("ownerHome")
+                    navController.popBackStack()
                 }
             )
         }

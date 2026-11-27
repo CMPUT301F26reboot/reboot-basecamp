@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
 import com.example.campsitereservationapp.ui.components.CustomDialogScreenComponent
+import com.example.campsitereservationapp.ui.owner.Lotterylist.LotteryStatus
 import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryCard
 import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryListViewModel
 import com.example.campsitereservationapp.ui.theme.PillShape
@@ -94,6 +95,8 @@ fun OwnerSendNotificationContent(
 
     var showCreatedDialog by remember { mutableStateOf(false) }
     var showFailedDialog by remember { mutableStateOf(false) }
+    var showEmptyDialog by remember { mutableStateOf(false) }
+    var notifIgnored by remember { mutableStateOf(true) }
 
     var subject by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
@@ -106,33 +109,42 @@ fun OwnerSendNotificationContent(
     Scaffold(
         modifier = Modifier,
         bottomBar = {
-            Button(
-                onClick = {
-                    viewModel.onSend(
-                        subject,
-                        message,
-                        profileId,
-                        lotteryId,
-                        onSuccess = {
-                            subject = ""
-                            message = ""
-                            showCreatedDialog = true
-                        },
-                        onFailure = { showFailedDialog = true }
-                    )
-                },
-                shape = PillShape,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSurface,
-                    contentColor = MaterialTheme.colorScheme.surface
-                ),
-                contentPadding = PaddingValues(vertical = 16.dp),
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
-            ) {
-                Icon(Icons.Filled.Notifications, contentDescription = "Send Notification")
-                Spacer(Modifier.width(8.dp))
-                Text("Send Notification", fontWeight = FontWeight.Bold)
+            if(lottery?.status == LotteryStatus.ACTIVE){
+                Button(
+                    onClick = {
+                        notifIgnored = false // button disabled until user accepts notification as sent
+                        if(subject == "" || message == ""){
+                            showEmptyDialog = true
+                        } else{
+                            viewModel.onSend(
+                                subject,
+                                message,
+                                profileId,
+                                lotteryId,
+                                onSuccess = {
+                                    subject = ""
+                                    message = ""
+                                    showCreatedDialog = true
+                                },
+                                onFailure = { showFailedDialog = true }
+                            )
+                        }
+                    },
+                    enabled = notifIgnored,
+                    shape = PillShape,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    ),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                ) {
+                    Icon(Icons.Filled.Notifications, contentDescription = "Send Notification")
+                    Spacer(Modifier.width(8.dp))
+                    Text("Send Notification", fontWeight = FontWeight.Bold)
+                }
             }
+
         }
     ) { padding ->
         Column(
@@ -164,50 +176,56 @@ fun OwnerSendNotificationContent(
 
             Spacer(Modifier.height(8.dp))
 
-            Card(){
+            if(lottery?.status == LotteryStatus.ACTIVE){
+                Card(){
+                    Text(
+                        "To: All entrants",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+
                 Text(
-                    "To: All entrants",
+                    "Subject:",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                 )
+
+                // Write the subject of the notification
+                OutlinedTextField(
+                    value = subject,
+                    onValueChange = {
+                        subject = it
+                    },
+                    placeholder = { Text("Subject...") },
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    "Message:",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                // Write the message of the notification
+                OutlinedTextField(
+                    value = message,
+                    onValueChange = {
+                        message = it
+                    },
+                    placeholder = { Text("Message...") },
+                    minLines = 5,
+                    singleLine = false,
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else { // lottery not active
+                Text("Cannot send notifications to an inactive lottery.")
             }
 
-            Text(
-                "Subject:",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-            )
 
-            // Write the subject of the notification
-            OutlinedTextField(
-                value = subject,
-                onValueChange = {
-                    subject = it
-                },
-                placeholder = { Text("Subject...") },
-                singleLine = true,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Text(
-                "Message:",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-            )
-
-            // Write the message of the notification
-            OutlinedTextField(
-                value = message,
-                onValueChange = {
-                    message = it
-                },
-                placeholder = { Text("Message...") },
-                minLines = 5,
-                singleLine = false,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.fillMaxWidth()
-            )
 
         }
     }
@@ -217,8 +235,9 @@ fun OwnerSendNotificationContent(
         CustomDialogScreenComponent(
             onDismissRequest = {
                 showCreatedDialog = false
+                notifIgnored = true
             },
-            title = "Notification sent!",
+            title = "Notification Sent!",
             description = "Your notification has been sent. Entrants can view it in their notifications screen."
         )
     } else if (showFailedDialog)
@@ -226,10 +245,21 @@ fun OwnerSendNotificationContent(
         CustomDialogScreenComponent(
             onDismissRequest = {
                 showFailedDialog = false
+                notifIgnored = true
             },
             title = "Notification creation Failed",
 
             )
+    } else if (showEmptyDialog)
+    {
+        CustomDialogScreenComponent(
+            onDismissRequest = {
+                showEmptyDialog = false
+                notifIgnored = true
+            },
+            title = "Cannot send Empty Notification",
+            description = "Please ensure that you have filled out both the subject and message field."
+        )
     }
 
 }
