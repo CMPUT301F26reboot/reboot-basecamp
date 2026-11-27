@@ -18,6 +18,8 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lis
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationsViewModel
+import com.example.campsitereservationapp.utils.endOfDay
+import com.example.campsitereservationapp.utils.toDayOnly
 import java.util.Date
 
 /**
@@ -61,12 +63,12 @@ class OwnerReservationsViewModel : ReservationsViewModel() {
         return when (filter) {
             ReservationFilter.Reserved -> all.filter {
                 val lastDate = it.dates.maxOrNull()
-                it.status == "reserved" && (lastDate == null || lastDate.after(today))
+                it.status == "reserved" && (lastDate == null || lastDate.endOfDay().after(today))
             }
 
             ReservationFilter.Past -> all.filter {
                 val lastDate = it.dates.maxOrNull()
-                it.status == "reserved" && lastDate != null && lastDate.before(today)
+                it.status == "reserved" && lastDate != null && lastDate.endOfDay().before(today)
             }
 
             ReservationFilter.Cancelled -> all.filter {
@@ -89,6 +91,7 @@ class OwnerReservationsViewModel : ReservationsViewModel() {
         return allReservations
             .filter { it.campsiteID == listingId && it.status == "reserved" }
             .flatMap { it.dates }
+            .map { it.toDayOnly() }
             .toSet()
     }
 
