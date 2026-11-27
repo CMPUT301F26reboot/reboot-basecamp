@@ -41,7 +41,7 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Tests for [UserProfileViewModel] (US 01.07.03, US 01.08.01, US 01.10.01). Firestore is mocked
+ * Tests for [UserProfileViewModel] (US 01.07.03, US 01.08.01, US 01.08.02, US 01.10.01). Firestore is mocked
  * with MockK so that the ViewModel can be created without Firebase running.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -101,12 +101,13 @@ class UserProfileViewModelTest {
         return write
     }
 
-    /** Loads a saved profile into the ViewModel. */
-    private fun loadProfile() {
+    /** Loads a saved profile into the ViewModel, with [picture] as its saved photo. */
+    private fun loadProfile(picture: String = "") {
         val profile = Profile(name = "Alex Tremblay", deviceId = profileId)
         profile.email = "alex@example.com"
         profile.phoneNumber = "+1 (403) 555-0199"
         profile.notificationsEnabled = false
+        profile.profilePicture = picture
 
         val read = FakeTask<DocumentSnapshot>()
         every { document.get() } returns read.task
@@ -271,6 +272,43 @@ class UserProfileViewModelTest {
         write.onSuccess!!.onSuccess(null)
 
         assertEquals("encoded-photo", viewModel.profilePicture)
+        assertFalse(viewModel.isSaving)
+    }
+
+    @Test
+    fun removeProfilePicture_success_clearsPhoto() {
+        loadProfile(picture = "saved-photo")
+        val write = stubUpdate("profilePicture", "")
+
+        viewModel.removeProfilePicture()
+        write.onSuccess!!.onSuccess(null)
+
+        verify { document.update("profilePicture", "") }
+        assertEquals("", viewModel.profilePicture)
+        assertFalse(viewModel.isSaving)
+        assertEquals("Profile picture removed", viewModel.message)
+    }
+
+    @Test
+    fun removeProfilePicture_writeFails_keepsPhotoAndShowsMessage() {
+        loadProfile(picture = "saved-photo")
+        val write = stubUpdate("profilePicture", "")
+
+        viewModel.removeProfilePicture()
+        write.onFailure!!.onFailure(Exception("Network unavailable"))
+
+        assertEquals("saved-photo", viewModel.profilePicture)
+        assertFalse(viewModel.isSaving)
+        assertNotNull(viewModel.message)
+    }
+
+    @Test
+    fun removeProfilePicture_noPhoto_doesNotWrite() {
+        loadProfile()
+
+        viewModel.removeProfilePicture()
+
+        verify(exactly = 0) { document.update("profilePicture", any()) }
         assertFalse(viewModel.isSaving)
     }
 

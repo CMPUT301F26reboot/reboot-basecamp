@@ -33,14 +33,11 @@ enum class ProfileField(val key: String, val label: String) {
 
 /**
  * ViewModel of UserProfileScreen. Loads the user's profile and gives the screen the ability to
- * change its details (US 01.07.03), change the notification setting (US 01.10.01), and delete it
- * (US 01.08.01).
+ * change its details (US 01.07.03), add, change or remove its picture (US 01.08.02), change the
+ * notification setting (US 01.10.01), and delete it (US 01.08.01).
  *
  * Outstanding issues:
- *  - Nothing sends notifications yet, so [notificationsEnabled] is saved but not acted on.
- *  - The toggle isn't on the notification log screen yet, because that screen doesn't exist.
- *  - [deleteProfile] removes the device ID from waitlists, but other screens still join lotteries
- *    with a hardcoded ID until navigation passes the real one.
+ *  - [notificationsEnabled] is saved, but phone notifications don't check it yet.
  *  - Firestore doesn't fail a save while offline, so [isSaving] stays true until the device
  *    reconnects and the save goes through.
  */
@@ -216,6 +213,25 @@ class UserProfileViewModel : DatabaseModel() {
                     message = "Couldn't save your changes. Please try again."
                 }
         }
+    }
+
+    /**
+     * Removes the profile picture, so the screen goes back to the placeholder. Keeps the photo if
+     * the write fails.
+     */
+    fun removeProfilePicture() {
+        if (isSaving || profilePicture.isEmpty()) return
+        isSaving = true
+        profilesRef.document(profileId).update("profilePicture", "")
+            .addOnSuccessListener {
+                isSaving = false
+                profilePicture = ""
+                message = "Profile picture removed"
+            }
+            .addOnFailureListener {
+                isSaving = false
+                message = "Couldn't remove your profile picture. Please try again."
+            }
     }
 
     /** Deletes the profile and takes the user off every lottery waitlist they joined. */
