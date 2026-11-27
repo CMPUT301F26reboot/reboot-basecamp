@@ -1,12 +1,13 @@
-// Model for User Notifications. Handles the notification searching by keyword for specific user
-// and marking notifications as viewed. KDocs written by Claude Opus 5.5, 2026/11/23
+// Model for User Notifications. Handles the notification searching by keyword for specific user,
+// marking notifications as viewed, and turning notifications on or off. KDocs written by Claude Opus 5.5, 2026/11/23
 
 /**
  * UserNotificationsViewModel.kt
  *
  * ViewModel for the entrant's Notifications screen. Filters the live Notifications collection
- * (inherited from DatabaseModel) down to the current entrant, searches it by keyword, and
- * marks notifications as viewed.
+ * (inherited from DatabaseModel) down to the current entrant, searches it by keyword,
+ * marks notifications as viewed, and saves whether the entrant wants phone notifications
+ * (US 01.10.01).
  */
 
 package com.example.campsitereservationapp.ui.entrant.Notifications;
@@ -20,7 +21,8 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.Databa
 import com.google.firebase.firestore.FieldValue
 
 /**
- * Holds the search results for [UserNotificationsScreen] and handles marking notifications viewed.
+ * Holds the search results for [UserNotificationsScreen], handles marking notifications viewed,
+ * and turns the entrant's notifications on or off.
  */
 class UserNotificationsViewModel: DatabaseModel(){
 
@@ -41,18 +43,35 @@ class UserNotificationsViewModel: DatabaseModel(){
         notificationsRef.document(notificationId).update("viewedBy", FieldValue.arrayUnion(profileId))
     }
 
+    /** Message to show in a snackbar, or null if there's nothing to report. */
     var message by mutableStateOf<String?>(null)
         private set
 
+    /** Clears [message] once the snackbar has shown it. */
     fun clearMessage() {
         message = null
     }
 
+    /**
+     * Checks whether the entrant has notifications turned on. Reads from the live Profiles
+     * collection, so it always matches the toggle on the profile screen.
+     *
+     * @param profileId the Firestore document ID of the entrant's profile.
+     * @return the saved setting, or true if the profile hasn't loaded yet.
+     */
     fun notificationsEnabled(profileId: String): Boolean {
         val profile = _profiles.find { it.id == profileId }
+        // profiles start with notifications on, so default to on until it loads
         return profile?.notificationsEnabled ?: true
     }
 
+    /**
+     * Turns the entrant's notifications on or off. The toggle updates on its own once the
+     * profile changes, and [message] is set if the save fails.
+     *
+     * @param profileId the Firestore document ID of the entrant's profile.
+     * @param enabled true to turn notifications on, or false to turn them off.
+     */
     fun updateNotifications(profileId: String, enabled: Boolean) {
         profilesRef.document(profileId).update("notificationsEnabled", enabled)
             .addOnFailureListener {

@@ -1,5 +1,5 @@
 /*
- * This file tests the user notifications view model
+ * This file tests the user notifications view model, including the notifications on/off setting
  *
  * AI use:
  * Claude Opus 5.5, 2026/11/26
@@ -23,7 +23,8 @@ import org.junit.Test
 
 /**
  * Mock tests for [UserNotificationsViewModel], which shows an entrant their notifications and
- * lets them search and open them (US 01.03.01, US 01.03.02, US 01.05.02, US 01.07.02).
+ * lets them search and open them (US 01.03.01, US 01.03.02, US 01.05.02, US 01.07.02), and turn
+ * notifications on or off (US 01.10.01).
  */
 class UserNotificationsViewModelTests {
 
@@ -170,6 +171,7 @@ class UserNotificationsViewModelTests {
         } returns save.task
 
         viewModel.updateNotifications(entrantId1, false)
+        // make the save fail so the entrant gets told it didn't work
         save.fail()
 
         assertEquals("Couldn't save your changes. Please try again.", viewModel.message)

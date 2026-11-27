@@ -1,3 +1,6 @@
+/**
+ * This file tests the check NotificationWatcher uses to decide if a notification pops up on the phone.
+ */
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.ui.entrant.Notifications.NotificationWatcher
@@ -5,6 +8,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+/**
+ * Tests for [NotificationWatcher.shouldShowPhoneNotification], which stops phone notifications
+ * when the entrant has opted out (US 01.10.01) or has already seen them.
+ */
 class NotificationWatcherTest {
 
     @Test
