@@ -1,8 +1,14 @@
+/**
+ * Shows a screen for the Admin to check messages between Owners and Entrants
+ */
+
 package com.example.campsitereservationapp.ui.Admin.AdminMessage
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,6 +36,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.ui.yourMessage
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.graphics.Color
+import com.example.campsitereservationapp.ui.theme.*
 
 @Composable
 fun AdminMessageLogScreen(
@@ -64,6 +72,11 @@ fun AdminMessageLogScreen(
             }
         }
 
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+            Text(text = "Message Logs", fontSize = 40.sp)
+        }
+
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -80,20 +93,28 @@ fun messageCard(
     message: Message,
     vm: AdminMessageLogViewModel
 ){
-    OutlinedCard(modifier = Modifier.fillMaxWidth().padding(5.dp)){
+    OutlinedCard(
+        modifier = Modifier.fillMaxWidth().padding(5.dp),
+        border = BorderStroke(2.dp, Gray500)
+    ){
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(5.dp))
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        )
         {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)){
+            Row(
+                Modifier.fillMaxWidth().padding(5.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)){
                 Text(vm.getName(message.senderID))
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "To Arrow")
                 Text(vm.getName(message.receiverID))
             }
 
-            Text(message.timestamp.toString())
+            Text(modifier = Modifier.fillMaxWidth().padding(5.dp), text = message.timestamp.toDate().toString())
 
             yourMessage(message)
+
+            Spacer(Modifier.padding(5.dp))
         }
     }
 }

@@ -1,3 +1,7 @@
+/**
+ * Provides all backend functionality for the AdminMessageLogScreen
+ */
+
 package com.example.campsitereservationapp.ui.Admin.AdminMessage
 
 import androidx.compose.runtime.mutableStateListOf
@@ -6,6 +10,21 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Mes
 
 class AdminMessageLogViewModel: DatabaseModel() {
     var messages = mutableStateListOf<Message>()
+
+    init{
+
+        messagesRef
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                querySnapshot.documents.forEach{ document ->
+                    val temp = document.toObject(Message::class.java)
+                    if(temp != null){
+                        messages.add(temp)
+                    }
+                }
+            }
+
+    }
     /**
      * Sorts and returns all messages
      */
