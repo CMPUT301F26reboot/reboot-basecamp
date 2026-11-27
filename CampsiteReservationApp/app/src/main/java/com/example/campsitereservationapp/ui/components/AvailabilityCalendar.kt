@@ -58,6 +58,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.text.DateFormat
 import java.time.DayOfWeek
+import java.time.Year
 import java.time.YearMonth
 import java.time.format.TextStyle as DateTextStyle
 import java.util.Calendar
@@ -106,6 +107,20 @@ fun AvailabilityCalendar(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
+                Spacer(Modifier.height(12.dp))
+                if (viewReservations) {
+                    val cal = appCalendar()
+                    val nights = availableDays.count{
+                        cal.time = it
+                        cal.get(Calendar.YEAR) == shownMonth.year &&
+                                cal.get(Calendar.MONTH) + 1 == shownMonth.monthValue
+                    }
+                    Text(
+                        text = "$nights ${if (nights == 1) "night" else "nights"} reserved this month",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 Spacer(Modifier.height(12.dp))
             }
 

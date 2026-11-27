@@ -31,53 +31,62 @@ class AdminAccessViewModelTest {
     private val adminId = "temp-admin-device"
     private val userId = "temp-user-device"
 
-    private lateinit var profilesRef: CollectionReference
+    /** Device IDs that have a document in the mocked `Admins` collection. */
+    private val admins = mutableSetOf<String>()
+
+    private lateinit var adminsRef: CollectionReference
     private lateinit var viewModel: AdminAccessViewModel
 
+    //test setup
     @Before
     fun setUp() {
         val db = mockk<FirebaseFirestore>(relaxed = true)
-        profilesRef = mockk(relaxed = true)
-        // 1. Mock "Profiles" collection instead of "Admins"
-        every { db.collection("Profiles") } returns profilesRef
+        adminsRef = mockk(relaxed = true)
+        every { db.collection("Admins") } returns adminsRef
+
         mockkStatic("com.google.firebase.firestore.FirestoreKt")
         every { Firebase.firestore } returns db
+
+        //Create an temporary admin profile
+        admins.add(adminId)
 
         viewModel = AdminAccessViewModel()
     }
 
-    /** Runs the admin check for [deviceId] and returns [role] in the mocked profile snapshot. */
-    private fun checkDevice(deviceId: String, role: String?) {
+    /** Runs the admin check for [deviceId] and finishes the Firestore lookup. */
+    private fun checkDevice(deviceId: String) {
         val document = mockk<DocumentReference>()
         val lookup = MockTask<DocumentSnapshot>()
-        every { profilesRef.document(deviceId) } returns document
+        every { adminsRef.document(deviceId) } returns document
         every { document.get() } returns lookup.task
 
         viewModel.check(deviceId)
-        // 2. Mock getString("role") on the DocumentSnapshot
-        lookup.succeed(mockk { every { getString("role") } returns role })
+        lookup.succeed(mockk { every { exists() } returns (deviceId in admins) })
+
     }
 
-    // Check if profile with role = "Admin" sets isAdmin to true
+    //check if admin is in database
     @Test
-    fun check_adminRoleInDatabase_isAdminTrue() {
-        checkDevice(adminId, role = "Admin")
+    fun check_adminInDatabase_isAdminTrue() {
+        checkDevice(adminId)
 
         assertTrue(viewModel.isAdmin)
         assertFalse(viewModel.isChecking)
     }
 
-    // Check if profile with non-Admin role sets isAdmin to false
+    //check if admin is not in database
     @Test
     fun check_deviceNotInDatabase_isAdminFalse() {
-        checkDevice(userId, role = "Entrant")
+        checkDevice(userId)
 
         assertFalse(viewModel.isAdmin)
         assertFalse(viewModel.isChecking)
     }
 
+    //delete temporary admin profile
     @After
     fun tearDown() {
+        admins.remove(adminId)
         unmockkAll()
     }
 }
