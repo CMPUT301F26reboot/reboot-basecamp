@@ -18,11 +18,14 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Pro
 import com.example.campsitereservationapp.ui.Admin.BrowseComponents.ConfirmDeleteDialog
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.ui.Admin.BrowseComponents.DeleteDialog
 import com.example.campsitereservationapp.ui.Admin.BrowseComponents.SearchBarComponent
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.utils.getDeviceId
+
 @Composable
         /**
          * The Screen for Admin Browsing Profile,
@@ -70,11 +73,13 @@ fun AdminBrowseProfilesScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(profiles, key = {it.id}) { profile ->
-                ProfileCard(
-                    profile = profile,
-                    onDeleteProfile = { confirmDelete.value = "Profile" to profile },
-                    onDeleteProfilePicture = { confirmDelete.value = "Profile Picture" to profile }
-                )
+                if (profile.deviceId != getDeviceId(context = LocalContext.current)){
+                    ProfileCard(
+                        profile = profile,
+                        onDeleteProfile = { confirmDelete.value = "Profile" to profile },
+                        onDeleteProfilePicture = { confirmDelete.value = "Profile Picture" to profile }
+                    )
+                }
             }
 
         }
