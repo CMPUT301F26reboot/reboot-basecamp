@@ -49,8 +49,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Not
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.campsitereservationapp.utils.appDateFormat
 
 // Note: Code structure was inspired/copied from the user notifications screen
 
@@ -204,7 +203,7 @@ private fun NotificationCard(
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault()).format(
+                        text = appDateFormat("MMM d, yyyy h:mm a").format(
                             notification.timestamp
                         ),
                         style = MaterialTheme.typography.bodySmall,
