@@ -41,6 +41,8 @@ import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.LabeledField
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.SectionHeader
+import com.example.campsitereservationapp.utils.APP_TIME_ZONE
+import com.example.campsitereservationapp.utils.appDateFormat
 import com.example.campsitereservationapp.utils.decodeBase64Image
 import java.text.SimpleDateFormat
 import java.time.YearMonth
@@ -120,8 +122,9 @@ fun OwnerCampsiteDetailsScreen(
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
+
                         Text(
-                            "$bookedCount reservations · ${reservedDates.size} nights reserved this month",
+                            "$bookedCount ${if (bookedCount == 1) "reservation" else "reservations"}",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -130,7 +133,7 @@ fun OwnerCampsiteDetailsScreen(
                             selectedDays = emptySet(),
                             onDayClick = {},
                             title = "Availability",
-                            initialMonth = YearMonth.now(),
+                            initialMonth = YearMonth.now(APP_TIME_ZONE.toZoneId()),
                             viewReservations = true
                         )
                     }
@@ -310,7 +313,7 @@ private fun ReservationRow(
     onClick: () -> Unit,
     cancelled: Boolean = false
 ) {
-    val dateFormatter = SimpleDateFormat("MMM d", Locale.getDefault())
+    val dateFormatter = appDateFormat("MMM d")
     val startDate = reservation.dates.firstOrNull()
     val endDate = reservation.dates.lastOrNull()
     val nights = reservation.dates.size
@@ -328,8 +331,8 @@ private fun ReservationRow(
             modifier = Modifier.size(56.dp)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Text(startDate?.let { SimpleDateFormat("MMM", Locale.getDefault()).format(it) } ?: "", style = MaterialTheme.typography.labelSmall)
-                Text(startDate?.let { SimpleDateFormat("d", Locale.getDefault()).format(it) } ?: "", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(startDate?.let { appDateFormat("MMM").format(it) } ?: "", style = MaterialTheme.typography.labelSmall)
+                Text(startDate?.let { appDateFormat("d").format(it) } ?: "", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             }
         }
 

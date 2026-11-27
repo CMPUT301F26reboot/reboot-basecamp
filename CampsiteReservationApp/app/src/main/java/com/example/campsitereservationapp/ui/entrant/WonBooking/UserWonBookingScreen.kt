@@ -108,7 +108,7 @@ fun UserWonBookingScreen(
     viewModel: UserWonBookingViewModel = viewModel()
 ) {
     LaunchedEffect(lotteryId, campsiteName) {
-        viewModel.start(lotteryId, campsiteName)
+        viewModel.start(lotteryId, campsiteName, profileId)
     }
 
     val isFinished = viewModel.isFinished

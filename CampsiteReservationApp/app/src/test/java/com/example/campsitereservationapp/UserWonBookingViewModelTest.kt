@@ -119,7 +119,7 @@ class UserWonBookingViewModelTest {
         deliver("Listings", Listing::class.java, listOf(twoJack))
         deliver("Lotteries", Lottery::class.java, listOf(julyLottery))
         deliver("Reservations", Reservation::class.java, reservations)
-        viewModel.start(lotteryId, "Two Jack Lakeside")
+        viewModel.start(lotteryId, "Two Jack Lakeside", entrantId)
     }
 
     /** Makes the decline write return a task whose listeners the test can fire. */
@@ -130,6 +130,7 @@ class UserWonBookingViewModelTest {
         var onFailure: OnFailureListener? = null
         every { collections.getValue("Lotteries").document(lotteryId) } returns doc
         every { doc.update("declinedProfileIds", any()) } returns task
+        every { doc.update("selectedlist", any()) } returns task
         every { task.addOnSuccessListener(any<OnSuccessListener<Void>>()) } answers { onSuccess = firstArg(); task }
         every { task.addOnFailureListener(any<OnFailureListener>()) } answers { onFailure = firstArg(); task }
         return { onSuccess!! } to { onFailure!! }
@@ -137,7 +138,7 @@ class UserWonBookingViewModelTest {
 
     @Test
     fun isLoading_shouldBeTrueUntilLotteryAndCampsiteArrive() {
-        viewModel.start(lotteryId, "Two Jack Lakeside")
+        viewModel.start(lotteryId, "Two Jack Lakeside", entrantId)
         assertTrue(viewModel.isLoading)
 
         openTwoJackOffer()

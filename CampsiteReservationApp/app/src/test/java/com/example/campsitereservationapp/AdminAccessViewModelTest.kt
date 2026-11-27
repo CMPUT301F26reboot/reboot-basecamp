@@ -43,6 +43,7 @@ class AdminAccessViewModelTest {
         val db = mockk<FirebaseFirestore>(relaxed = true)
         adminsRef = mockk(relaxed = true)
         every { db.collection("Admins") } returns adminsRef
+
         mockkStatic("com.google.firebase.firestore.FirestoreKt")
         every { Firebase.firestore } returns db
 
@@ -61,6 +62,7 @@ class AdminAccessViewModelTest {
 
         viewModel.check(deviceId)
         lookup.succeed(mockk { every { exists() } returns (deviceId in admins) })
+
     }
 
     //check if admin is in database
