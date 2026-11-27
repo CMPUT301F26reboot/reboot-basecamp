@@ -43,9 +43,10 @@ class AdminAccessViewModel : DatabaseModel() {
         if (checkedDeviceId == deviceId) return
         checkedDeviceId = deviceId
         isChecking = true
-        adminsRef.document(deviceId).get()
+        profilesRef.document(deviceId).get()
             .addOnSuccessListener { document ->
-                isAdmin = document.exists()
+                val role = document.getString("role")
+                isAdmin = role.equals("Admin", ignoreCase = true)
                 isChecking = false
             }
             .addOnFailureListener {

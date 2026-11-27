@@ -47,3 +47,5 @@ internal val Gray900 = Color(0xFF111827)
 val DeleteRed = Color(0xFFEF4444)
 
 val RatingAmber = Color(0xFFF59E0B)
+
+val commonButtonColour = Gray900
