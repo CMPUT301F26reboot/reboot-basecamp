@@ -10,11 +10,13 @@
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.ui.entrant.Notifications.UserNotificationsViewModel
 import io.mockk.every
 import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -129,5 +131,47 @@ class UserNotificationsViewModelTests {
         verify {
             firestore.collection("Notifications").document("notif-broadcast").update("viewedBy", any())
         }
+    }
+
+    @Test
+    fun notificationsEnabled_shouldMatchTheEntrantsSetting() {
+        val profile = Profile(name = "Sam").apply {
+            id = entrantId1
+            notificationsEnabled = false
+        }
+        firestore.deliver("Profiles", Profile::class.java, listOf(profile))
+
+        assertFalse(viewModel.notificationsEnabled(entrantId1))
+    }
+
+    @Test
+    fun notificationsEnabled_profileNotLoadedShouldBeOn() {
+        assertTrue(viewModel.notificationsEnabled(entrantId1))
+    }
+
+    @Test
+    fun updateNotifications_shouldSaveTheSettingToTheProfile() {
+        every {
+            firestore.collection("Profiles").document(entrantId1).update(any<String>(), any())
+        } returns MockTask<Void?>().task
+
+        viewModel.updateNotifications(entrantId1, false)
+
+        verify {
+            firestore.collection("Profiles").document(entrantId1).update("notificationsEnabled", false)
+        }
+    }
+
+    @Test
+    fun updateNotifications_saveFailsShouldShowMessage() {
+        val save = MockTask<Void?>()
+        every {
+            firestore.collection("Profiles").document(entrantId1).update(any<String>(), any())
+        } returns save.task
+
+        viewModel.updateNotifications(entrantId1, false)
+        save.fail()
+
+        assertEquals("Couldn't save your changes. Please try again.", viewModel.message)
     }
 }
