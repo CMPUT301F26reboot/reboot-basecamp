@@ -19,6 +19,7 @@ import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewMod
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
 import com.example.campsitereservationapp.ui.owner.Notifications.OwnerNotifLogScreen
+import com.example.campsitereservationapp.ui.owner.Notifications.OwnerSendNotificationScreen
 import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsitesScreen
 import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfilesScreen
 import com.example.campsitereservationapp.ui.Admin.CampsiteImages.CampsiteImagesScreen
