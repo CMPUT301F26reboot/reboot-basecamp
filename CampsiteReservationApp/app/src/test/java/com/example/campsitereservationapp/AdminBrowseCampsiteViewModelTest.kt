@@ -14,6 +14,7 @@
 package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsiteViewModel
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchViewModel
 import com.google.firebase.firestore.DocumentReference
@@ -115,5 +116,21 @@ class AdminBrowseCampsiteViewModelTest {
         verify(exactly = 0) { listingDoc.delete() }
         assertEquals(listOf(twoJack, tunnelMountain), viewModel._searchResults)
         assertFalse(called)
+    }
+
+    @Test
+    fun campsiteDelete_success_shouldRemoveCampsiteFromItsLotteries() {
+        val lotteryDoc = mockk<DocumentReference>(relaxed = true)
+        every { firestore.collection("Lotteries").document("lottery-banff") } returns lotteryDoc
+        val lottery = Lottery(campsiteIDs = listOf("listing-two-jack", "listing-tunnel-mtn"))
+            .apply { id = "lottery-banff" }
+        val other = Lottery(campsiteIDs = listOf("listing-tunnel-mtn")).apply { id = "lottery-other" }
+        firestore.deliver("Lotteries", Lottery::class.java, listOf(lottery, other))
+
+        viewModel.campsiteDelete(twoJack, onSuccess = {}, onFailure = {})
+        deletion.succeed(null)
+
+        verify { lotteryDoc.update("campsiteIDs", any()) }
+        verify(exactly = 0) { firestore.collection("Lotteries").document("lottery-other") }
     }
 }

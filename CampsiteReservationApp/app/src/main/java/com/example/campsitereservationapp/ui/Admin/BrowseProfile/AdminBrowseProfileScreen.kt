@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.ConfirmDeleteDialog
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,7 +38,13 @@ fun AdminBrowseProfilesScreen(
     val deletionType = remember { mutableStateOf("") }
     val showDeletedDialog = remember { mutableStateOf(false) }
     val showDeletedFailedDialog = remember { mutableStateOf(false) }
+    // what is waiting for the admin to confirm: "Profile" or "Profile Picture", and whose
+    val confirmDelete = remember { mutableStateOf<Pair<String, Profile>?>(null) }
 
+    // show every profile once they load, and refresh the list when one is added or removed
+    LaunchedEffect(viewModel.profileCount) {
+        viewModel.refreshSearch()
+    }
 
     Column(
         modifier = Modifier
@@ -63,25 +72,36 @@ fun AdminBrowseProfilesScreen(
             items(profiles, key = {it.id}) { profile ->
                 ProfileCard(
                     profile = profile,
-                    onDeleteProfile = {
-                        deletionType.value = "Profile"
+                    onDeleteProfile = { confirmDelete.value = "Profile" to profile },
+                    onDeleteProfilePicture = { confirmDelete.value = "Profile Picture" to profile }
+                )
+            }
+
+        }
+
+        confirmDelete.value?.let { (type, profile) ->
+            ConfirmDeleteDialog(
+                deletedType = type,
+                name = if (type == "Profile") profile.name else "",
+                onConfirm = {
+                    confirmDelete.value = null
+                    deletionType.value = type
+                    if (type == "Profile") {
                         viewModel.profileDelete(
                             profile = profile,
                             onSuccess = { showDeletedDialog.value = true },
                             onFailure = { showDeletedFailedDialog.value = true },
                         )
-                    },
-                    onDeleteProfilePicture = {
-                        deletionType.value = "Profile Picture"
+                    } else {
                         viewModel.profilePictureDelete(
                             profile = profile,
                             onSuccess = { showDeletedDialog.value = true },
                             onFailure = { showDeletedFailedDialog.value = true },
                         )
                     }
-                )
-            }
-
+                },
+                onDismiss = { confirmDelete.value = null }
+            )
         }
 
         //popup dialog on successful or failure on listing deletion

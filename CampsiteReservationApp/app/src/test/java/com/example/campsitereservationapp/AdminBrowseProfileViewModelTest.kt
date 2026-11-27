@@ -13,6 +13,7 @@
  */
 package com.example.campsitereservationapp
 
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfileViewModel
 import com.google.firebase.firestore.DocumentReference
@@ -118,5 +119,21 @@ class AdminBrowseProfileViewModelTest {
         verify { profileDoc.update("profilePicture", "") }
         assertTrue(succeeded)
         assertFalse(failed)
+        assertEquals("", jane.profilePicture) // card stops showing the old photo
+    }
+
+    @Test
+    fun profileDelete_success_shouldTakeProfileOffWaitlists() {
+        val lotteryDoc = mockk<DocumentReference>(relaxed = true)
+        every { firestore.collection("Lotteries").document("lottery-banff") } returns lotteryDoc
+        val joined = Lottery().apply { id = "lottery-banff"; waitlist = listOf("device-jane", "device-john") }
+        val notJoined = Lottery().apply { id = "lottery-other"; waitlist = listOf("device-john") }
+        firestore.deliver("Lotteries", Lottery::class.java, listOf(joined, notJoined))
+
+        viewModel.profileDelete(jane, onSuccess = {}, onFailure = {})
+        deletion.succeed(null)
+
+        verify { lotteryDoc.update("waitlist", any()) }
+        verify(exactly = 0) { firestore.collection("Lotteries").document("lottery-other") }
     }
 }

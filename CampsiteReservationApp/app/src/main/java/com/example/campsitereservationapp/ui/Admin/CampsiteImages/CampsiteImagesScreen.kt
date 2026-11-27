@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.ConfirmDeleteDialog
 import com.example.campsitereservationapp.ui.Admin.BrowseComponents.DeleteDialog
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.CampsiteDetailsCard
 
@@ -49,6 +50,8 @@ fun CampsiteImagesScreen(
     val photos = viewModel.getImages(listingID)
     val showDeletedDialog = remember { mutableStateOf(false) }
     val showDeletedFailedDialog = remember { mutableStateOf(false) }
+    // position of the photo waiting for the admin to confirm its deletion
+    val confirmDeleteIndex = remember { mutableStateOf<Int?>(null) }
 
     //top header, taken from owner campsite details screen
     Scaffold(
@@ -92,23 +95,17 @@ fun CampsiteImagesScreen(
             }
             //AI Usage - Copilot, items() is prompted
             //Prompt, how do I display my 2 photo cards side by side with items()
-            itemsIndexed(photos.chunked(2)) { index, photoPair ->
+            itemsIndexed(photos.chunked(2)) { row, photoPair ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    photoPair.forEach { photo ->
+                    photoPair.forEachIndexed { column, photo ->
                         Box(modifier = Modifier.weight(1f)) {
                             PhotoCard(
                                 photo = photo,
-                                onDelete = {
-                                    viewModel.deleteImage(
-                                        listingId = listingID,
-                                        index = index + 1,
-                                        onSuccess = { showDeletedDialog.value = true },
-                                        onFailure = { showDeletedFailedDialog.value = true }
-                                    )
-                                }
+                                // position in photoUrls: 2 photos per row
+                                onDelete = { confirmDeleteIndex.value = row * 2 + column }
                             )
                         }
                     }
@@ -119,6 +116,23 @@ fun CampsiteImagesScreen(
                 }
 
             }
+        }
+
+        confirmDeleteIndex.value?.let { index ->
+            ConfirmDeleteDialog(
+                deletedType = "Image",
+                name = "",
+                onConfirm = {
+                    confirmDeleteIndex.value = null
+                    viewModel.deleteImage(
+                        listingId = listingID,
+                        index = index,
+                        onSuccess = { showDeletedDialog.value = true },
+                        onFailure = { showDeletedFailedDialog.value = true }
+                    )
+                },
+                onDismiss = { confirmDeleteIndex.value = null }
+            )
         }
 
         //popup dialog on successful or failure on listing deletion
