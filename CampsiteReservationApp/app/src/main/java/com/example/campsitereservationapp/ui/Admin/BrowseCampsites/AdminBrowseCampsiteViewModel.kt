@@ -7,7 +7,6 @@ package com.example.campsitereservationapp.ui.Admin.BrowseCampsites
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchViewModel
-import java.util.Date
 
 /**
  * ViewModel for Browsing Campsite, reuses UserCampsiteSearchViewModel functions
@@ -18,12 +17,10 @@ class AdminBrowseCampsiteViewModel(
 
     //access viewmodel modified variables
     val _searchResults = injectedModel._searchResults
-    val _selectedDates = injectedModel._selectedDates
-
     /**
      * Searches for campsites
-     *
-     * */
+     * @param keyword the input text of the search
+     */
     fun campsiteSearch(keyword:String){
         injectedModel.doSearch(keyword,"",0)
     }
@@ -31,6 +28,8 @@ class AdminBrowseCampsiteViewModel(
     /**
      * Deletes campsite
      * @param listing what listing is being deleted
+     * @param onSuccess action if deletion successful
+     * @param onFailure action if deletion not successful
      */
     fun campsiteDelete(
         listing: Listing,

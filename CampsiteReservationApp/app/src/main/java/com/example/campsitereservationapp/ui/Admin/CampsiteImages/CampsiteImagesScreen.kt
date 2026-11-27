@@ -3,63 +3,52 @@
  */
 package com.example.campsitereservationapp.ui.Admin.CampsiteImages
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.ui.components.CustomDialogScreenComponent
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.DeleteDialog
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.CampsiteDetailsCard
-import com.example.campsitereservationapp.ui.theme.DeleteRed
-import com.example.campsitereservationapp.utils.decodeBase64Image
-import kotlin.collections.orEmpty
 
 @Composable
+        /**
+         * Screen to view images of a campsite,
+         * code is a modified version of Owner campsite details screen
+         *
+         * @param listingID ID of listing/campsite clicked
+         * @param onBack navigate to previous screen
+         */
 fun CampsiteImagesScreen(
     listingID: String,
     onBack: () -> Unit,
     viewModel: CampsiteImagesViewModel = viewModel()
 ) {
-    val listing_doc = viewModel.getListing(listingID)
+    val listingDoc = viewModel.getListing(listingID)
     val photos = viewModel.getImages(listingID)
-    var showDeletedDialog by remember { mutableStateOf(false) }
-    var showDeletedFailedDialog by remember { mutableStateOf(false) }
+    val showDeletedDialog = remember { mutableStateOf(false) }
+    val showDeletedFailedDialog = remember { mutableStateOf(false) }
 
     //top header, taken from owner campsite details screen
     Scaffold(
@@ -86,6 +75,8 @@ fun CampsiteImagesScreen(
             }
         }
     ) { padding ->
+
+        //Images being displayed, there are 2 columns of images
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,8 +86,8 @@ fun CampsiteImagesScreen(
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
             item {
-                if (listing_doc != null){
-                    CampsiteDetailsCard(listing_doc)
+                if (listingDoc != null){
+                    CampsiteDetailsCard(listingDoc)
                 }
             }
             //AI Usage - Copilot, items() is prompted
@@ -114,8 +105,8 @@ fun CampsiteImagesScreen(
                                     viewModel.deleteImage(
                                         listingId = listingID,
                                         photoUrl = photo,
-                                        onSuccess = { showDeletedDialog = true },
-                                        onFailure = { showDeletedFailedDialog = true }
+                                        onSuccess = { showDeletedDialog.value = true },
+                                        onFailure = { showDeletedFailedDialog.value = true }
                                     )
                                 }
                             )
@@ -127,60 +118,15 @@ fun CampsiteImagesScreen(
                     }
                 }
 
-                //popup dialog on successful or failure on listing deletion
-                if (showDeletedDialog) {
-                    CustomDialogScreenComponent(
-                        onDismissRequest = {
-                            showDeletedDialog = false
-                        },
-                        title = "Image Deleted"
-                    )
-                } else if (showDeletedFailedDialog)
-                {
-                    CustomDialogScreenComponent(
-                        onDismissRequest = {
-                            showDeletedFailedDialog = false
-                        },
-                        title = "Error: Deletion Failure",
-                    )
-                }
-
             }
         }
-    }
-}
 
-/**
- * Cards for each photo
- */
-@Composable
-fun PhotoCard(
-    photo: String,
-    onDelete: () -> Unit
-){
-    Column()
-    {
-        AsyncImage(
-            model = decodeBase64Image(photo),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+        //popup dialog on successful or failure on listing deletion
+        DeleteDialog(
+            deletedType = "Image",
+            showDeletedDialog = showDeletedDialog,
+            showDeletedFailedDialog = showDeletedFailedDialog
         )
-        //delete button
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onDelete,
-            shape = MaterialTheme.shapes.small,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = DeleteRed,
-                contentColor = MaterialTheme.colorScheme.surface
-            )
-        ) {
-            Text("Delete")
-        }
     }
-
 }
+

@@ -1,13 +1,12 @@
 package com.example.campsitereservationapp.ui.Admin.BrowseProfile
 
 import androidx.compose.runtime.mutableStateListOf
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
-import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchViewModel
 
 /**
- * ViewModel for Browsing Campsite, used UserCampsiteSearchViewModel as reference
+ * ViewModel for Browsing Profiles, basically a copy of AdminBrowseCampsiteViewModel
+ * UserCampsiteSearchViewModel as for how search is done
  */
 class AdminBrowseProfileViewModel(
 ): DatabaseModel() {
@@ -18,7 +17,7 @@ class AdminBrowseProfileViewModel(
     /**
      * Searches for profiles based on name
      *
-     * [keyword] is string typed into search bar which is used to do a prefix query on the names of each campsite
+     * @param [keyword] string typed into search bar which is used to do a prefix query on the names of each campsite
      */
     fun profileSearch(keyword:String){
         _searchResults.clear()
@@ -52,15 +51,13 @@ class AdminBrowseProfileViewModel(
     }
 
     /**
+     * Copied from UserCampsiteSearchViewModel
      * Shows if a listing meets the keyword requirements
      *
      * Compares the keyword with the listing name using compareTo
      */
     internal fun meetsKeywordRequirements(keyword: String, profile: Profile): Boolean{
-        if(keyword.isEmpty())
-            return true
-
-        return (keyword.compareTo(profile.name, ignoreCase = true) <= 0                 //keyword is a prefix or comes before
+        return keyword.isEmpty() || (keyword.compareTo(profile.name, ignoreCase = true) <= 0                 //keyword is a prefix or comes before
                 && profile.name.compareTo(keyword + '\uffff', ignoreCase = true) < 0) //keyword + large character is larger
     }
 

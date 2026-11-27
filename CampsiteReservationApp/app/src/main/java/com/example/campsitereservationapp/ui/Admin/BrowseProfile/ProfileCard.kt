@@ -1,3 +1,6 @@
+/**
+ * This file holds the Profile Card used in AdminBrowseProfileScreen
+ */
 package com.example.campsitereservationapp.ui.Admin.BrowseProfile
 
 import androidx.compose.foundation.layout.Column
@@ -26,13 +29,15 @@ import com.example.campsitereservationapp.ui.theme.DeleteRed
 
 /**
  * Profile Card for Admin Browse Profile, Copied Campsite card from Campsite Listings
+ * @param profile being displayed
+ * @param onDelete action after clicking delete
  */
 @Composable
 fun ProfileCard(
     profile: Profile,
     onDelete: () -> Unit,
 ) {
-    //taken from owner campsite listings screen
+    //copied from owner campsite listings screen
     Card(
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

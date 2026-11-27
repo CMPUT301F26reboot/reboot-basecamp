@@ -1,5 +1,5 @@
 /**
- * This file contains the resuable search bar used in Admin Browse Campsite/Profile
+ * This file contains the reusable search bar used in Admin Browse Campsite/Profile
  *
  */
 package com.example.campsitereservationapp.ui.Admin.BrowseComponents
@@ -23,6 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
+        /**
+         * SearchBar used in Admin Browsing Campsite or Profile
+         * @param onSearch string returned from using search bar
+         */
 fun SearchBarComponent(
     onSearch: (query: String) -> Unit
 ){

@@ -1,7 +1,5 @@
 /**
  * This file holds the UI for Admin Browse Campsites,
- *
- *
  */
 package com.example.campsitereservationapp.ui.Admin.BrowseCampsites
 
@@ -14,19 +12,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.DeleteDialog
 import com.example.campsitereservationapp.ui.Admin.BrowseComponents.SearchBarComponent
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
-import com.example.campsitereservationapp.ui.components.CustomDialogScreenComponent
 @Composable
 /**
  * UI for Admin Campsite Search
+ * @param onBack navigate to previous screen
+ * @param onImages navigate to images of campsite
  */
 fun AdminBrowseCampsitesScreen(
     onBack:() -> Unit,
@@ -34,8 +32,8 @@ fun AdminBrowseCampsitesScreen(
     viewModel: AdminBrowseCampsiteViewModel = viewModel(),
 ){
     val listings = viewModel._searchResults
-    var showDeletedDialog by remember { mutableStateOf(false) }
-    var showDeletedFailedDialog by remember { mutableStateOf(false) }
+    val showDeletedDialog = remember { mutableStateOf(false) }
+    val showDeletedFailedDialog = remember { mutableStateOf(false) }
 
 
     Column(
@@ -64,8 +62,8 @@ fun AdminBrowseCampsitesScreen(
                     onDelete = {
                         viewModel.campsiteDelete(
                             listing = listing,
-                            onSuccess = { showDeletedDialog = true },
-                            onFailure = { showDeletedFailedDialog = true },
+                            onSuccess = { showDeletedDialog.value = true },
+                            onFailure = { showDeletedFailedDialog.value = true },
                         )
                     },
                     onImages = {onImages(listing.id)}
@@ -75,22 +73,12 @@ fun AdminBrowseCampsitesScreen(
         }
 
         //popup dialog on successful or failure on listing deletion
-        if (showDeletedDialog) {
-            CustomDialogScreenComponent(
-                onDismissRequest = {
-                    showDeletedDialog = false
-                },
-                title = "Campsite Deleted"
-            )
-        } else if (showDeletedFailedDialog)
-        {
-            CustomDialogScreenComponent(
-                onDismissRequest = {
-                    showDeletedFailedDialog = false
-                },
-                title = "Error: Deletion Failure",
-                )
-        }
+        DeleteDialog(
+            deletedType = "Campsite",
+            showDeletedDialog = showDeletedDialog,
+            showDeletedFailedDialog = showDeletedFailedDialog
+        )
+
 
     }
 

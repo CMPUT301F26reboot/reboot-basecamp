@@ -1,3 +1,6 @@
+/**
+ * This file holds the UI for the Campsite Card
+ */
 package com.example.campsitereservationapp.ui.Admin.BrowseCampsites
 
 import androidx.compose.foundation.layout.Column
@@ -73,8 +76,7 @@ fun CampsiteCard(
             Spacer(modifier = Modifier.weight(1f))
 
             //right side buttons
-            Column(
-            ) {
+            Column {
                 //delete button
                 IconButton(
                     onClick = onDelete,
