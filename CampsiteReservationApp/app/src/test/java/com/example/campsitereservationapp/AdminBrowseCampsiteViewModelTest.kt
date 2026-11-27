@@ -15,6 +15,7 @@ package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsiteViewModel
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchViewModel
 import com.google.firebase.firestore.DocumentReference
@@ -132,5 +133,29 @@ class AdminBrowseCampsiteViewModelTest {
 
         verify { lotteryDoc.update("campsiteIDs", any()) }
         verify(exactly = 0) { firestore.collection("Lotteries").document("lottery-other") }
+    }
+
+    @Test
+    fun campsiteDelete_success_shouldCancelOnlyFutureReservationsAndNotifyThoseEntrants() {
+        val futureDoc = mockk<DocumentReference>(relaxed = true)
+        val ongoingDoc = mockk<DocumentReference>(relaxed = true)
+        val pastDoc = mockk<DocumentReference>(relaxed = true)
+        val reservations = firestore.collection("Reservations")
+        every { reservations.document("res-future") } returns futureDoc
+        every { reservations.document("res-ongoing") } returns ongoingDoc
+        every { reservations.document("res-past") } returns pastDoc
+        firestore.deliver("Reservations", Reservation::class.java, listOf(
+            Reservation(listOf(daysFromNow(10), daysFromNow(11)), "entrant-a", "listing-two-jack").apply { id = "res-future" },
+            Reservation(listOf(daysFromNow(-1), daysFromNow(1)), "entrant-b", "listing-two-jack").apply { id = "res-ongoing" },
+            Reservation(listOf(daysFromNow(-30)), "entrant-c", "listing-two-jack").apply { id = "res-past" },
+        ))
+
+        viewModel.campsiteDelete(twoJack, onSuccess = {}, onFailure = {})
+        deletion.succeed(null)
+
+        verify { futureDoc.update("status", "cancelled") }
+        verify(exactly = 0) { ongoingDoc.update(any<String>(), any()) } // still camping: keeps the stay
+        verify(exactly = 0) { pastDoc.update(any<String>(), any()) }
+        verify(exactly = 1) { firestore.collection("Notifications").add(any()) }
     }
 }

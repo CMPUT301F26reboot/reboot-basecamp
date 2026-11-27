@@ -15,6 +15,7 @@ package com.example.campsitereservationapp
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfileViewModel
 import com.google.firebase.firestore.DocumentReference
 import io.mockk.every
@@ -135,5 +136,32 @@ class AdminBrowseProfileViewModelTest {
 
         verify { lotteryDoc.update("waitlist", any()) }
         verify(exactly = 0) { firestore.collection("Lotteries").document("lottery-other") }
+    }
+
+    @Test
+    fun profileDelete_success_shouldCancelReservationsThatHaveNotFinished() {
+        val futureDoc = mockk<DocumentReference>(relaxed = true)
+        val ongoingDoc = mockk<DocumentReference>(relaxed = true)
+        val pastDoc = mockk<DocumentReference>(relaxed = true)
+        val othersDoc = mockk<DocumentReference>(relaxed = true)
+        val reservations = firestore.collection("Reservations")
+        every { reservations.document("res-future") } returns futureDoc
+        every { reservations.document("res-ongoing") } returns ongoingDoc
+        every { reservations.document("res-past") } returns pastDoc
+        every { reservations.document("res-john") } returns othersDoc
+        firestore.deliver("Reservations", Reservation::class.java, listOf(
+            Reservation(listOf(daysFromNow(10)), "device-jane", "listing-a").apply { id = "res-future" },
+            Reservation(listOf(daysFromNow(-1), daysFromNow(1)), "device-jane", "listing-a").apply { id = "res-ongoing" },
+            Reservation(listOf(daysFromNow(-30)), "device-jane", "listing-a").apply { id = "res-past" },
+            Reservation(listOf(daysFromNow(10)), "device-john", "listing-a").apply { id = "res-john" },
+        ))
+
+        viewModel.profileDelete(jane, onSuccess = {}, onFailure = {})
+        deletion.succeed(null)
+
+        verify { futureDoc.update("status", "cancelled") }
+        verify { ongoingDoc.update("status", "cancelled") }
+        verify(exactly = 0) { pastDoc.update(any<String>(), any()) }   // history is kept
+        verify(exactly = 0) { othersDoc.update(any<String>(), any()) } // other users untouched
     }
 }

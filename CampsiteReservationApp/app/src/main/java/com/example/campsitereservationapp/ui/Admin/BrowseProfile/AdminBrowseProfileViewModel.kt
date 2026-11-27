@@ -3,7 +3,9 @@ package com.example.campsitereservationapp.ui.Admin.BrowseProfile
 import androidx.compose.runtime.mutableStateListOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.notFinished
 import com.google.firebase.firestore.FieldValue
+import java.util.Date
 
 /**
  * ViewModel for Browsing Profiles, basically a copy of AdminBrowseCampsiteViewModel
@@ -58,6 +60,7 @@ class AdminBrowseProfileViewModel(
             .addOnSuccessListener {
                 _searchResults.remove(profile)
                 removeFromWaitlists(profile.id)
+                cancelReservations(profile.id)
                 onSuccess()
             }
             .addOnFailureListener {
@@ -71,6 +74,22 @@ class AdminBrowseProfileViewModel(
      *
      * @param profileId the deleted profile.
      */
+    /**
+     * Cancels every reservation of a deleted profile that hasn't finished, upcoming or happening
+     * now, as if the account never existed. Finished stays are left as the owner's history.
+     * No notification is sent, since the profile no longer exists.
+     *
+     * @param profileId the deleted profile.
+     * @param now the current time.
+     */
+    internal fun cancelReservations(profileId: String, now: Date = Date()) {
+        _reservations
+            .filter { it.entrantID == profileId && notFinished(it, now) }
+            .forEach { reservation ->
+                reservationsRef.document(reservation.id).update("status", "cancelled")
+            }
+    }
+
     private fun removeFromWaitlists(profileId: String) {
         _lotteries.filter { profileId in it.waitlist }.forEach { lottery ->
             lotteriesRef.document(lottery.id).update("waitlist", FieldValue.arrayRemove(profileId))

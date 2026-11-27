@@ -1,13 +1,14 @@
 /**
- * This file contains the BrowseCampsiteViewModel, it injects UserCampsiteViewModel
- * since a lot of the functionality is the same
+ * This file contains the BrowseCampsiteViewModel, which lets an admin browse campsites.
  */
 package com.example.campsitereservationapp.ui.Admin.BrowseCampsites
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserCampsiteSearchViewModel
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.startsAfterToday
 import com.google.firebase.firestore.FieldValue
+import java.util.Date
 
 /**
  * ViewModel for Browsing Campsite, reuses UserCampsiteSearchViewModel functions
@@ -54,6 +55,7 @@ class AdminBrowseCampsiteViewModel(
             .addOnSuccessListener {
                 _searchResults.remove(listing)
                 removeFromLotteries(listing.id)
+                cancelFutureReservations(listing)
                 onSuccess()
             }
             .addOnFailureListener {
@@ -62,8 +64,38 @@ class AdminBrowseCampsiteViewModel(
     }
 
     /**
+     * Cancels the deleted campsite's reservations that start after today and tells each entrant.
+     * Stays happening now are kept so the guests can finish them, and finished stays are left
+     * as history.
+     *
+     * @param listing the deleted campsite.
+     * @param now the current time.
+     */
+    internal fun cancelFutureReservations(listing: Listing, now: Date = Date()) {
+        _reservations
+            .filter { it.campsiteID == listing.id && startsAfterToday(it, now) }
+            .forEach { reservation ->
+                reservationsRef.document(reservation.id).update("status", "cancelled")
+                notificationsRef.add(
+                    mapOf(
+                        "lotteryId" to "",
+                        "message" to "Your reservation at ${listing.name} was cancelled because " +
+                                "the campsite was removed by an administrator.",
+                        "recipientIds" to listOf(reservation.entrantID),
+                        "reservationId" to reservation.id,
+                        "senderId" to "",
+                        "subject" to "Reservation Cancelled",
+                        "timestamp" to now,
+                        "type" to "reserveCancel",
+                        "viewedBy" to emptyList<String>()
+                    )
+                )
+            }
+    }
+
+    /**
      * Takes a deleted campsite out of every lottery it was in, so lotteries don't point at a
-     * campsite that no longer exists. Reservations on it are left as they are.
+     * campsite that no longer exists.
      * @param listingId the deleted campsite.
      */
     private fun removeFromLotteries(listingId: String) {
