@@ -20,6 +20,8 @@ import com.google.firebase.firestore.ListenerRegistration
  */
 object NotificationWatcher {
     private var registration: ListenerRegistration? = null
+    private var profileRegistration: ListenerRegistration? = null
+    private var notificationsEnabled = true
 
     /**
      * Starts listening. Calling it again while already listening does nothing.
@@ -28,7 +30,18 @@ object NotificationWatcher {
      * @param profileId the profile ID used in notifications' `recipientIds` (the device ID).
      */
     fun start(context: Context, profileId: String) {
-        if (registration != null) return
+        if (profileRegistration != null) return
+
+        // get the profile's setting first so notifications sent while it was off don't pop up on startup
+        profileRegistration = FirebaseFirestore.getInstance().collection("Profiles").document(profileId)
+            .addSnapshotListener { profile, error ->
+                if (error != null) return@addSnapshotListener
+                notificationsEnabled = profile?.getBoolean("notificationsEnabled") ?: true
+                if (registration == null) listenForNotifications(context, profileId)
+            }
+    }
+
+    private fun listenForNotifications(context: Context, profileId: String) {
         val appContext = context.applicationContext
         val prefs = appContext.getSharedPreferences("shown_notifications", Context.MODE_PRIVATE)
 
@@ -43,7 +56,8 @@ object NotificationWatcher {
                     if (change.type != DocumentChange.Type.ADDED) continue
                     val doc = change.document
                     val viewedBy = doc.get("viewedBy") as? List<*> ?: emptyList<Any>()
-                    if (!shouldShowPhoneNotification(true, doc.id in shown, profileId in viewedBy)) continue // already shown or already read
+                    if (!notificationsEnabled) shown += doc.id // turned off, so it won't pop up later when turned back on
+                    if (!shouldShowPhoneNotification(notificationsEnabled, doc.id in shown, profileId in viewedBy)) continue // already shown or already read
 
                     LocalNotifier.show(
                         appContext,
@@ -66,6 +80,8 @@ object NotificationWatcher {
 
     /** Stops listening. Only needed if the app ever switches profiles on the same device. */
     fun stop() {
+        profileRegistration?.remove()
+        profileRegistration = null
         registration?.remove()
         registration = null
     }
