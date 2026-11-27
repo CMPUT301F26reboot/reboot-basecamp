@@ -41,6 +41,21 @@ open class ReservationsViewModel: DatabaseModel() {
     fun listingFor(reservation: Reservation): Listing? =
         _listings.firstOrNull { it.id == reservation.campsiteID }
 
+    /** State tracking whether the reservation is being cancelled */
+    var isCancelling by mutableStateOf(false)
+
+    /**
+     * Flips the reservation's status to "cancelled" in Firestore
+     */
+    fun cancelReservation(reservationId: String) {
+        if (isCancelling) return
+        isCancelling = true
+        reservationsRef.document(reservationId)
+            .update("status", "cancelled")
+            .addOnSuccessListener { isCancelling = false }
+            .addOnFailureListener { isCancelling = false }
+    }
+
     // Gemini 2026/11/25
     // Q. "I want to print all the information in a reservation document to a csv in kotlin android studio.
     // Just say we pass reservation as type Reservation where a databasemodel syncs firestore data of the

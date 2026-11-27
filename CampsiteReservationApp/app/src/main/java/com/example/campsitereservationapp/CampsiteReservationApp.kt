@@ -38,6 +38,7 @@ import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDet
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
 import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryListScreen
+import com.example.campsitereservationapp.ui.owner.Notifications.OwnerSendNotificationScreen
 import com.example.campsitereservationapp.ui.owner.WaitList.OwnerWaitlistScreen
 import com.example.campsitereservationapp.utils.getDeviceId
 import java.util.Date
@@ -488,13 +489,13 @@ fun CampsiteReservationApp() {
         composable(
             route = "ownerWaitlist/{lotteryId}"
         ){ entry ->
+            val lotteryId = entry.arguments?.getString("lotteryId").orEmpty()
             OwnerWaitlistScreen(
-                lotteryID = entry.arguments?.getString("lotteryId").orEmpty()
-                ,
+                lotteryID = lotteryId,
                 onBack = {
                     navController.popBackStack()
                 },
-                onSendNotification = { /* TODO */},
+                onSendNotification = { navController.navigate("ownerSendNotif/$lotteryId")},
             )
         }
 
@@ -507,10 +508,22 @@ fun CampsiteReservationApp() {
                     navController.navigate("ownerHome")
                 },
                 onOpenNotif = { lotteryId ->
-                    navController.navigate( "/* TODO */")
+                    navController.navigate( "ownerSendNotif/$lotteryId")
                 }
             )
 
+        }
+
+        composable(
+            route = "ownerSendNotif/{lotteryId}"
+        ){ entry ->
+            OwnerSendNotificationScreen(
+                profileId = OWNER_ID,
+                lotteryId = entry.arguments?.getString("lotteryId").orEmpty(),
+                onBack = {
+                    navController.navigate("ownerHome")
+                }
+            )
         }
 
         // ------------------------ Admin ------------------------- ///

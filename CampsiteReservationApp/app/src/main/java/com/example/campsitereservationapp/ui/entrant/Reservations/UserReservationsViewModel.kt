@@ -66,9 +66,6 @@ class UserReservationsViewModel : ReservationsViewModel() {
     var selectedReservation by mutableStateOf<Reservation?>(null)
         private set
 
-    /** State tracking whether the reservation is being cancelled */
-    var isCancelling by mutableStateOf(false)
-
     /**  The UI calls this when the user taps the "Cancel" button on a card*/
     fun onCancelClicked(reservation: Reservation) {
         selectedReservation = reservation
@@ -78,18 +75,6 @@ class UserReservationsViewModel : ReservationsViewModel() {
     /** The UI calls this if the user taps "Keep it"*/
     fun dismissCancelDialog() {
         pendingCancelId = null
-    }
-
-    /**
-     * Flips the reservation's status to "cancelled" in Firestore
-     */
-    fun cancelReservation(reservationId: String) {
-        if (isCancelling) return
-        isCancelling = true
-        reservationsRef.document(reservationId)
-            .update("status", "cancelled")
-            .addOnSuccessListener { isCancelling = false }
-            .addOnFailureListener { isCancelling = false }
     }
 
     /** The UI calls this when the user taps "Yes, cancel" in the dialog*/

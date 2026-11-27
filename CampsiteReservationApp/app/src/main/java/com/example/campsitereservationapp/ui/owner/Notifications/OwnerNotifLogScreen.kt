@@ -8,7 +8,7 @@
  * US 02.10.02 (Campsite Owner Sent Notifications Log)
  *
  * The owner's Notifications screen. Lists every notification the owner sent to the entrants
- * of a lottery, newest searches appear first, and tapping a notification takes the owner to the
+ * of a lottery, newest notifications appear first, and tapping a notification takes the owner to the
  * notification creation screen for the respective lottery.
  *
  * Split into two parts: [OwnerNotifLogScreen] is the version that talks to
@@ -60,8 +60,7 @@ import java.util.Locale
  *
  * @param profileId the current owners profile ID, used to show only their notifications.
  * @param onBack called when the back button is tapped.
- * @param onOpenNotif called when a notification is tapped, with its type, reservation ID, and
- *   lottery ID, so the caller can navigate to the right screen.
+ * @param onOpenNotif called when a notification is tapped with lottery ID, so the caller can navigate to the right waitlist notification.
  * @param viewModel the screen's ViewModel; can be replaced for testing.
  */
 @Composable

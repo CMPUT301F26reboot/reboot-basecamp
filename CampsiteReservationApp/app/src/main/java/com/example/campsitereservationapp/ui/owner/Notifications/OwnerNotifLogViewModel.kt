@@ -28,7 +28,10 @@ class OwnerNotifLogViewModel: DatabaseModel(){
     val allLotteries: List<Lottery>
         get() = _lotteries
 
-    /** Gets the lottery name */
+    /** Finds the lottery name by id
+     * @param lotteryId given id of the lottery the notification belongs to
+     * @return the matching lottery name, or "No lottery found"
+     */
     fun getLotName(lotteryId: String): String{
         val lottery =  allLotteries.find {it.id == lotteryId}
         return lottery?.title ?: "No lottery found"
@@ -40,7 +43,7 @@ class OwnerNotifLogViewModel: DatabaseModel(){
      *
      * Queries database based on keyword where senderIds match profileId
      *
-     * @param keyword is string typed into search bar which is used to do a prefix query on the subject
+     * @param keyword is string typed into search bar which is used to do a query on the subject
      * and message of notifications
      * @param ownerId is a Firestore string id of the profile, to ensure that resulting notifications are
      * only those of the owner
@@ -50,7 +53,7 @@ class OwnerNotifLogViewModel: DatabaseModel(){
         _searchResults.clear()
         val all = allNotifications
             .filter{
-                ownerId in it.senderId
+                it.senderId == ownerId
             }
         for (notification in all){
             if(containsKeyword(keyword, notification)) {
@@ -66,7 +69,7 @@ class OwnerNotifLogViewModel: DatabaseModel(){
      *
      * @param keyword the search text; an empty keyword always matches.
      * @param notification the notification to check.
-     * @return true if the notification's subject or message starts with [keyword].
+     * @return true if the notification's subject or message contains [keyword].
      */
     internal fun containsKeyword(keyword: String, notification: Notifications): Boolean{
         if(keyword.isEmpty())
