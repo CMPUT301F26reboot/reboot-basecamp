@@ -36,6 +36,7 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
         lottery.title = title
         lottery.waitlistCapacity = waitlistCap
         lottery.lotteryWinners = winnersToDraw
+        lottery.drawn = false
         lotteriesRef.add(lottery)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure() }

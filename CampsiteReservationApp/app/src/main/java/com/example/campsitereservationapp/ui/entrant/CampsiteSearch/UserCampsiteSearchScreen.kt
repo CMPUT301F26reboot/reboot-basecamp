@@ -159,7 +159,6 @@ fun UserCampsiteSearchScreen(
                     onSelect = {
                         onToDetails(listing.id, vm._selectedDates.minOrNull(), vm._selectedDates.maxOrNull())
                     },
-                    vm = vm
                 )
             }
         }
@@ -181,7 +180,6 @@ fun UserSearchCampsiteCard(
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     onSelect: () -> Unit = {},
-    vm: UserCampsiteSearchViewModel = viewModel()
 ) {
     val cardBackground = if (isSelected) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface
     val cardBorderColor = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outlineVariant

@@ -19,6 +19,9 @@ import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewMod
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
 import com.example.campsitereservationapp.ui.owner.Notifications.OwnerNotifLogScreen
+import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsitesScreen
+import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfilesScreen
+import com.example.campsitereservationapp.ui.Admin.CampsiteImages.CampsiteImagesScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
@@ -38,7 +41,6 @@ import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDet
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
 import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryListScreen
-import com.example.campsitereservationapp.ui.owner.Notifications.OwnerSendNotificationScreen
 import com.example.campsitereservationapp.ui.owner.WaitList.OwnerWaitlistScreen
 import com.example.campsitereservationapp.utils.getDeviceId
 import java.util.Date
@@ -501,7 +503,7 @@ fun CampsiteReservationApp() {
 
         composable(
             route = "ownerNotifLog"
-        ){ 
+        ){
             OwnerNotifLogScreen(
                 profileId = OWNER_ID,
                 onBack = {
@@ -542,10 +544,10 @@ fun CampsiteReservationApp() {
                         navController.popBackStack()
                     },
                     onManageCampsites = {
-                        //navController.navigate("adminCampsites")
+                        navController.navigate("adminBrowseCampsites")
                     },
                     onManageProfiles = {
-                        //navController.navigate("adminProfiles")
+                        navController.navigate("adminBrowseProfiles")
                     },
                     onNotificationLogs = {
                         //navController.navigate("adminNotificationLogs")
@@ -565,5 +567,43 @@ fun CampsiteReservationApp() {
                 )
             }
         }
+
+        composable(
+            route = "adminBrowseCampsites"
+        ){
+            AdminBrowseCampsitesScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onImages = {navController.navigate("adminBrowseCampsiteImage/$it")}
+            )
+        }
+
+        composable(
+            route = "adminBrowseCampsiteImage/{listingId}",
+            arguments = listOf(
+                navArgument("listingId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+            CampsiteImagesScreen(
+                listingID = entry.arguments?.getString("listingId").orEmpty(),
+                onBack = {
+                    navController.popBackStack()
+                },
+            )
+        }
+
+        composable(
+            route = "adminBrowseProfiles"
+        ){
+            AdminBrowseProfilesScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }
+

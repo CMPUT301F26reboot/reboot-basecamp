@@ -36,6 +36,7 @@ class Lottery(var dates: List<Date> = emptyList(),
     var lotteryWinners: Int? = null
 
     var cancelled: Boolean = false
+    var drawn: Boolean = false
 
     /** Adds [entrant] to this lottery's waitlist.
      *
