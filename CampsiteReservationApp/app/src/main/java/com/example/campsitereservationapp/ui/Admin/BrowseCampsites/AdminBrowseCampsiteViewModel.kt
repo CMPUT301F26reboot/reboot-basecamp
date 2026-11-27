@@ -99,8 +99,16 @@ class AdminBrowseCampsiteViewModel(
      * @param listingId the deleted campsite.
      */
     private fun removeFromLotteries(listingId: String) {
+        //if lottery only has 1 listing and it's to be deleted, delete the lottery
+
         _lotteries.filter { listingId in it.campsiteIDs }.forEach { lottery ->
-            lotteriesRef.document(lottery.id).update("campsiteIDs", FieldValue.arrayRemove(listingId))
+            //if the matching lottery only has itself as it's 1 campsite, delete the lottery
+            if (lottery.campsiteIDs.size == 1){
+                lotteriesRef.document(lottery.id).delete()
+            }
+            else{
+                lotteriesRef.document(lottery.id).update("campsiteIDs", FieldValue.arrayRemove(listingId))
+            }
         }
     }
 
