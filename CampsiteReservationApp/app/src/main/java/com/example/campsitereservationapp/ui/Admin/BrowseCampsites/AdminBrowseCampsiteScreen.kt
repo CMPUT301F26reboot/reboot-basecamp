@@ -34,6 +34,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.ui.Admin.BrowseComponents.CampsiteCard
 import com.example.campsitereservationapp.ui.Admin.BrowseComponents.SearchBarComponent
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.ui.components.CustomDialogScreenComponent
+import com.example.campsitereservationapp.ui.components.formatDateRange
 import com.example.campsitereservationapp.ui.entrant.CampsiteSearch.UserSearchCampsiteCard
 import java.util.Date
 
@@ -47,6 +49,8 @@ fun AdminBrowseCampsitesScreen(
     viewModel: AdminBrowseCampsiteViewModel = viewModel(),
 ){
     val listings = viewModel._searchResults
+    var showDeletedDialog by remember { mutableStateOf(false) }
+    var showDeletedFailedDialog by remember { mutableStateOf(false) }
 
 
     Column(
@@ -72,14 +76,33 @@ fun AdminBrowseCampsitesScreen(
             items(listings, key = {it.id}) { listing ->
                 CampsiteCard(
                     listing = listing,
-                    onDelete = {}
+                    onDelete = {viewModel.campsiteDelete(
+                        listing = listing,
+                        onSuccess = {showDeletedDialog = true},
+                        onFailure = {showDeletedFailedDialog = true}
+                    )}
                 )
             }
 
         }
 
-
-
+        //popup dialog on successful or failure on listing addition
+        if (showDeletedDialog) {
+            CustomDialogScreenComponent(
+                onDismissRequest = {
+                    showDeletedDialog = false
+                },
+                title = "Campsite Deleted"
+            )
+        } else if (showDeletedFailedDialog)
+        {
+            CustomDialogScreenComponent(
+                onDismissRequest = {
+                    showDeletedFailedDialog = false
+                },
+                title = "Error: Deletion Failure",
+                )
+        }
 
     }
 

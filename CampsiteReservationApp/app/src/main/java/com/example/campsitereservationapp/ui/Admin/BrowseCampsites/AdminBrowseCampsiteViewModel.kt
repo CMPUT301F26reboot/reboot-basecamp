@@ -32,15 +32,20 @@ class AdminBrowseCampsiteViewModel(
      * Deletes campsite
      * @param listing what listing is being deleted
      */
-    fun campsiteDelete(listing: Listing) {
+    fun campsiteDelete(
+        listing: Listing,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ) {
         if (listing.id.isBlank()) return
 
         listingsRef.document(listing.id).delete()
             .addOnSuccessListener {
                 _searchResults.remove(listing)
+                onSuccess()
             }
             .addOnFailureListener {
-                // Optional: handle failure (e.g., set an error message state)
+                onFailure()
             }
     }
 
