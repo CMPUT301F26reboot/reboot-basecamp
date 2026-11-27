@@ -1,8 +1,8 @@
 /**
- * OwnerNotifLogViewModel.kt
+ * AdminNotificationLogsViewModel.kt
  *
- * ViewModel for the owners Notifications screen. Filters the live Notifications collection
- * (inherited from DatabaseModel) down to the current owner, and searches it by keyword
+ * ViewModel for the admins Notifications screen. Filters the live Notifications collection
+ * (inherited from DatabaseModel) and searches it by keyword
  */
 
 package com.example.campsitereservationapp.ui.Admin.Notifications
@@ -10,14 +10,15 @@ package com.example.campsitereservationapp.ui.Admin.Notifications
 import androidx.compose.runtime.mutableStateListOf
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
 
 /**
- * Holds the search results for [OwnerNotifLogScreen].
+ * Holds the search results for [AdminNotificationLogsScreen].
  */
 class AdminNotificationLogsViewModel: DatabaseModel(){
 
-    /** The owners notifications that match the current search. Updated by [doSearch]. */
+    /** The notifications that match the current search. Updated by [doSearch]. */
     var _searchResults = mutableStateListOf<Notifications>()
 
     /** Retrieves all notifications */
@@ -25,37 +26,30 @@ class AdminNotificationLogsViewModel: DatabaseModel(){
         get() = _notifications
 
     /** Retrieves all lotteries so we can get the lottery name */
-    val allLotteries: List<Lottery>
-        get() = _lotteries
+    val allProfiles: List<Profile>
+        get() = _profiles
 
-    /** Finds the lottery name by id
-     * @param lotteryId given id of the lottery the notification belongs to
-     * @return the matching lottery name, or "No lottery found"
+    /** Finds the name of the given profileId
+     * @param profileId given id of the sender the notification belongs to
+     * @return the matching profile name, or "No profile found"
      */
-    fun getLotName(lotteryId: String): String{
-        val lottery =  allLotteries.find {it.id == lotteryId}
-        return lottery?.title ?: "No lottery found"
+    fun getSenderName(profileId: String): String{
+        val profile =  allProfiles.find {it.id == profileId}
+        return profile?.name ?: "System"
     }
-
 
     /**
      * Searches for notifications based on criteria
      *
-     * Queries database based on keyword where senderIds match profileId
+     * Queries database based on keyword
      *
      * @param keyword is string typed into search bar which is used to do a query on the subject
      * and message of notifications
-     * @param ownerId is a Firestore string id of the profile, to ensure that resulting notifications are
-     * only those of the owner
      *
      */
-    fun doSearch(keyword: String, ownerId: String){
+    fun doSearch(keyword: String){
         _searchResults.clear()
-        val all = allNotifications
-            .filter{
-                it.senderId == ownerId
-            }
-        for (notification in all){
+        for (notification in allNotifications){
             if(containsKeyword(keyword, notification)) {
                 _searchResults.add(notification)
             }

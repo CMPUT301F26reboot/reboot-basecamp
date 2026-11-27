@@ -1,24 +1,23 @@
-// Owner notifications screen. Displays the UI for the notifications screen, where the owner
-// can search for the notifications they sent, and click them to go to the send notification screen
-// for that lottery
+// Admin notifications screen. Displays the UI for the notifications screen, where the admin
+// can search through the notifications, click on the sender/recipient to view their profile, and delete the notification
 
 /**
- * Owner Notifications screen —
+ * Admin Notifications screen —
  *
- * US 02.10.02 (Campsite Owner Sent Notifications Log)
+ * US 03.08.01 (Admin Notification Logs)
  *
- * The owner's Notifications screen. Lists every notification the owner sent to the entrants
- * of a lottery, newest notifications appear first, and tapping a notification takes the owner to the
- * notification creation screen for the respective lottery.
+ * The admin's Notifications screen. Lists every notification, newest notifications appear first, and they can
+ * delete the notification by clicking the trash button
  *
- * Split into two parts: [OwnerNotifLogScreen] is the version that talks to
- * the ViewModel, and [OwnerNotifLogContent] is the UI version that just takes
+ * Split into two parts: [AdminNotificationLogsScreen] is the version that talks to
+ * the ViewModel, and [AdminNotificationLogsViewModel] is the UI version that just takes
  * values and callbacks.
  */
 
 package com.example.campsitereservationapp.ui.Admin.Notifications
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,58 +47,49 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.style.TextDecoration
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-// Note: Code structure was inspired/copied from the user notifications screen
+// Note: Code structure was inspired/copied from the owner notifications screen
 
 /**
- * Entry point for the owner notifications screen. Connects [OwnerNotifLogViewModel] to
- * [OwnerNotifLogContent].
+ * Entry point for the admin notifications screen. Connects [AdminNotificationLogsViewModel] to
+ * [AdminNotificationLogsContent].
  *
- * @param profileId the current owners profile ID, used to show only their notifications.
  * @param onBack called when the back button is tapped.
- * @param onOpenNotif called when a notification is tapped with lottery ID, so the caller can navigate to the right waitlist notification.
  * @param viewModel the screen's ViewModel; can be replaced for testing.
  */
 @Composable
 fun AdminNotificationLogsScreen(
-    profileId: String,
     onBack: () -> Unit,
-    onOpenNotif: (lotteryId: String) -> Unit,
     viewModel: AdminNotificationLogsViewModel = viewModel()
 ){
 
     AdminNotificationLogsContent(
-        profileId = profileId,
         onBack = onBack,
-        onOpenNotif = onOpenNotif,
         viewModel = viewModel
     )
 }
 
 /**
  * The Notifications screen layout: search bar, and the list of notification cards.
- * Shows all of the owners sent notifications until something is typed, then updates the list
+ * Shows all of the notifications until something is typed, then updates the list
  * as the search text changes.
  *
- * @param profileId the current owners profile ID, used when searching.
  * @param onBack called when the back button is tapped.
- * @param onOpenNotif called with a notification's lottery ID when tapped.
  * @param viewModel provides the search results and runs searches.
  */
 @Composable
 fun AdminNotificationLogsContent(
-    profileId: String,
     onBack: () -> Unit,
-    onOpenNotif: (lotteryId: String) -> Unit,
-    viewModel: AdminNotificationLogsViewModel
+    viewModel: AdminNotificationLogsViewModel,
 ) {
     var search by remember { mutableStateOf("") }
 
     LaunchedEffect(viewModel.allNotifications.size) {
-        viewModel.doSearch(search, profileId)
+        viewModel.doSearch(search)
     }
 
     Scaffold(modifier = Modifier) { padding ->
@@ -111,8 +101,8 @@ fun AdminNotificationLogsContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             BackButtonAndHeaderScreenComponent(
-                title = "Notification History",
-                subHeader = "Updates you've sent about your lotteries.",
+                title = "Notification Logs",
+                subHeader = "All notifications sent from system or owners.",
                 onBack = onBack
             )
 
@@ -121,15 +111,16 @@ fun AdminNotificationLogsContent(
                 value = search,
                 onValueChange = {
                     search = it
-                    viewModel.doSearch(it, profileId)
+                    viewModel.doSearch(it)
                 },
-                placeholder = { Text("Search Notifications") },
+                placeholder = { Text("Search Notification log") },
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(8.dp))
+
             //if no notifications
             if (viewModel._searchResults.isEmpty()) {
                 Box(
@@ -155,10 +146,7 @@ fun AdminNotificationLogsContent(
                     items(viewModel._searchResults, key = { it.id }) { notification ->
                         NotificationCard(
                             notification = notification,
-                            lotteryName = viewModel.getLotName(notification.lotteryId),
-                            onClick = {
-                                onOpenNotif(notification.lotteryId)
-                            },
+                            viewModel = viewModel,
                         )
                     }
                 }
@@ -172,17 +160,13 @@ fun AdminNotificationLogsContent(
  * One notification card showing the subject, time sent, lottery name, and message.
  *
  * @param notification the notification to display.
- * @param lotteryName the name of the lottery the notification belongs to
- * @param onClick called when the card is tapped.
  */
 @Composable
 private fun NotificationCard(
     notification: Notifications,
-    lotteryName: String,
-    onClick: () -> Unit
+    viewModel: AdminNotificationLogsViewModel,
 ) {
     Surface(
-        onClick = onClick,
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shape = MaterialTheme.shapes.medium,
@@ -199,17 +183,24 @@ private fun NotificationCard(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        lotteryName,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
                         text = SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault()).format(
                             notification.timestamp
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+
+                    Spacer(Modifier.height(4.dp))
+
+                    Text(
+                        text = "Sender: " + viewModel.getSenderName(notification.senderId),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textDecoration = TextDecoration.Underline,
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
                     Text(
                         notification.message,
                         style = MaterialTheme.typography.bodyMedium,

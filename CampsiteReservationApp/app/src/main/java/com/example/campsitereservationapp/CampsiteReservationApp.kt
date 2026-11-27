@@ -21,6 +21,7 @@ import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
 import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsitesScreen
 import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfilesScreen
 import com.example.campsitereservationapp.ui.Admin.CampsiteImages.CampsiteImagesScreen
+import com.example.campsitereservationapp.ui.Admin.Notifications.AdminNotificationLogsScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
@@ -49,7 +50,7 @@ import java.util.Date
 // what the respective composable route name is.
 
 // OWNER_ID is hardcoded for now since no owner signup/device setup yet.
-private const val OWNER_ID = "test-owner"
+private const val OWNER_ID = "1"
 
 /**
  * Sign-up route. Sign-up forwards at once when the device already has a profile.
@@ -522,7 +523,7 @@ fun CampsiteReservationApp() {
                         navController.navigate("adminBrowseProfiles")
                     },
                     onNotificationLogs = {
-                        //navController.navigate("adminNotificationLogs")
+                        navController.navigate("adminNotificationLogs")
                     },
                     onMessageLogs = {
                         //navController.navigate("adminMessageLogs")
@@ -571,6 +572,16 @@ fun CampsiteReservationApp() {
             route = "adminBrowseProfiles"
         ){
             AdminBrowseProfilesScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = "adminNotificationLogs"
+        ){
+            AdminNotificationLogsScreen(
                 onBack = {
                     navController.popBackStack()
                 }
