@@ -5,6 +5,7 @@ package com.example.campsitereservationapp.ui.entrant.CampsiteSearch
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,7 +29,13 @@ import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.SearchBarComponent
 import com.example.campsitereservationapp.ui.components.AvailabilityCalendar
+import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.ui.components.DateRangeCalendarDialog
+import com.example.campsitereservationapp.ui.components.InputDateScreenComponent
+import com.example.campsitereservationapp.ui.components.formatDateRange
+import com.example.campsitereservationapp.ui.components.nextDateRange
 import java.time.YearMonth
 import java.util.Date
 import com.example.campsitereservationapp.ui.theme.RatingAmber
@@ -52,55 +59,33 @@ fun UserCampsiteSearchScreen(
     onBack: () -> Unit,
     onToDetails: (listingId: String, start: Date?, end: Date?) -> Unit
 ){
-    val scope = rememberCoroutineScope()
-    var keyword by remember{mutableStateOf("")}
     var location by remember{mutableStateOf("")}
     var occupancyInput by remember{mutableStateOf("")}
     var occupancy by remember{mutableStateOf(0)}
     var showCalendar by remember{mutableStateOf(false)}
-    var showCalText by remember{mutableStateOf("")}
-    showCalText = "Date Selection"
+    val dates = vm._selectedDates.toList()
 
 
 
-    if(occupancyInput == "")
-        occupancy = 0
-    else
-        occupancy = occupancyInput.toInt()
+    if(occupancyInput == "") occupancy = 0
+    else occupancy = occupancyInput.toInt()
 
-    Spacer(modifier = Modifier.padding(8.dp))
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.Center){
-        FilledTonalIconButton(
-            onClick = onBack,
-            modifier = Modifier.padding(start = 16.dp, top = 8.dp)
-        ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-        }
+    Column(modifier = modifier.padding(12.dp), verticalArrangement = Arrangement.Center){
+        BackButtonAndHeaderScreenComponent(
+            title = "Browse Campsites",
+            onBack = onBack
+        )
+        Spacer(Modifier.height(12.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            TextField(
-                modifier = Modifier.fillMaxWidth(fraction = 0.7f).padding(5.dp),
-                value = keyword,
-                onValueChange = { keyword = it },
-                label = { Text("Search Bar") },
-                shape = MaterialTheme.shapes.medium,
+            SearchBarComponent(
+                onSearch = { keyword ->
+                    vm.doSearch(keyword, location, occupancy)
+                }
             )
-
-            Button(
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
-                onClick = { vm.doSearch(keyword, location, occupancy) },
-                shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(vertical = 14.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                )
-            ){
-                Text("Search")
-            }
         }
 
         Row(
@@ -125,30 +110,43 @@ fun UserCampsiteSearchScreen(
             )
         }
 
+        //AI PROMPT COPILOT:
+        //How to I make a Text field, but instead of asking for an input, when you click it,
+        // it opens up the calendar and the text updates based on what the dates are chosen.
+        // Also, the purpose of this is to match the UI of the Text fields above
 
-        Button(
-            onClick = {
-            showCalendar = !showCalendar
-            if(showCalText == "Show Date Selection")
-                showCalText = "Close Date Selection"
-            else
-                showCalText = "Show Date Selection"
-                      },
-            modifier = Modifier.fillMaxWidth().padding(5.dp),
-            shape = MaterialTheme.shapes.medium,
-            contentPadding = PaddingValues(vertical = 18.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-        )
-        {
-            Text(showCalText)
+        //Date Input
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+                .clickable { showCalendar = true }
+        ) {
+            TextField(
+                value = if (dates.isEmpty()) "" else formatDateRange(dates),
+                onValueChange = { },
+                readOnly = true,
+                enabled = false,
+                label = { Text("Dates") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.DateRange,
+                        contentDescription = "Select Dates",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                shape = MaterialTheme.shapes.medium,
+                colors = TextFieldDefaults.colors(
+                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledIndicatorColor = MaterialTheme.colorScheme.outline
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
-        if(showCalendar){
-            AvailabilityCalendar(
-                vm.get365Dates(), vm._selectedDates, vm::toggleDate,
-                initialMonth = YearMonth.now())
-        }
+        //display campsites
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -160,6 +158,23 @@ fun UserCampsiteSearchScreen(
                     }
                 )
             }
+        }
+
+        //Popup Calendar to select range of dates
+        if(showCalendar){
+            DateRangeCalendarDialog(
+                dates = dates,
+                onSelection = { tappedDay ->
+                    // Calculates the full date range between first tap and second tap
+                    val newRange = nextDateRange(vm._selectedDates.toList(), tappedDay)
+
+                    // Update ViewModel selected dates
+                    vm._selectedDates.clear()
+                    vm._selectedDates.addAll(newRange)
+                },
+                onDismiss = { showCalendar = false },
+                title = "Select Dates",
+            )
         }
     }
 }
