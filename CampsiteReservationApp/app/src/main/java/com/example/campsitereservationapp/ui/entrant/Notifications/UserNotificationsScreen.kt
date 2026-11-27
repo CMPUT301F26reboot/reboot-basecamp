@@ -200,6 +200,7 @@ private fun NotificationCard(
         onClick = onClick,
         color = if(isViewed){ MaterialTheme.colorScheme.surfaceVariant} else{MaterialTheme.colorScheme.surface},
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
     ) {

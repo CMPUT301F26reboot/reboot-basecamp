@@ -29,6 +29,9 @@ open class ReservationsViewModel: DatabaseModel() {
 
     var filter by mutableStateOf(ReservationFilter.All)
 
+    /** State tracking whether the reservation is being cancelled */
+    var isCancelling by mutableStateOf(false)
+
     /** Called by the filter buttons when the user picks a new filter. */
     fun onFilterSelected(f: ReservationFilter) {
         filter = f
@@ -40,9 +43,6 @@ open class ReservationsViewModel: DatabaseModel() {
     /** Finds the Listing a reservation points at, or null if it was deleted. */
     fun listingFor(reservation: Reservation): Listing? =
         _listings.firstOrNull { it.id == reservation.campsiteID }
-
-    /** State tracking whether the reservation is being cancelled */
-    var isCancelling by mutableStateOf(false)
 
     /**
      * Flips the reservation's status to "cancelled" in Firestore
