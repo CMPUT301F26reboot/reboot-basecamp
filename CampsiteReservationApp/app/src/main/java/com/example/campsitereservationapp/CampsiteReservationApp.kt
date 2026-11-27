@@ -18,6 +18,7 @@ import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
+import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsitesScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
@@ -493,7 +494,7 @@ fun CampsiteReservationApp() {
                         navController.popBackStack()
                     },
                     onManageCampsites = {
-                        //navController.navigate("adminCampsites")
+                        navController.navigate("adminBrowseCampsites")
                     },
                     onManageProfiles = {
                         //navController.navigate("adminProfiles")
@@ -515,6 +516,21 @@ fun CampsiteReservationApp() {
                     }
                 )
             }
+        }
+
+        composable(
+            route = "adminBrowseCampsites"
+        ){
+            AdminBrowseCampsitesScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onToDetails = { listingId, start, end ->
+                    val dates = if (start != null && end !=null)
+                        "?start=${start.time}&end=${end.time}" else ""
+                    navController.navigate("campsiteDetails/$listingId$dates")
+                }
+            )
         }
     }
 }
