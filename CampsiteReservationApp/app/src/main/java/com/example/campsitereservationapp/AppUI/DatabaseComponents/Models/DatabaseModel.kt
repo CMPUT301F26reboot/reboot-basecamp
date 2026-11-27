@@ -5,14 +5,11 @@ package com.example.campsitereservationapp.AppUI.DatabaseComponents.Models
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.*
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlin.jvm.java
 
 
 /**
@@ -34,9 +31,9 @@ open class DatabaseModel :ViewModel() {
 
     //Every local copy of each collection
     protected var _listings = mutableStateListOf<Listing>()
-    var _lotteries = mutableStateListOf<Lottery>()
+    protected var _lotteries = mutableStateListOf<Lottery>()
     protected var _profiles = mutableStateListOf<Profile>()
-    var _reservations = mutableStateListOf<Reservation>()
+    protected var _reservations = mutableStateListOf<Reservation>()
     protected var _chats = mutableStateListOf<Chat>()
     protected var _messages = mutableStateListOf<Message>()
 
