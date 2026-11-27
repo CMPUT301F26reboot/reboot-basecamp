@@ -18,6 +18,8 @@ import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
+import com.example.campsitereservationapp.ui.owner.Notifications.OwnerNotifLogScreen
+import com.example.campsitereservationapp.ui.owner.Notifications.OwnerSendNotificationScreen
 import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsitesScreen
 import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfilesScreen
 import com.example.campsitereservationapp.ui.Admin.CampsiteImages.CampsiteImagesScreen
@@ -349,7 +351,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("ownerListings")
                 },
                 onNotificationHistory = {
-                    //navController.navigate("ownerNotificationHistory")
+                    navController.navigate("ownerNotifLog")
                 },
                 onProfile = {
                     //navController.navigate("ownerProfile")
@@ -490,13 +492,40 @@ fun CampsiteReservationApp() {
         composable(
             route = "ownerWaitlist/{lotteryId}"
         ){ entry ->
+            val lotteryId = entry.arguments?.getString("lotteryId").orEmpty()
             OwnerWaitlistScreen(
-                lotteryID = entry.arguments?.getString("lotteryId").orEmpty()
-                ,
+                lotteryID = lotteryId,
                 onBack = {
                     navController.popBackStack()
                 },
-                onSendNotification = { /* TODO */},
+                onSendNotification = { navController.navigate("ownerSendNotif/$lotteryId")},
+            )
+        }
+
+        composable(
+            route = "ownerNotifLog"
+        ){
+            OwnerNotifLogScreen(
+                profileId = OWNER_ID,
+                onBack = {
+                    navController.navigate("ownerHome")
+                },
+                onOpenNotif = { lotteryId ->
+                    navController.navigate( "ownerSendNotif/$lotteryId")
+                }
+            )
+
+        }
+
+        composable(
+            route = "ownerSendNotif/{lotteryId}"
+        ){ entry ->
+            OwnerSendNotificationScreen(
+                profileId = OWNER_ID,
+                lotteryId = entry.arguments?.getString("lotteryId").orEmpty(),
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
 

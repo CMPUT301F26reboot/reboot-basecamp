@@ -12,8 +12,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.Databa
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.firestore.pipeline.Expression.Companion.documentId
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.campsitereservationapp.utils.appDateFormat
 
 enum class ReservationFilter { All, Reserved, Past, Cancelled }
 
@@ -64,7 +63,7 @@ open class ReservationsViewModel: DatabaseModel() {
     // csv file?
 
     fun exportToCsv(reservation: Reservation, outputFile: File) {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateFormat = appDateFormat("yyyy-MM-dd")
 
         // Join multiple dates with a semicolon so they stay cleanly inside one CSV cell
         val formattedDates = reservation.dates.joinToString("; ") { date ->

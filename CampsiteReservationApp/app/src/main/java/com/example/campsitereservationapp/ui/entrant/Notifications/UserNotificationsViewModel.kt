@@ -43,7 +43,7 @@ class UserNotificationsViewModel: DatabaseModel(){
      *
      * Queries database based on keyword where recipientIds match entrantId
      *
-     * @param keyword is string typed into search bar which is used to do a prefix query on the subject
+     * @param keyword is string typed into search bar which is used to do a contains on the subject
      * and message of notifications
      * @param entrantId is a Firestore string id of the profile, to ensure that resulting notifications are
      * only those of the entrant
@@ -69,7 +69,7 @@ class UserNotificationsViewModel: DatabaseModel(){
      *
      * @param keyword the search text; an empty keyword always matches.
      * @param notification the notification to check.
-     * @return true if the notification's subject or message starts with [keyword].
+     * @return true if the notification's subject or message contains [keyword].
      */
     internal fun containsKeyword(keyword: String, notification: Notifications): Boolean{
         if(keyword.isEmpty())

@@ -19,9 +19,6 @@
  * the ViewModel, and [UserNotificationsContent] is the UI version that just takes
  * values and callbacks.
  *
- * Outstanding issues:
- *  - Filtering by date is not implemented yet (unsure if we will).
- *  - Maybe impliment delete feature?
  */
 
 package com.example.campsitereservationapp.ui.entrant.Notifications
@@ -57,8 +54,7 @@ import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Not
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.campsitereservationapp.utils.appDateFormat
 
 // Note: Code structure was inspired by Jonathan's Reservations screen code, and some of Nicholas's campsite search
 
@@ -99,8 +95,6 @@ fun UserNotificationsScreen(
  * @param onOpenNotif called with a notification's type, reservation ID, and lottery ID when tapped.
  * @param profileId the current entrant's profile ID, used when searching.
  * @param viewModel provides the search results and runs searches.
- *
- * TODO: filtering by dates (maybe)
  */
 @Composable
 fun UserNotificationsContent(
@@ -147,10 +141,8 @@ fun UserNotificationsContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // TODO: add filter by date feature here
-
             Spacer(Modifier.height(8.dp))
-            //if no reservations
+            //if no notifications
             if (viewModel._searchResults.isEmpty()) {
                 Box(
                     Modifier
@@ -213,7 +205,7 @@ private fun NotificationCard(
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.Top) {
-                // campsite details
+                // notification details
                 Column(Modifier.weight(1f)) {
                     Text(
                         notification.subject,
@@ -221,7 +213,7 @@ private fun NotificationCard(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault()).format(
+                        text = appDateFormat("MMM d, yyyy h:mm a").format(
                             notification.timestamp
                         ),
                         style = MaterialTheme.typography.bodySmall,

@@ -53,6 +53,7 @@ import java.util.Date
 @Composable
 fun OwnerLotteryCard(
     lottery: OwnerLotteryItem,
+    displayButtons: Boolean,
     onViewEntrants: () -> Unit,
     onEdit: () -> Unit,
     onViewResults: () -> Unit,
@@ -73,13 +74,17 @@ fun OwnerLotteryCard(
                 LotteryStatus.ACTIVE -> {
                     ActiveDetails(lottery)
                     EntrantsJoinedRow(lottery.entrantCount, lottery.waitlistCap)
-                    ActiveActions(lottery.entrantCount, onViewEntrants, onEdit)
+                    if(displayButtons) {
+                        ActiveActions(lottery.entrantCount, onViewEntrants, onEdit)
+                    }
                 }
                 LotteryStatus.COMPLETED -> {
                     CompletedDetails(lottery)
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        SecondaryButton("Entrants", onViewEntrants, Modifier.weight(1f))
-                        SecondaryButton("Results", onViewResults, Modifier.weight(1f))
+                    if(displayButtons) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            SecondaryButton("Entrants", onViewEntrants, Modifier.weight(1f))
+                            SecondaryButton("Results", onViewResults, Modifier.weight(1f))
+                        }
                     }
                 }
                 LotteryStatus.CANCELLED -> Unit
