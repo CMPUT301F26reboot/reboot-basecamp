@@ -99,17 +99,54 @@ class AdminBrowseCampsiteViewModel(
      * @param listingId the deleted campsite.
      */
     private fun removeFromLotteries(listingId: String) {
-        //if lottery only has 1 listing and it's to be deleted, delete the lottery
+        //Look up the listing to get the owner's ID and name
+        val listing = _listings.firstOrNull { it.id == listingId }
+        val ownerID = listing?.ownerID.orEmpty()
 
+        //delete campsite from lotteries that contain it
         _lotteries.filter { listingId in it.campsiteIDs }.forEach { lottery ->
             //if the matching lottery only has itself as it's 1 campsite, delete the lottery
             if (lottery.campsiteIDs.size == 1){
                 lotteriesRef.document(lottery.id).delete()
+
+                //send notification to Owner
+                notificationsRef.add(
+                    mapOf(
+                        "lotteryId" to "",
+                        "message" to "Your lottery: ${lottery.title} was deleted because " +
+                                "the only campsite was removed by an administrator.",
+                        "recipientIds" to listOf(ownerID),
+                        "reservationId" to "",
+                        "senderId" to "System",
+                        "subject" to "Lottery Deleted",
+                        "timestamp" to Date(),
+                        "type" to "reserveCancel",
+                        "viewedBy" to emptyList<String>()
+                    )
+                )
             }
             else{
                 lotteriesRef.document(lottery.id).update("campsiteIDs", FieldValue.arrayRemove(listingId))
+
+                //send notification to Owner
+                notificationsRef.add(
+                    mapOf(
+                        "lotteryId" to "",
+                        "message" to "Your listing: ${listing?.name} was removed by an administrator.",
+                        "recipientIds" to listOf(ownerID),
+                        "reservationId" to "",
+                        "senderId" to "System",
+                        "subject" to "Listing Deleted",
+                        "timestamp" to Date(),
+                        "type" to "reserveCancel",
+                        "viewedBy" to emptyList<String>()
+                    )
+                )
             }
+
         }
+
+
     }
 
 
