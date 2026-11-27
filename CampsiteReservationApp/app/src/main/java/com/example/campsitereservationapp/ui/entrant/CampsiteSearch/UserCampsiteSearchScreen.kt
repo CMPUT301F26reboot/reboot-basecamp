@@ -150,139 +150,15 @@ fun UserCampsiteSearchScreen(
                 initialMonth = YearMonth.now())
         }
         LazyColumn(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(vm._searchResults){ listing ->
-                UserSearchCampsiteCard(
+                CampsiteCard(
                     listing = listing,
-                    onSelect = {
+                    onDetailsClick = {
                         onToDetails(listing.id, vm._selectedDates.minOrNull(), vm._selectedDates.maxOrNull())
-                    },
+                    }
                 )
-            }
-        }
-    }
-}
-
-
-/**
- * Composable card displaying details for a single campsite option within a search result.
- * Includes thumbnail image, location, capacity, star rating, availability dates, and a selection radio button.
- *
- * @param modifier optional [Modifier] applied to the outer [Surface].
- * @param isSelected whether this campsite card is currently selected by the user.
- * @param onSelect callback to details screen triggered when the user clicks this campsite card.
- */
-@Composable
-fun UserSearchCampsiteCard(
-    listing: Listing,
-    modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
-    onSelect: () -> Unit = {},
-) {
-    val cardBackground = if (isSelected) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface
-    val cardBorderColor = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outlineVariant
-    val cardBorderWidth = if (isSelected) 2.dp else 1.dp
-
-    Surface(
-        onClick = onSelect,
-        shape = MaterialTheme.shapes.large,
-        color = cardBackground,
-        border = BorderStroke(cardBorderWidth, cardBorderColor),
-        modifier = modifier
-            .fillMaxWidth()
-            .height(130.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Image Box (occupies 25% width of row)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.25f)
-                        .height(95.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
-                    contentAlignment = Alignment.Center
-                ) {
-                    //select first photo, show nothing if Null
-                    val firstPhoto = listing.photoUrls.firstOrNull()
-                    if (firstPhoto!= null) {
-                        AsyncImage(
-                            model = firstPhoto,
-                            contentDescription = listing.name,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                // Information details about campsite (occupies rest of space)
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Text(
-                        text = listing.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = listing.address,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            modifier = Modifier.size(13.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = "Up to ${listing.maxOccupancy} guests",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            modifier = Modifier.size(13.dp),
-                            tint = RatingAmber
-                        )
-                        Text(
-                            text = "${listing.rating} (${listing.numOfReviews} reviews)",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
             }
         }
     }
