@@ -32,6 +32,7 @@ fun AdminBrowseProfilesScreen(
     viewModel: AdminBrowseProfileViewModel = viewModel(),
 ){
     val profiles = viewModel._searchResults
+    val deletionType = remember { mutableStateOf("") }
     val showDeletedDialog = remember { mutableStateOf(false) }
     val showDeletedFailedDialog = remember { mutableStateOf(false) }
 
@@ -62,13 +63,22 @@ fun AdminBrowseProfilesScreen(
             items(profiles, key = {it.id}) { profile ->
                 ProfileCard(
                     profile = profile,
-                    onDelete = {
+                    onDeleteProfile = {
+                        deletionType.value = "Profile"
                         viewModel.profileDelete(
                             profile = profile,
                             onSuccess = { showDeletedDialog.value = true },
                             onFailure = { showDeletedFailedDialog.value = true },
                         )
                     },
+                    onDeleteProfilePicture = {
+                        deletionType.value = "Profile Picture"
+                        viewModel.profilePictureDelete(
+                            profile = profile,
+                            onSuccess = { showDeletedDialog.value = true },
+                            onFailure = { showDeletedFailedDialog.value = true },
+                        )
+                    }
                 )
             }
 
@@ -76,7 +86,7 @@ fun AdminBrowseProfilesScreen(
 
         //popup dialog on successful or failure on listing deletion
         DeleteDialog(
-            deletedType = "Profile",
+            deletedType = deletionType.value,
             showDeletedDialog = showDeletedDialog,
             showDeletedFailedDialog = showDeletedFailedDialog
         )

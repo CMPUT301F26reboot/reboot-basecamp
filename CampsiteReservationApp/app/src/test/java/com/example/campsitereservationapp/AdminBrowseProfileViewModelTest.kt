@@ -8,7 +8,7 @@
  *   and calls onSuccess.
  * - A failed delete keeps the profile in the search results and calls onFailure.
  * - A profile with no ID is never sent to Firestore, and neither callback runs.
- *
+ * - make sure profile picture is deleted when they click delete profile picture button
  * AI Reference: AI Use Logs - Jacob/Claude-Chat-Log_2026-11-26_AdminBrowseAndDelete.md
  */
 package com.example.campsitereservationapp
@@ -102,5 +102,21 @@ class AdminBrowseProfileViewModelTest {
         verify(exactly = 0) { profileDoc.delete() }
         assertEquals(listOf(jane, john), viewModel._searchResults)
         assertFalse(called)
+    }
+    @Test
+    fun profilePictureDelete_success_shouldClearPictureAndCallOnSuccess() {
+        var succeeded = false
+        var failed = false
+        val clearPicture = MockTask<Void>()
+        every { profileDoc.update("profilePicture", "") } returns clearPicture.task
+        jane.profilePicture = "https://example.com/photos/jane.jpg"
+
+        viewModel.profilePictureDelete(jane, onSuccess = { succeeded = true }, onFailure = { failed = true })
+        clearPicture.succeed(null)
+
+        verify { firestore.collection("Profiles").document("device-jane") }
+        verify { profileDoc.update("profilePicture", "") }
+        assertTrue(succeeded)
+        assertFalse(failed)
     }
 }

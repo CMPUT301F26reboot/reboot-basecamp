@@ -30,7 +30,7 @@ class AdminBrowseProfileViewModel(
     }
 
     /**
-     * Deletes campsite
+     * Deletes profile
      * @param profile what Profile is being deleted
      */
     fun profileDelete(
@@ -49,6 +49,28 @@ class AdminBrowseProfileViewModel(
                 onFailure()
             }
     }
+
+    /**
+     * Deletes Profile Picture
+     * @param profile what profile pfp belongs to
+     */
+    fun profilePictureDelete(
+        profile: Profile,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ) {
+        if (profile.id.isBlank() || profile.profilePicture.isBlank()) return
+
+        profilesRef.document(profile.id)
+            .update("profilePicture", "")
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure()
+            }
+    }
+
 
     /**
      * Copied from UserCampsiteSearchViewModel

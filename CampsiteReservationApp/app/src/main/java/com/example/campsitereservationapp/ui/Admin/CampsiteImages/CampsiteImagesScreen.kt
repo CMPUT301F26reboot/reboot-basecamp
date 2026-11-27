@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -92,7 +92,7 @@ fun CampsiteImagesScreen(
             }
             //AI Usage - Copilot, items() is prompted
             //Prompt, how do I display my 2 photo cards side by side with items()
-            items(photos.chunked(2)) { photoPair ->
+            itemsIndexed(photos.chunked(2)) { index, photoPair ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -104,7 +104,7 @@ fun CampsiteImagesScreen(
                                 onDelete = {
                                     viewModel.deleteImage(
                                         listingId = listingID,
-                                        photoUrl = photo,
+                                        index = index + 1,
                                         onSuccess = { showDeletedDialog.value = true },
                                         onFailure = { showDeletedFailedDialog.value = true }
                                     )

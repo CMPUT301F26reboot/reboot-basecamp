@@ -19,7 +19,7 @@ class CampsiteImagesViewModel: DatabaseModel() {
     /**
      * Gets the images in listing
      */
-    fun getImages(listingID: String): List<String>{
+    fun getImages(listingID: String): List<String> {
         return getListing(listingID)?.photoUrls.orEmpty()
     }
 
@@ -27,25 +27,29 @@ class CampsiteImagesViewModel: DatabaseModel() {
      * Deletes image, of a listing given the image's index
      *
      * @param listingId id of listing that contains the image
-     * @param photoUrl field is called 'photoUrl' still, but it's the byte64 representation of it
+     * @param index index of image in listing.photos array
      * @param onSuccess action after successful image deletion
      * @param onFailure action after image deletion failure
      *
      * COPILOT PROMPT: how do I delete a field, when the field is a list and the element being deleted is given
-     * COPILOT RETURN: thats a dumb way of doing it, just use the photo URL as so:
      */
     fun deleteImage(
         listingId: String,
-        photoUrl: String,
+        index: Int,
         onSuccess: () -> Unit = {},
         onFailure: () -> Unit = {}
     ) {
-        if (listingId.isBlank() || photoUrl.isBlank()) return
+        val listing = getListing(listingId) ?: return
+        if (index !in listing.photoUrls.indices) return
 
-        // 1. Remove photoUrl from the "photoUrls" array field in Firestore
+        val updatedPhotos = listing.photoUrls.toMutableList().apply {
+            removeAt(index)
+        }
+
         listingsRef.document(listingId)
-            .update("photoUrls", FieldValue.arrayRemove(photoUrl))
+            .update("photoUrls", updatedPhotos)
             .addOnSuccessListener {
+                listing.photoUrls = updatedPhotos
                 onSuccess()
             }
             .addOnFailureListener {
