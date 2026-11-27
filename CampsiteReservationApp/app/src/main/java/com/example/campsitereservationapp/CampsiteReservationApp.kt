@@ -50,7 +50,7 @@ import java.util.Date
 // what the respective composable route name is.
 
 // OWNER_ID is hardcoded for now since no owner signup/device setup yet.
-private const val OWNER_ID = "1"
+private const val OWNER_ID = "test-owner"
 
 /**
  * Sign-up route. Sign-up forwards at once when the device already has a profile.

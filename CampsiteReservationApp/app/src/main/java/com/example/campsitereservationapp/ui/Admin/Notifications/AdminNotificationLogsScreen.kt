@@ -1,5 +1,5 @@
 // Admin notifications screen. Displays the UI for the notifications screen, where the admin
-// can search through the notifications, click on the sender/recipient to view their profile, and delete the notification
+// can search through the notifications and delete the notification
 
 /**
  * Admin Notifications screen —
@@ -10,7 +10,7 @@
  * delete the notification by clicking the trash button
  *
  * Split into two parts: [AdminNotificationLogsScreen] is the version that talks to
- * the ViewModel, and [AdminNotificationLogsViewModel] is the UI version that just takes
+ * the ViewModel, and [AdminNotificationLogsContent] is the UI version that just takes
  * values and callbacks.
  */
 
@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -46,9 +47,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
+import com.example.campsitereservationapp.ui.Admin.BrowseComponents.ConfirmDeleteDialog
 import com.example.campsitereservationapp.ui.components.BackButtonAndHeaderScreenComponent
+import com.example.campsitereservationapp.ui.theme.DeleteRed
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -87,6 +96,7 @@ fun AdminNotificationLogsContent(
     viewModel: AdminNotificationLogsViewModel,
 ) {
     var search by remember { mutableStateOf("") }
+    var notifToDelete by remember { mutableStateOf<Notifications?>(null) }
 
     LaunchedEffect(viewModel.allNotifications.size) {
         viewModel.doSearch(search)
@@ -146,25 +156,40 @@ fun AdminNotificationLogsContent(
                     items(viewModel._searchResults, key = { it.id }) { notification ->
                         NotificationCard(
                             notification = notification,
-                            viewModel = viewModel,
+                            senderName = viewModel.getSenderName(notification.senderId),
+                            onDelete = { notifToDelete = notification }
                         )
                     }
                 }
             }
         }
     }
+    notifToDelete?.let { notification ->
+        ConfirmDeleteDialog(
+            deletedType = "Notification",
+            name = notification.subject,
+            onConfirm = {
+                viewModel.deleteNotification(notification.id)
+                notifToDelete = null
+            },
+            onDismiss = { notifToDelete = null }
+        )
+    }
 }
 
 
 /**
- * One notification card showing the subject, time sent, lottery name, and message.
+ * One notification card showing the subject, time sent, sender name, and message.
  *
  * @param notification the notification to display.
+ * * @param senderName the name of whoever sent the notification.
+ *  * @param onDelete called when the delete button is tapped.
  */
 @Composable
 private fun NotificationCard(
     notification: Notifications,
-    viewModel: AdminNotificationLogsViewModel,
+    senderName: String,
+    onDelete: () -> Unit,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
@@ -193,10 +218,9 @@ private fun NotificationCard(
                     Spacer(Modifier.height(4.dp))
 
                     Text(
-                        text = "Sender: " + viewModel.getSenderName(notification.senderId),
+                        text = "Sender: $senderName",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textDecoration = TextDecoration.Underline,
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -204,6 +228,23 @@ private fun NotificationCard(
                     Text(
                         notification.message,
                         style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+
+                //delete button
+                IconButton(
+                    onClick = onDelete,
+                    shape = MaterialTheme.shapes.small,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = DeleteRed,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete notification",
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }

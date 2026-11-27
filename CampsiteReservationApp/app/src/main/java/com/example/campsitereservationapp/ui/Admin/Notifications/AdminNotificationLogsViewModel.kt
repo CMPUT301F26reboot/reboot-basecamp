@@ -8,7 +8,6 @@
 package com.example.campsitereservationapp.ui.Admin.Notifications
 
 import androidx.compose.runtime.mutableStateListOf
-import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.DatabaseModel
@@ -25,17 +24,26 @@ class AdminNotificationLogsViewModel: DatabaseModel(){
     val allNotifications: List<Notifications>
         get() = _notifications
 
-    /** Retrieves all lotteries so we can get the lottery name */
+    /** Retrieves all profiles so we can get the sender name */
     val allProfiles: List<Profile>
         get() = _profiles
 
     /** Finds the name of the given profileId
      * @param profileId given id of the sender the notification belongs to
-     * @return the matching profile name, or "No profile found"
+     * @return the matching profile name, or "System"
      */
     fun getSenderName(profileId: String): String{
-        val profile =  allProfiles.find {it.id == profileId}
+        val profile =  allProfiles.find {it.id == profileId || it.deviceId == profileId}
         return profile?.name ?: "System"
+    }
+
+    /**
+     * Deletes a notification from the database.
+     *
+     * @param notificationId the Firestore ID of the notification to delete.
+     */
+    fun deleteNotification(notificationId: String) {
+        notificationsRef.document(notificationId).delete()
     }
 
     /**

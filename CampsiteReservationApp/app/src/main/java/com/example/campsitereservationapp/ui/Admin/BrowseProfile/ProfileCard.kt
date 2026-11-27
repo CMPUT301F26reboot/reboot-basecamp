@@ -114,7 +114,7 @@ fun ProfileCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete campsite",
+                        contentDescription = "Delete profile",
                     )
                 }
 
