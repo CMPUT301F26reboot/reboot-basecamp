@@ -263,7 +263,7 @@ private fun CampsiteHeader(listing: Listing) {
  * @param listing the campsite to describe.
  */
 @Composable
-private fun CampsiteDetailsCard(listing: Listing) {
+fun CampsiteDetailsCard(listing: Listing) {
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),

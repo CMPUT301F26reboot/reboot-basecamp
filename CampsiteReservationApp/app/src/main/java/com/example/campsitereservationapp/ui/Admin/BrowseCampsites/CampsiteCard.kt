@@ -1,4 +1,4 @@
-package com.example.campsitereservationapp.ui.Admin.BrowseComponents
+package com.example.campsitereservationapp.ui.Admin.BrowseCampsites
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.ui.owner.CampsiteList.CampsiteThumbnail
 import com.example.campsitereservationapp.ui.owner.CampsiteList.RatingRow
+import com.example.campsitereservationapp.ui.theme.DeleteRed
+import com.example.campsitereservationapp.ui.theme.commonButtonColour
 
 
 /**
@@ -34,8 +37,10 @@ import com.example.campsitereservationapp.ui.owner.CampsiteList.RatingRow
 @Composable
 fun CampsiteCard(
     listing: Listing,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onImages: () -> Unit,
 ) {
+    //taken from owner campsite listings screen
     Card(
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -47,6 +52,7 @@ fun CampsiteCard(
 
             Spacer(Modifier.width(12.dp))
 
+            //campsite information
             Column(modifier = Modifier.weight(1f)) {
                 Text(listing.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(
@@ -66,24 +72,41 @@ fun CampsiteCard(
                 }
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(
-                onClick = onDelete,
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )
-
-
+            //right side buttons
+            Column(
             ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete campsite",
+                //delete button
+                IconButton(
+                    onClick = onDelete,
+                    shape = MaterialTheme.shapes.medium,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = DeleteRed,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete campsite",
+                        )
+                }
 
-                )
+                //images button
+                IconButton(
+                    onClick = onImages,
+                    shape = MaterialTheme.shapes.medium,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = commonButtonColour,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Image,
+                        contentDescription = "View Images",
+
+                        )
+                }
+
             }
-
-
-
             }
         }
 }
