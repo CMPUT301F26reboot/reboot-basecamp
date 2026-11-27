@@ -43,7 +43,7 @@ object NotificationWatcher {
                     if (change.type != DocumentChange.Type.ADDED) continue
                     val doc = change.document
                     val viewedBy = doc.get("viewedBy") as? List<*> ?: emptyList<Any>()
-                    if (doc.id in shown || profileId in viewedBy) continue // already shown or already read
+                    if (!shouldShowPhoneNotification(true, doc.id in shown, profileId in viewedBy)) continue // already shown or already read
 
                     LocalNotifier.show(
                         appContext,
@@ -55,6 +55,13 @@ object NotificationWatcher {
                 }
                 prefs.edit().putStringSet("ids", shown).apply()
             }
+    }
+
+    internal fun shouldShowPhoneNotification(notificationsEnabled: Boolean, alreadyShown: Boolean, alreadyViewed: Boolean): Boolean{
+        if(!notificationsEnabled)
+            return false
+
+        return !alreadyShown && !alreadyViewed
     }
 
     /** Stops listening. Only needed if the app ever switches profiles on the same device. */
