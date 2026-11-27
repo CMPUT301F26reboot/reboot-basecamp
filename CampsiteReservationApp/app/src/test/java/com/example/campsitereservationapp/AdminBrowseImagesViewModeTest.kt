@@ -6,10 +6,13 @@
  * - Looking up an ID that doesn't exist returns null.
  * - A listing's images include both Base64 images and URL links.
  * - A listing that doesn't exist has no images.
- * - Deleting a URL image removes that link from the listing in Firestore and calls onSuccess.
- * - Deleting a Base64 image removes that image from the listing in Firestore and calls onSuccess.
- * - A failed delete calls onFailure.
- * - A blank listing ID or blank image is never sent to Firestore, and neither callback runs.
+ * - Deleting a URL image saves the list without that link to Firestore, removes it from the
+ *   listing's images, and calls onSuccess.
+ * - Deleting a Base64 image saves the list without that image to Firestore, removes it from the
+ *   listing's images, and calls onSuccess.
+ * - A failed delete keeps every image in the listing and calls onFailure.
+ * - An unknown listing or an index outside the list is never sent to Firestore, and neither
+ *   callback runs.
  *
  * AI Reference: AI Use Logs - Jacob/Claude-Chat-Log_2026-11-26_AdminBrowseAndDelete.md
  */
@@ -18,10 +21,8 @@ package com.example.campsitereservationapp
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.ui.Admin.CampsiteImages.CampsiteImagesViewModel
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -44,15 +45,12 @@ class CampsiteImagesViewModelTest {
 
     private val firestore = MockFirestore()
     private val listingDoc = mockk<DocumentReference>()
-    private val removal = mockk<FieldValue>()
     private val write = MockTask<Void>()
     private lateinit var viewModel: CampsiteImagesViewModel
 
     @Before
     fun setUp() {
         firestore.install()
-        mockkStatic(FieldValue::class) // undone by firestore.uninstall()
-        every { FieldValue.arrayRemove(*anyVararg()) } returns removal
         every { firestore.collection("Listings").document(any()) } returns listingDoc
         every { listingDoc.update("photoUrls", any()) } returns write.task
 
@@ -90,12 +88,12 @@ class CampsiteImagesViewModelTest {
         var succeeded = false
         var failed = false
 
-        viewModel.deleteImage("listing-two-jack", urlImage, onSuccess = { succeeded = true }, onFailure = { failed = true })
+        viewModel.deleteImage("listing-two-jack", 1, onSuccess = { succeeded = true }, onFailure = { failed = true })
         write.succeed(null)
 
         verify { firestore.collection("Listings").document("listing-two-jack") }
-        verify { FieldValue.arrayRemove(urlImage) }
-        verify { listingDoc.update("photoUrls", removal) }
+        verify { listingDoc.update("photoUrls", listOf(base64Image)) }
+        assertEquals(listOf(base64Image), viewModel.getImages("listing-two-jack"))
         assertTrue(succeeded)
         assertFalse(failed)
     }
@@ -104,32 +102,34 @@ class CampsiteImagesViewModelTest {
     fun deleteImage_base64_shouldRemoveImageAndCallOnSuccess() {
         var succeeded = false
 
-        viewModel.deleteImage("listing-two-jack", base64Image, onSuccess = { succeeded = true })
+        viewModel.deleteImage("listing-two-jack", 0, onSuccess = { succeeded = true })
         write.succeed(null)
 
-        verify { FieldValue.arrayRemove(base64Image) }
-        verify { listingDoc.update("photoUrls", removal) }
+        verify { listingDoc.update("photoUrls", listOf(urlImage)) }
+        assertEquals(listOf(urlImage), viewModel.getImages("listing-two-jack"))
         assertTrue(succeeded)
     }
 
     @Test
-    fun deleteImage_failure_shouldCallOnFailure() {
+    fun deleteImage_failure_shouldKeepImagesAndCallOnFailure() {
         var succeeded = false
         var failed = false
 
-        viewModel.deleteImage("listing-two-jack", urlImage, onSuccess = { succeeded = true }, onFailure = { failed = true })
+        viewModel.deleteImage("listing-two-jack", 1, onSuccess = { succeeded = true }, onFailure = { failed = true })
         write.fail()
 
+        assertEquals(listOf(base64Image, urlImage), viewModel.getImages("listing-two-jack"))
         assertFalse(succeeded)
         assertTrue(failed)
     }
 
     @Test
-    fun deleteImage_blankInput_shouldNotTouchFirestore() {
+    fun deleteImage_unknownListingOrBadIndex_shouldNotTouchFirestore() {
         var called = false
 
-        viewModel.deleteImage("", urlImage, onSuccess = { called = true }, onFailure = { called = true })
-        viewModel.deleteImage("listing-two-jack", "", onSuccess = { called = true }, onFailure = { called = true })
+        viewModel.deleteImage("listing-missing", 0, onSuccess = { called = true }, onFailure = { called = true })
+        viewModel.deleteImage("listing-two-jack", 2, onSuccess = { called = true }, onFailure = { called = true })
+        viewModel.deleteImage("listing-two-jack", -1, onSuccess = { called = true }, onFailure = { called = true })
 
         verify(exactly = 0) { listingDoc.update(any<String>(), any()) }
         assertFalse(called)
