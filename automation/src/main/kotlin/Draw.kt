@@ -86,10 +86,13 @@ fun main() {
             val losers = waitlist.filter { it !in winnerSet }
             val title = snap.getString("title") ?: "a lottery"
 
-            // set lottery drawn to true and add winners to selected list
-            tx.update(lot.reference, mapOf("selectedlist" to winners, "drawn" to true,))
+            // set lottery drawn to true and add winners to selected list, and delete them from waitlist
+            tx.update(lot.reference,
+                mapOf("selectedlist" to winners,
+                    "waitlist" to losers,
+                    "drawn" to true,))
 
-            // create winners notification
+            // NOTIFICATION: create winners notification
             if(winners.isNotEmpty()){
                 tx.create(db.collection("Notifications").document(), mapOf(
                     "lotteryId" to lot.id,
@@ -105,7 +108,7 @@ fun main() {
                 ))
             }
 
-            // create losers notification
+            // NOTIFICATION: create losers notification
             if (losers.isNotEmpty()) {
                 tx.create(db.collection("Notifications").document(), mapOf(
                     "lotteryId" to lot.id,

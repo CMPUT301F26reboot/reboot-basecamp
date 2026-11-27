@@ -62,9 +62,14 @@ class UserReservationsViewModel : ReservationsViewModel() {
     var pendingCancelId by mutableStateOf<String?>(null)
         private set
 
+    /** The reservation that was selected to be cancelled */
+    var selectedReservation by mutableStateOf<Reservation?>(null)
+        private set
+
     /**  The UI calls this when the user taps the "Cancel" button on a card*/
-    fun onCancelClicked(reservationId: String) {
-        pendingCancelId = reservationId
+    fun onCancelClicked(reservation: Reservation) {
+        selectedReservation = reservation
+        pendingCancelId = reservation.id
     }
 
     /** The UI calls this if the user taps "Keep it"*/
@@ -76,6 +81,23 @@ class UserReservationsViewModel : ReservationsViewModel() {
     fun confirmCancel() {
         val id = pendingCancelId ?: return
         cancelReservation(id)
+
+        // NOTIFICATION: create notification for reservation cancellation
+        val campName = selectedReservation?.campName.orEmpty()
+        val changes = mapOf(
+            "lotteryId" to "",
+            "message" to "Your reservation $campName was cancelled. Please click this notification to view " +
+                    "the cancelled reservation or download the CSV",
+            "recipientIds" to listOf(selectedReservation?.entrantID.orEmpty()),
+            "reservationId" to pendingCancelId,
+            "senderId" to "",
+            "subject" to "Reservation Cancelled",
+            "timestamp" to Date(),
+            "type" to "reserveCancel",
+            "viewedBy" to emptyList<String>()
+        )
+        notificationsRef.add(changes)
+
         pendingCancelId = null // Close the dialog
     }
 

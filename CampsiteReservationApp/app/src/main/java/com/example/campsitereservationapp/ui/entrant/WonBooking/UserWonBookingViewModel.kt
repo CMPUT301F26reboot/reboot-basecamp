@@ -34,15 +34,12 @@ import java.util.Date
  * Holds the state for [UserWonBookingScreen]: which campsite and lottery are being shown, which
  * date the entrant picked, and whether they've accepted the rules. Also does the Firestore write
  * for declining an offer.
- *
- *
- * Outstanding issues:
- *  - reservedDays() does not check a reservation's status, so a cancelled reservation would still block that date.
  */
 class UserWonBookingViewModel : ListingViewModel() {
 
     private var lotteryId by mutableStateOf<String?>(null)
     private var campsiteName by mutableStateOf<String?>(null)
+    private var profileId by mutableStateOf<String?>(null)
 
     /** Dates the user has tapped in the calendar, before intersecting with [bookableDays]. */
     private var picked by mutableStateOf<Set<Date>>(emptySet())
@@ -103,10 +100,11 @@ class UserWonBookingViewModel : ListingViewModel() {
         get() = isValidSelection(selectedDays) && (findCampsite()?.rulesAcceptanceRequired != true || rulesAccepted)
 
     /** Call once from the screen with the ids passed through navigation. Safe to call repeatedly. */
-    fun start(lotteryId: String, campsiteName: String) {
+    fun start(lotteryId: String, campsiteName: String, profileId: String) {
         if (this.lotteryId == lotteryId && this.campsiteName == campsiteName) return
         this.lotteryId = lotteryId
         this.campsiteName = campsiteName
+        this.profileId = profileId
         picked = emptySet()
         rulesAccepted = false
         isFinished = false
@@ -125,13 +123,55 @@ class UserWonBookingViewModel : ListingViewModel() {
         rulesAccepted = accepted
     }
 
-    /** Called when the user confirms the Book dialog. Doesn't save anything yet (see Outstanding issues above). */
+    /** Called when the user confirms the Book dialog. Creates the reservation,
+     * removes them from selectedlist (so that it no longer appears as a lottery), then notifies the user */
     fun onBookClicked() {
+
+        val entrant = profileId ?: return
+        val site = campsite ?: return
+        val days = selectedDays.sorted()
+        val lotId = lotteryId ?: return
+        if (days.isEmpty()) return
+
+        val newReservation = reservationsRef.document()
+        val reservationInfo = mapOf(
+            "campName" to site.name,
+            "campsiteID" to site.id,
+            "dates" to days,
+            "entrantID" to entrant,
+            "rated" to false,
+            "status" to "reserved"
+        )
+        newReservation.set(reservationInfo)
+            .addOnSuccessListener {
+
+                lotteriesRef.document(lotId)
+                    .update(SELECTED_FIELD, FieldValue.arrayRemove(entrant))
+
+                // NOTIFICATION: create notification for reservation confirmation
+                val notificationInfo = mapOf(
+                    "lotteryId" to "",
+                    "message" to "Your reservation ${site.name} has been booked. Please click this notification to view " +
+                            "the reservation or download the CSV",
+                    "recipientIds" to listOf(entrant),
+                    "reservationId" to newReservation.id,
+                    "senderId" to "",
+                    "subject" to "Reservation Confirmed",
+                    "timestamp" to Date(),
+                    "type" to "reserveConfirm",
+                    "viewedBy" to emptyList<String>()
+                )
+                notificationsRef.add(notificationInfo)
+                isFinished = true
+            }
+            .addOnFailureListener {
+                errorMessage = "Couldn't book. Please try again."
+            }
     }
 
     /**
      * Called when the user confirms the Decline dialog (US 01.04.03).
-     * Records the decline by adding [profileId] to the lottery's declined-ids field, and sets
+     * Removes the user from selectedlist, and sets
      * [isFinished] once the write succeeds so the screen can navigate away.
      */
     fun declineOffer(profileId: String) {
@@ -141,7 +181,7 @@ class UserWonBookingViewModel : ListingViewModel() {
         errorMessage = null
 
         lotteriesRef.document(id)
-            .update(DECLINED_FIELD, FieldValue.arrayUnion(profileId))
+            .update(SELECTED_FIELD, FieldValue.arrayRemove(profileId))
             .addOnSuccessListener {
                 isDeclining = false
                 isFinished = true
@@ -172,7 +212,10 @@ class UserWonBookingViewModel : ListingViewModel() {
     /** Days already booked at the campsite with id [campsiteId]. */
     private fun reservedDays(campsiteId: String): Set<Date> =
         _reservations
-            .filter { it.campsiteID == campsiteId }
+            .filter {
+                it.campsiteID == campsiteId &&
+                it.status == "reserved"
+            }
             .flatMap { it.dates }
             .map { it.toDayOnly() }
             .toSet()
@@ -188,8 +231,9 @@ class UserWonBookingViewModel : ListingViewModel() {
     private fun isValidSelection(days: Set<Date>): Boolean = days.isNotEmpty()
 
     private companion object {
-        const val DECLINED_FIELD = "declinedProfileIds"
+        const val SELECTED_FIELD = "selectedlist"
     }
+
 }
 
 /** Days the lottery offers, minus days already reserved at the campsite. */

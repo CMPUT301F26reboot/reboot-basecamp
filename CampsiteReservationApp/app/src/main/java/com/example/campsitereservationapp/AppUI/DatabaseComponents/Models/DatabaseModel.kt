@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Chat
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Notifications
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Message
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
@@ -27,7 +28,7 @@ open class DatabaseModel :ViewModel() {
     protected var lotteriesRef = db.collection("Lotteries")
     protected var profilesRef = db.collection("Profiles")
     protected var reservationsRef = db.collection("Reservations")
-    protected var logentriesRef = db.collection("LogEntries")
+    protected var notificationsRef = db.collection("Notifications")
     protected var chatsRef = db.collection("Chats")
     protected var adminsRef = db.collection("Admins")
     protected var messagesRef = db.collection("Messages")
@@ -37,6 +38,7 @@ open class DatabaseModel :ViewModel() {
     var _lotteries = mutableStateListOf<Lottery>()
     protected var _profiles = mutableStateListOf<Profile>()
     var _reservations = mutableStateListOf<Reservation>()
+    protected var _notifications = mutableStateListOf<Notifications>()
     protected var _chats = mutableStateListOf<Chat>()
     protected var _messages = mutableStateListOf<Message>()
 
@@ -99,6 +101,20 @@ open class DatabaseModel :ViewModel() {
                 val reservation = document.toObject(Reservation::class.java)
                 if(reservation != null){
                     _reservations.add(reservation)
+                }
+            }
+        }
+
+        notificationsRef.addSnapshotListener{ snapshot, error ->
+            if(error != null){
+                return@addSnapshotListener
+            }
+
+            _notifications.clear()
+            snapshot?.documents?.forEach{document ->
+                val notification = document.toObject(Notifications::class.java)
+                if(notification != null){
+                    _notifications.add(notification)
                 }
             }
         }
