@@ -5,6 +5,7 @@
  */
 package com.example.campsitereservationapp.ui.owner.CampsiteRegister
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-/** Campsite rules text and the checkbox that controls whether entrants must accept them. */
+/**
+ * Campsite rules text and the checkbox that controls whether entrants must accept them.
+ * When the owner unchecks it, entrants still see the rules but don't have to accept them to book.
+ *
+ * @param acceptanceRequired whether entrants must accept the rules before booking.
+ * @param onAcceptanceRequiredChange event call when the owner checks or unchecks the box.
+ */
 @Composable
 internal fun RulesSection(
     rules: String,
@@ -28,7 +35,11 @@ internal fun RulesSection(
     onAcceptanceRequiredChange: (Boolean) -> Unit
 ) {
     Column {
-        SectionHeader(title = "Rules & policies", subtitle = "Entrants must accept these rules before confirming their reservation.")
+        SectionHeader(
+            title = "Rules & policies",
+            subtitle = if (acceptanceRequired) "Entrants must accept these rules before confirming their reservation."
+            else "Entrants can read these rules, but don't have to accept them."
+        )
         Spacer(Modifier.height(12.dp))
         LabeledField(label = "Campsite rules") {
             OutlinedTextField(
@@ -40,8 +51,13 @@ internal fun RulesSection(
             )
         }
         Spacer(Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = true, onCheckedChange = {}, enabled = false)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onAcceptanceRequiredChange(!acceptanceRequired) }
+        ) {
+            Checkbox(checked = acceptanceRequired, onCheckedChange = onAcceptanceRequiredChange)
             Text("Acceptance required before reservation confirmation", style = MaterialTheme.typography.bodySmall)
         }
     }

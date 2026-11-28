@@ -11,6 +11,7 @@ package com.example.campsitereservationapp
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Lottery
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationViewModel
+import com.example.campsitereservationapp.ui.owner.splitCampsites
 import com.google.firebase.firestore.DocumentReference
 import io.mockk.every
 import io.mockk.mockk
@@ -106,4 +107,68 @@ class OwnerLotteryCreationViewModelTest {
         assertTrue(failed)
         assertFalse(succeeded)
     }
+
+    @Test
+    fun createAndAddLottery_newLottery_shouldBeReadyForTheDraw() {
+        createJulyLottery()
+
+        assertFalse(saved.captured.drawn) // the scheduled draw only picks lotteries with drawn = false
+    }
+
+    // multiple owners (US 02.04.08)
+
+    @Test
+    fun getOtherOwnersListings_shouldOnlyReturnOtherOwnersCampsites() {
+        firestore.deliver("Listings", Listing::class.java, listOf(twoJack, tunnelMountain, lakeLouise))
+
+        assertEquals(listOf(lakeLouise), viewModel.getOtherOwnersListings(ownerId))
+    }
+
+    @Test
+    fun createAndAddLottery_withInvitedCampsite_shouldSaveCreatorAndPendingInvite() {
+        viewModel.createAndAddLottery(
+            dates = listOf(day(2027, 7, 9)),
+            title = "Shared Banff Weekend",
+            start = day(2027, 5, 1),
+            end = day(2027, 5, 31),
+            campsiteIDs = listOf("listing-two-jack"),
+            winnersToDraw = 2,
+            waitlistCap = 20,
+            onSuccess = {},
+            onFailure = {},
+            ownerID = ownerId,
+            invitedCampsiteIDs = listOf("listing-lake-louise")
+        )
+
+        assertEquals(ownerId, saved.captured.ownerID)
+        assertEquals(listOf("listing-two-jack"), saved.captured.campsiteIDs) // entrants only see accepted ones
+        assertEquals(listOf("listing-lake-louise"), saved.captured.pendingCampsiteIDs)
+    }
+
+    @Test
+    fun updateLottery_withPendingInvites_shouldSaveThem() {
+        val lotteryDoc = mockk<DocumentReference>(relaxed = true)
+        every { firestore.collection("Lotteries").document("lottery-shared") } returns lotteryDoc
+        val changes = slot<Map<String, Any>>()
+        every { lotteryDoc.update(capture(changes)) } returns MockTask<Void>().task
+
+        viewModel.updateLottery(
+            lotteryId = "lottery-shared",
+            dates = listOf(day(2027, 7, 9)),
+            title = "Shared Banff Weekend",
+            start = day(2027, 5, 1),
+            end = day(2027, 5, 31),
+            campsiteIDs = listOf("listing-two-jack"),
+            winnersToDraw = 2,
+            waitlistCap = 20,
+            onSuccess = {},
+            onFailure = {},
+            pendingCampsiteIDs = listOf("listing-lake-louise")
+        )
+
+        assertEquals(listOf("listing-lake-louise"), changes.captured["pendingCampsiteIDs"])
+        assertEquals(listOf("listing-two-jack"), changes.captured["campsiteIDs"])
+    }
+
+
 }
