@@ -2,6 +2,7 @@
 // Q. I need to set up notifications with android studio. I need to detect notifications from a Notifications
 // document from firebase, and then send a local notification to the device when one of these notifications
 // are created. How can I do this? I have provided the Notifications schema, and our current MainActivity.
+// Also checks the profile's notificationsEnabled setting so the user can opt out (US 01.10.01).
 
 package com.example.campsitereservationapp.ui.entrant.Notifications
 
@@ -16,19 +17,46 @@ import com.google.firebase.firestore.ListenerRegistration
  *
  * Runs from [start] until [stop], for as long as the app process is alive (including while
  * the app is in the background). Notifications that were already shown, or that the user has
- * already viewed in the app, are not shown again.
+ * already viewed in the app, are not shown again. Nothing is shown while the profile has
+ * notifications turned off (US 01.10.01).
  */
 object NotificationWatcher {
+    /** Listener on the notifications sent to this profile. */
     private var registration: ListenerRegistration? = null
 
+    /** Listener on the profile, used to keep [notificationsEnabled] up to date. */
+    private var profileRegistration: ListenerRegistration? = null
+
+    /** The profile's notifications setting. Starts on, the same as a new profile. */
+    private var notificationsEnabled = true
+
     /**
-     * Starts listening. Calling it again while already listening does nothing.
+     * Starts listening to the profile's notifications setting, then to its notifications once the
+     * setting has loaded. Calling it again while already listening does nothing.
      *
      * @param context any context; the application context is kept, not the activity.
      * @param profileId the profile ID used in notifications' `recipientIds` (the device ID).
      */
     fun start(context: Context, profileId: String) {
-        if (registration != null) return
+        if (profileRegistration != null) return
+
+        // get the profile's setting first so notifications sent while it was off don't pop up on startup
+        profileRegistration = FirebaseFirestore.getInstance().collection("Profiles").document(profileId)
+            .addSnapshotListener { profile, error ->
+                if (error != null) return@addSnapshotListener
+                notificationsEnabled = profile?.getBoolean("notificationsEnabled") ?: true
+                if (registration == null) listenForNotifications(context, profileId)
+            }
+    }
+
+    /**
+     * Listens for notifications addressed to [profileId] and shows each new one on the phone,
+     * unless notifications are turned off.
+     *
+     * @param context any context; the application context is kept, not the activity.
+     * @param profileId the profile ID used in notifications' `recipientIds` (the device ID).
+     */
+    private fun listenForNotifications(context: Context, profileId: String) {
         val appContext = context.applicationContext
         val prefs = appContext.getSharedPreferences("shown_notifications", Context.MODE_PRIVATE)
 
@@ -43,7 +71,8 @@ object NotificationWatcher {
                     if (change.type != DocumentChange.Type.ADDED) continue
                     val doc = change.document
                     val viewedBy = doc.get("viewedBy") as? List<*> ?: emptyList<Any>()
-                    if (doc.id in shown || profileId in viewedBy) continue // already shown or already read
+                    if (!notificationsEnabled) shown += doc.id // turned off, so it won't pop up later when turned back on
+                    if (!shouldShowPhoneNotification(notificationsEnabled, doc.id in shown, profileId in viewedBy)) continue // turned off, already shown, or already read
 
                     LocalNotifier.show(
                         appContext,
@@ -57,8 +86,26 @@ object NotificationWatcher {
             }
     }
 
-    /** Stops listening. Only needed if the app ever switches profiles on the same device. */
+    /**
+     * Decides whether a new notification should pop up on the phone.
+     *
+     * @param notificationsEnabled whether the profile has notifications turned on.
+     * @param alreadyShown whether it already popped up on this device.
+     * @param alreadyViewed whether the user already opened it in the app.
+     * @return true only if notifications are on and the user hasn't seen it yet.
+     */
+    internal fun shouldShowPhoneNotification(notificationsEnabled: Boolean, alreadyShown: Boolean, alreadyViewed: Boolean): Boolean{
+        // the user opted out, so nothing pops up
+        if(!notificationsEnabled)
+            return false
+
+        return !alreadyShown && !alreadyViewed
+    }
+
+    /** Stops both listeners. Only needed if the app ever switches profiles on the same device. */
     fun stop() {
+        profileRegistration?.remove()
+        profileRegistration = null
         registration?.remove()
         registration = null
     }

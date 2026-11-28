@@ -37,7 +37,6 @@ enum class ProfileField(val key: String, val label: String) {
  * notification setting (US 01.10.01), and delete it (US 01.08.01).
  *
  * Outstanding issues:
- *  - [notificationsEnabled] is saved, but phone notifications don't check it yet.
  *  - Firestore doesn't fail a save while offline, so [isSaving] stays true until the device
  *    reconnects and the save goes through.
  */
