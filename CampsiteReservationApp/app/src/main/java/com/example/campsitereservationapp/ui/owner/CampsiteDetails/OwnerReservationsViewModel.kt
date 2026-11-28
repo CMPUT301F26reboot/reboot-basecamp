@@ -15,6 +15,7 @@
 package com.example.campsitereservationapp.ui.owner.CampsiteDetails
 
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Listing
+import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Profile
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Documents.Reservation
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationFilter
 import com.example.campsitereservationapp.AppUI.DatabaseComponents.Models.ReservationsViewModel
@@ -116,5 +117,14 @@ class OwnerReservationsViewModel : ReservationsViewModel() {
     fun getBookedReservationCount(listingId: String): Int {
         return allReservations.count { it.campsiteID == listingId && it.status == "reserved" }
     }
+    /**
+     * Gets the profile to show for a guest.
+     *
+     * @param entrantId id of the guest's profile.
+     * @return the profile name, or [entrantId] itself when the profile is unknown or
+     *   its name is blank.
+     */
+    fun getGuestProfile(entrantId: String): Profile? =
+        _profiles.firstOrNull { it.id == entrantId }
 }
 
