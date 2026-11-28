@@ -68,7 +68,7 @@ fun UserCurrentLotteriesScreen(
     }
 
 
-    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)){
+    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Spacer(Modifier.padding(32.dp))
 
         // Filter buttons
@@ -109,7 +109,7 @@ fun UserCurrentLotteriesScreen(
             }
             //won button
             Button(
-                onClick =  {
+                onClick = {
                     showWon = true
                     showOngoing = false
                     allButtonToggled = false
@@ -157,27 +157,35 @@ fun UserCurrentLotteriesScreen(
 
         }
 
-        if(showWon){
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                items(vm.wonLotteries.toList()){ lottery ->
-                    WonLotteryCard(
+        if (showWon) {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                items(vm.wonLotteries.toList()) { lottery ->
+                    UserLotteryCard(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
                         profileId = profileId,
-                        onToBooking = onToBooking
+                        buttonLabel = "Claim",
+                        onClick = { wonLottery, _ -> onToBooking(wonLottery.id) }
                     )
                 }
             }
         }
-        if(showOngoing){
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                items(vm.ongoingLotteries.toList()){ lottery ->
-                    OngoingLotteryCard(
+        if (showOngoing) {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                items(vm.ongoingLotteries.toList()) { lottery ->
+                    UserLotteryCard(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
                         profileId = profileId,
-                        onToLeave = vm::leaveLottery
-                        )
+                        buttonLabel = "Cancel",
+                        onClick = vm::leaveLottery
+                    )
                 }
             }
         }
@@ -287,8 +295,8 @@ fun OngoingLotteryCard(
     imageURL: String,
     profileId: String,
     onToLeave: (Lottery, String) -> Unit
-){
-    OutlinedCard(modifier = Modifier.fillMaxWidth(fraction = 0.9f)){
+) {
+    OutlinedCard(modifier = Modifier.fillMaxWidth(fraction = 0.9f)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -339,14 +347,14 @@ fun OngoingLotteryCard(
                     )
                     Button(
                         modifier = Modifier.fillMaxWidth(0.7f),
-                        onClick = {onToLeave(lottery, profileId)},
+                        onClick = { onToLeave(lottery, profileId) },
                         shape = MaterialTheme.shapes.medium,
                         contentPadding = PaddingValues(vertical = 14.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error,
                             contentColor = MaterialTheme.colorScheme.onError
                         )
-                    ){
+                    ) {
                         Text("Leave")
                     }
 
