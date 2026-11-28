@@ -76,7 +76,6 @@ fun UserReservationsScreen(
     profileId: String,
     onBack: () -> Unit,
     onOpenReservation: (reservationId: String) -> Unit = {},
-    onToLotteries: () -> Unit,
     viewModel: UserReservationsViewModel = viewModel()
 ){
     val rows = viewModel.filteredReservations(profileId)
@@ -99,7 +98,6 @@ fun UserReservationsScreen(
         onDismissReview = viewModel::dismissReviewSheet,
         onRatingChanged = viewModel::onRatingChanged,
         onSubmitReview = viewModel::submitReview,
-        onLotteriesTab = onToLotteries
 
 
     )
@@ -135,7 +133,6 @@ fun UserReservationContent(
     onDismissReview: () -> Unit,
     onRatingChanged: (Int) -> Unit,
     onSubmitReview: (Int) -> Unit,
-    onLotteriesTab: () -> Unit
     ) {
     Column(Modifier.fillMaxSize()) {
         Row(
@@ -149,52 +146,6 @@ fun UserReservationContent(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-
-
-        ) {
-            Button(
-                onClick = onLotteriesTab,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                Text(
-                    "Lotteries",
-                    style = MaterialTheme.typography.titleMedium
-
-                )
-            }
-            Spacer(Modifier.width(16.dp))
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Button(
-                    onClick = { /* Already on this screen */ },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Text(
-                        "Reservations",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                // the underline bar
-                Box(
-                    Modifier
-                        .width(120.dp)
-                        .height(2.dp)
-                        .background(MaterialTheme.colorScheme.onSurface)
-                )
-            }
-        }
         Spacer(Modifier.height(12.dp))
         // filter buttons
         Row(

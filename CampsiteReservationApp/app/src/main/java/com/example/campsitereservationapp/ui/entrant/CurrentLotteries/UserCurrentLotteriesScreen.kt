@@ -53,7 +53,6 @@ fun UserCurrentLotteriesScreen(
     profileId: String,
     onBack: () -> Unit,
     onToBooking: (lotteryId: String) -> Unit,
-    onToReservations: () -> Unit
 ){
     vm.start(profileId)
     var showWon by remember{ mutableStateOf(true) }
@@ -70,54 +69,6 @@ fun UserCurrentLotteriesScreen(
 
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)){
         Spacer(Modifier.padding(32.dp))
-        //--------Title-----------------
-
-        Text(modifier = Modifier, style = MaterialTheme.typography.headlineMedium, text = "Lotteries")
-        //=============QUICKFIX FOR HEADER===========================
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Button(
-                    onClick = { /* Already on this screen */ },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Text(
-                        "Lotteries",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                // the underline bar
-                Box(
-                    Modifier
-                        .width(120.dp)
-                        .height(2.dp)
-                        .background(MaterialTheme.colorScheme.onSurface)
-                )
-            }
-            Spacer(Modifier.width(16.dp))
-            Button(
-                onClick = onToReservations,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                Text(
-                    "Reservations",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
-        //=======================================ENDOFQUICKFIX==========================
 
         //--------Which Lottery Type Buttons----
         Row(modifier = Modifier.fillMaxWidth(fraction = 0.7f), horizontalArrangement = Arrangement.spacedBy(10.dp)){
