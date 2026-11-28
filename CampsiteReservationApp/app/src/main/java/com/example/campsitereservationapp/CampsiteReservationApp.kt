@@ -41,6 +41,7 @@ import com.example.campsitereservationapp.ui.entrant.WonSelection.UserWonSelecti
 import com.example.campsitereservationapp.ui.owner.CampsiteRegister.OwnerCampDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerHomeScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteList.OwnerListingsScreen
+import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryInvitationsScreen
 import com.example.campsitereservationapp.ui.owner.Lotterylist.OwnerLotteryListScreen
 import com.example.campsitereservationapp.ui.owner.WaitList.OwnerWaitlistScreen
 import com.example.campsitereservationapp.utils.getDeviceId
@@ -398,6 +399,20 @@ fun CampsiteReservationApp() {
                 },
                 onViewResults = { lotteryId ->
                     //navController.navigate("lotteryResults/$lotteryId")
+                },
+                onViewInvitations = {
+                    navController.navigate("ownerLotteryInvitations")
+                }
+            )
+        }
+
+        composable(
+            route = "ownerLotteryInvitations"
+        ){
+            OwnerLotteryInvitationsScreen(
+                ownerId = OWNER_ID,
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -141,6 +141,7 @@ fun UserWonBookingScreen(
         rules = campsite?.rules.orEmpty(),
         rulesAccepted = viewModel.rulesAccepted,
         onRulesAcceptedChange = viewModel::onRulesAcceptedChanged,
+        rulesAcceptanceRequired = campsite?.rulesAcceptanceRequired ?: true,
         bookableDays = viewModel.bookableDays,
         selectedDays = viewModel.selectedDays,
         initialMonth = viewModel.initialMonth,
@@ -184,7 +185,8 @@ internal fun UserWonBookingContent(
     onBack: () -> Unit,
     onDayClick: (Date) -> Unit,
     onBook: () -> Unit,
-    onDecline: () -> Unit
+    onDecline: () -> Unit,
+    rulesAcceptanceRequired: Boolean = true
 ) {
     var showBookDialog by rememberSaveable { mutableStateOf(false) }
     var showDeclineDialog by rememberSaveable { mutableStateOf(false) }
@@ -293,7 +295,8 @@ internal fun UserWonBookingContent(
                         RulesPoliciesSection(
                             rules = rules,
                             accepted = rulesAccepted,
-                            onAcceptedChange = onRulesAcceptedChange
+                            onAcceptedChange = onRulesAcceptedChange,
+                            acceptanceRequired = rulesAcceptanceRequired
                         )
                     }
 
@@ -432,12 +435,16 @@ private fun SectionTitle(text: String) {
 /**
  * Shows the campsite's rules as a bullet list, with a checkbox the entrant must check before
  * they can book. Covers US 02.11.01.
+ *
+ * @param acceptanceRequired false when the owner doesn't require acceptance; the rules are
+ * still shown, but without the checkbox.
  */
 @Composable
 private fun RulesPoliciesSection(
     rules: String,
     accepted: Boolean,
-    onAcceptedChange: (Boolean) -> Unit
+    onAcceptedChange: (Boolean) -> Unit,
+    acceptanceRequired: Boolean = true
 ) {
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -453,15 +460,17 @@ private fun RulesPoliciesSection(
                     )
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onAcceptedChange(!accepted) }
-            ) {
-                Checkbox(checked = accepted, onCheckedChange = onAcceptedChange)
-                Text("Accept rules & policies", style = MaterialTheme.typography.bodyMedium)
+            if (acceptanceRequired) {
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onAcceptedChange(!accepted) }
+                ) {
+                    Checkbox(checked = accepted, onCheckedChange = onAcceptedChange)
+                    Text("Accept rules & policies", style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
     }

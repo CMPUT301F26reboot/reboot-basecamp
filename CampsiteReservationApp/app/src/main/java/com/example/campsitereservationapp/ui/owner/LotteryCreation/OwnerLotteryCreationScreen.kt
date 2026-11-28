@@ -72,6 +72,7 @@ import java.util.Date
 import com.example.campsitereservationapp.ui.theme.PillShape
 import androidx.compose.material.icons.filled.Check
 import com.example.campsitereservationapp.ui.components.datesBetween
+import com.example.campsitereservationapp.ui.components.StatusBadge
 
 /**
  * Creates a new lottery, or edits an existing one when [lotteryId] is given. In edit mode the
@@ -114,7 +115,7 @@ fun OwnerLotteryCreationScreen(
             lotteryDates = datesBetween(editingLottery.start, editingLottery.end)
             dates.clear()
             dates.addAll(editingLottery.dates.sorted())
-            selectedListingIDs = editingLottery.campsiteIDs
+            selectedListingIDs = editingLottery.campsiteIDs + editingLottery.pendingCampsiteIDs
             winnersToDraw = editingLottery.lotteryWinners ?: 0
             waitlistCap = editingLottery.waitlistCapacity ?: 0
             prefilled = true
@@ -123,6 +124,12 @@ fun OwnerLotteryCreationScreen(
 
     val ownerListings = viewModel.getOwnerListings(ownerID)
     val selectedListings = ownerListings.filter { it.id in selectedListingIDs }
+    val otherListings = viewModel.getOtherOwnersListings(ownerID)
+    val invitedListings = otherListings.filter { it.id in selectedListingIDs }
+    val acceptedIDs = editingLottery?.campsiteIDs.orEmpty()
+    // Campsites entrants can see: the owner's own, plus invited ones already accepted.
+    val lotteryListings = selectedListings + invitedListings.filter { it.id in acceptedIDs }
+    val pendingInvites = invitedListings.filter { it.id !in acceptedIDs }
 
     val canCreate = lotteryDates.isNotEmpty() &&
             selectedListings.isNotEmpty() &&
@@ -150,7 +157,7 @@ fun OwnerLotteryCreationScreen(
             )
 
             if (editingLottery != null) {
-                LotterySummaryCard(lottery = editingLottery, campsites = selectedListings)
+                LotterySummaryCard(lottery = editingLottery, campsites = lotteryListings)
             }
 
             // Input lottery title:
@@ -184,6 +191,25 @@ fun OwnerLotteryCreationScreen(
                 selectedListings = selectedListings,
                 onSelect = { selectedListingIDs = selectedListingIDs + it.id },
                 onRemove = { selectedListingIDs = selectedListingIDs - it.id },
+                modifier = Modifier
+            )
+
+            //other owners' campsites, invited until their owner accepts
+            ListingDropDownSelection(
+                title = "Invite other campsites",
+                subHeader = "Optional. Other owners' campsites join once their owner accepts.",
+                listingsHeader = "Invited campsites",
+                listings = otherListings,
+                selectedListings = invitedListings,
+                onSelect = { selectedListingIDs = selectedListingIDs + it.id },
+                onRemove = { selectedListingIDs = selectedListingIDs - it.id },
+                statusLabel = { listing ->
+                    when {
+                        listing.id in acceptedIDs -> "Joined"
+                        isEditing && listing.id in editingLottery?.pendingCampsiteIDs.orEmpty() -> "Invite pending"
+                        else -> "Will be invited"
+                    }
+                },
                 modifier = Modifier
             )
 
@@ -244,6 +270,11 @@ fun OwnerLotteryCreationScreen(
             //create button
             Button(
                 onClick = {
+                    val (campsiteIDs, pendingIDs) = splitCampsites(
+                        ownIDs = selectedListings.map { it.id },
+                        invitedIDs = invitedListings.map { it.id },
+                        acceptedIDs = acceptedIDs
+                    )
                     if (lotteryId != null) {
                         viewModel.updateLottery(
                             lotteryId = lotteryId,
@@ -251,11 +282,12 @@ fun OwnerLotteryCreationScreen(
                             dates = dates.toList(),
                             start = lotteryDates[0],
                             end = lotteryDates[lotteryDates.lastIndex].endOfDay(),
-                            campsiteIDs = selectedListingIDs,
+                            campsiteIDs = campsiteIDs,
                             winnersToDraw = winnersToDraw,
                             waitlistCap = waitlistCap,
                             onSuccess = { showCreatedDialog = true },
-                            onFailure = { showFailedDialog = true }
+                            onFailure = { showFailedDialog = true },
+                            pendingCampsiteIDs = pendingIDs
                         )
                     } else {
                         viewModel.createAndAddLottery(
@@ -263,11 +295,13 @@ fun OwnerLotteryCreationScreen(
                             dates = dates.toList(),
                             start = lotteryDates[0],
                             end = lotteryDates[lotteryDates.lastIndex].endOfDay(),
-                            campsiteIDs = selectedListingIDs,
+                            campsiteIDs = campsiteIDs,
                             winnersToDraw = winnersToDraw,
                             waitlistCap = waitlistCap,
                             onSuccess = { showCreatedDialog = true},
-                            onFailure = { showFailedDialog = true}
+                            onFailure = { showFailedDialog = true},
+                            ownerID = ownerID,
+                            invitedCampsiteIDs = pendingIDs
                         )
                     }
                 },
@@ -290,17 +324,22 @@ fun OwnerLotteryCreationScreen(
 
     //popup dialog on successful or failure on listing addition
     if (showCreatedDialog) {
-        val names = selectedListings.joinToString(" and ") { it.name }
+        val names = lotteryListings.joinToString(" and ") { it.name }
         val end = lotteryDates[lotteryDates.lastIndex]
+        val inviteNote = when (pendingInvites.size) {
+            0 -> ""
+            1 -> " 1 invited campsite joins once its owner accepts."
+            else -> " ${pendingInvites.size} invited campsites join once their owners accept."
+        }
         CustomDialogScreenComponent(
             onDismissRequest = {
                 showCreatedDialog = false
                 onCreate()
             },
             title = if (isEditing) "Changes saved" else "Lottery created",
-            description = if (isEditing) "Your lottery for $names has been updated."
+            description = (if (isEditing) "Your lottery for $names has been updated."
                 else "Your lottery for $names is live. " +
-                    "Campers can enter until ${formatDateRange(listOf(end))}."
+                    "Campers can enter until ${formatDateRange(listOf(end))}.") + inviteNote
         )
     } else if (showFailedDialog)
      {
@@ -351,6 +390,7 @@ fun OwnerLotteryCreationScreen(
  * @param selectedListings listings that are currently selected
  * @param onSelect event call with the listing picked from the dropdown
  * @param onRemove event call with the listing whose x was clicked
+ * @param statusLabel optional small label shown on each selected listing's card, e.g. "Invite pending"
  * @param modifier modifier of parent compose
  */
 @Composable
@@ -362,6 +402,7 @@ fun ListingDropDownSelection(
     selectedListings: List<Listing>,
     onSelect: (Listing) -> Unit,
     onRemove: (Listing) -> Unit,
+    statusLabel: (Listing) -> String? = { null },
     modifier: Modifier
 ){
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
@@ -410,6 +451,7 @@ fun ListingDropDownSelection(
                 ListingCard(
                     listing = listing,
                     onDelete = { onRemove(listing) },
+                    statusLabel = statusLabel(listing),
                     modifier = Modifier
                 )
             }
@@ -419,12 +461,14 @@ fun ListingDropDownSelection(
 /**Cards shown under Selected Campsites,
  * @param listing listing of <Listing> object to be shown
  * @param onDelete event call after clicking x in top right of card
+ * @param statusLabel optional small badge under the name, e.g. "Joined" or "Invite pending"
  * @param modifier modifier from parent compose
  */
 @Composable
 fun ListingCard(
     listing: Listing,
     onDelete: () -> Unit,
+    statusLabel: String? = null,
     modifier: Modifier
 ){
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
@@ -458,6 +502,15 @@ fun ListingCard(
                     icon = Icons.Outlined.Person,
                     text = "Up to ${listing.maxOccupancy} guests"
                 )
+                if (statusLabel != null) {
+                    StatusBadge(
+                        text = statusLabel,
+                        containerColor = if (statusLabel == "Joined") MaterialTheme.colorScheme.secondaryContainer
+                            else MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = if (statusLabel == "Joined") MaterialTheme.colorScheme.onSecondaryContainer
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
 
             Spacer(Modifier.width(8.dp))

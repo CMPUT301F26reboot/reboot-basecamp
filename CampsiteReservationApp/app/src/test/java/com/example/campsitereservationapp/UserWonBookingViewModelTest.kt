@@ -187,6 +187,16 @@ class UserWonBookingViewModelTest {
     }
 
     @Test
+    fun canBook_rulesNotRequiredByOwner_shouldOnlyNeedADate() {
+        twoJack.rulesAcceptanceRequired = false
+        openTwoJackOffer()
+
+        viewModel.toggleDay(at(2027, 7, 9))
+
+        assertTrue(viewModel.canBook) // no checkbox to tick, so a date is enough
+    }
+
+    @Test
     fun declineOffer_writeSucceeds_shouldFinish() {
         val (onSuccess, _) = stubDeclineWrite()
         openTwoJackOffer()
