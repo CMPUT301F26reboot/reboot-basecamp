@@ -3,7 +3,6 @@
  */
 package com.example.campsitereservationapp.ui.entrant.CurrentLotteries
 
-import android.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.*
@@ -53,11 +51,13 @@ fun UserCurrentLotteriesScreen(
     profileId: String,
     onBack: () -> Unit,
     onToBooking: (lotteryId: String) -> Unit,
-    onToReservations: () -> Unit
 ){
     vm.start(profileId)
     var showWon by remember{ mutableStateOf(true) }
-    var showOngoing by remember{ mutableStateOf(false) }
+    var showOngoing by remember{ mutableStateOf(true) }
+    var allButtonToggled by remember { mutableStateOf(true) }
+    var wonButtonToggled by remember { mutableStateOf(false) }
+    var ongoingButtonToggled by remember { mutableStateOf(false) }
 
     //--------Back Button----------
     FilledTonalIconButton(
@@ -68,285 +68,124 @@ fun UserCurrentLotteriesScreen(
     }
 
 
-    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)){
+    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Spacer(Modifier.padding(32.dp))
-        //--------Title-----------------
 
-        Text(modifier = Modifier, style = MaterialTheme.typography.headlineMedium, text = "Lotteries")
-        //=============QUICKFIX FOR HEADER===========================
+        // Filter buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Button(
-                    onClick = { /* Already on this screen */ },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.onSurface
+
+
+            //all button
+            Button(
+                onClick = {
+                    showWon = true
+                    showOngoing = true
+                    allButtonToggled = true
+                    wonButtonToggled = false
+                    ongoingButtonToggled = false
+                },
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+                colors = if (allButtonToggled) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
                     )
-                ) {
-                    Text(
-                        "Lotteries",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                // the underline bar
-                Box(
-                    Modifier
-                        .width(120.dp)
-                        .height(2.dp)
-                        .background(MaterialTheme.colorScheme.onSurface)
-                )
-            }
-            Spacer(Modifier.width(16.dp))
-            Button(
-                onClick = onToReservations,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             ) {
                 Text(
-                    "Reservations",
-                    style = MaterialTheme.typography.titleMedium
+                    "All",
+                    fontWeight = FontWeight.Medium,
                 )
             }
-        }
-        //=======================================ENDOFQUICKFIX==========================
+            //won button
+            Button(
+                onClick = {
+                    showWon = true
+                    showOngoing = false
+                    allButtonToggled = false
+                    wonButtonToggled = true
+                    ongoingButtonToggled = false
+                },
+                colors = if (wonButtonToggled) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
-        //--------Which Lottery Type Buttons----
-        Row(modifier = Modifier.fillMaxWidth(fraction = 0.7f), horizontalArrangement = Arrangement.spacedBy(10.dp)){
-            //show won button
-            TextButton(
-                modifier = Modifier.toggleable(value = showWon, interactionSource = null, indication = null,
-                    onValueChange = {}),
-                shape = MaterialTheme.shapes.medium,
-                onClick = {showWon = true
-                    showOngoing = false},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-                )
-            {
-                Text("Show Won")
+            ) {
+                Text("Won", fontWeight = FontWeight.Medium)
             }
-            //show ongoing button
-            TextButton(
-                modifier = Modifier.toggleable(
-                    value = showOngoing, interactionSource = null, indication = null,
-                    onValueChange = {}),
-                shape = MaterialTheme.shapes.medium,
-                onClick = {showWon = false
-                    showOngoing = true},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-            )
-            {
-                Text("Show Ongoing")
+            // Ongoing button
+            Button(
+                onClick = {
+                    showWon = false
+                    showOngoing = true
+                    allButtonToggled = false
+                    wonButtonToggled = false
+                    ongoingButtonToggled = true
+                },
+                colors = if (ongoingButtonToggled) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            ) {
+                Text("Ongoing", fontWeight = FontWeight.Medium)
             }
+
         }
 
-        if(showWon){
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                items(vm.wonLotteries.toList()){ lottery ->
-                    WonLotteryCard(
+        if (showWon) {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                items(vm.wonLotteries.toList()) { lottery ->
+                    UserLotteryCard(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
                         profileId = profileId,
-                        onToBooking = onToBooking)
+                        buttonLabel = "Claim",
+                        onClick = { wonLottery, _ -> onToBooking(wonLottery.id) }
+                    )
                 }
             }
-        }else{
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                items(vm.ongoingLotteries.toList()){ lottery ->
-                    OngoingLotteryCard(
+        }
+        if (showOngoing) {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                items(vm.ongoingLotteries.toList()) { lottery ->
+                    UserLotteryCard(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
                         profileId = profileId,
-                        onToLeave = vm::leaveLottery
-                        )
-                }
-            }
-        }
-    }
-}
-
-/**
- * Card for a won lottery
- * 
- * Shows image, title, and a claim button which takes user to booking screen
- * 
- * @param [lottery] is the lottery being displayed
- * @param [imageURL] is the image for that lottery
- * @param [profileId] is document id of the entrant's profile.
- * Not used right now but will be passed on to the onToBooking lambda when it's finished
- * @param [onToBooking] lambda to go to booking screen
- */
-@Composable
-fun WonLotteryCard(
-    lottery: Lottery,
-    imageURL: String,
-    profileId: String,
-    onToBooking: (lotteryId: String) -> Unit
-    ){
-    OutlinedCard(modifier = Modifier.fillMaxWidth(fraction = 0.9f)){
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Image Box (occupies 25% width of row)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.25f)
-                        .height(95.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
-                    contentAlignment = Alignment.Center
-                ) {
-                    //select first photo, show nothing if Null
-                    val firstPhoto = imageURL
-                    if (firstPhoto.isNotEmpty()) {
-                        AsyncImage(
-                            model = firstPhoto,
-                            contentDescription = lottery.title,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                // Information details about campsite (occupies rest of space)
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = lottery.title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        buttonLabel = "Leave Lottery",
+                        onClick = vm::leaveLottery
                     )
-
-                    Button(
-                        modifier = Modifier.fillMaxWidth(0.7f),
-                        onClick = {onToBooking(lottery.id)},
-                        shape = MaterialTheme.shapes.medium,
-                        contentPadding = PaddingValues(vertical = 14.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onSurface,
-                            contentColor = MaterialTheme.colorScheme.surface
-                        )
-                    ){
-                        Text("Claim")
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
- * Card for an ongoing lottery
- * 
- * Shows image, title, and a claim button which takes user to booking screen
- * 
- * @param [lottery] is the lottery being displayed
- * @param [imageURL] is the image for that lottery
- * @param [profileId] is document id of the entrant's profile.
- * @param [onToLeave] lambda to go leave lottery (vm::leaveLottery)
- */
-@Composable
-fun OngoingLotteryCard(
-    lottery: Lottery,
-    imageURL: String,
-    profileId: String,
-    onToLeave: (Lottery, String) -> Unit
-){
-    OutlinedCard(modifier = Modifier.fillMaxWidth(fraction = 0.9f)){
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Image Box (occupies 25% width of row)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.25f)
-                        .height(95.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
-                    contentAlignment = Alignment.Center
-                ) {
-                    //select first photo, show nothing if Null
-                    val firstPhoto = imageURL
-                    if (firstPhoto.isNotEmpty()) {
-                        AsyncImage(
-                            model = firstPhoto,
-                            contentDescription = lottery.title,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = lottery.title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Button(
-                        modifier = Modifier.fillMaxWidth(0.7f),
-                        onClick = {onToLeave(lottery, profileId)},
-                        shape = MaterialTheme.shapes.medium,
-                        contentPadding = PaddingValues(vertical = 14.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
-                        )
-                    ){
-                        Text("Leave")
-                    }
-
                 }
             }
         }

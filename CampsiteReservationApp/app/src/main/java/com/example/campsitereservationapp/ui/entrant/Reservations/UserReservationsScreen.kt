@@ -40,7 +40,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -76,7 +75,6 @@ fun UserReservationsScreen(
     profileId: String,
     onBack: () -> Unit,
     onOpenReservation: (reservationId: String) -> Unit = {},
-    onToLotteries: () -> Unit,
     viewModel: UserReservationsViewModel = viewModel()
 ){
     val rows = viewModel.filteredReservations(profileId)
@@ -99,7 +97,6 @@ fun UserReservationsScreen(
         onDismissReview = viewModel::dismissReviewSheet,
         onRatingChanged = viewModel::onRatingChanged,
         onSubmitReview = viewModel::submitReview,
-        onLotteriesTab = onToLotteries
 
 
     )
@@ -135,7 +132,6 @@ fun UserReservationContent(
     onDismissReview: () -> Unit,
     onRatingChanged: (Int) -> Unit,
     onSubmitReview: (Int) -> Unit,
-    onLotteriesTab: () -> Unit
     ) {
     Column(Modifier.fillMaxSize()) {
         Row(
@@ -149,52 +145,6 @@ fun UserReservationContent(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-
-
-        ) {
-            Button(
-                onClick = onLotteriesTab,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                Text(
-                    "Lotteries",
-                    style = MaterialTheme.typography.titleMedium
-
-                )
-            }
-            Spacer(Modifier.width(16.dp))
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Button(
-                    onClick = { /* Already on this screen */ },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Text(
-                        "Reservations",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                // the underline bar
-                Box(
-                    Modifier
-                        .width(120.dp)
-                        .height(2.dp)
-                        .background(MaterialTheme.colorScheme.onSurface)
-                )
-            }
-        }
         Spacer(Modifier.height(12.dp))
         // filter buttons
         Row(
@@ -376,6 +326,7 @@ private fun ReservationCard(
     onLeaveReview: () -> Unit
 ) {
     Surface(
+        shape = MaterialTheme.shapes.large,
         color = if(isPast){ MaterialTheme.colorScheme.surfaceVariant} else{MaterialTheme.colorScheme.surface},
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier
@@ -449,59 +400,67 @@ private fun ReservationCard(
                         )
                     }
                 }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            if (!isPast) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Button(
-                            onClick = onOpen,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.onSurface,
-                                contentColor = MaterialTheme.colorScheme.surface
-                            )
-                        ) { Text("View") }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        OutlinedButton(
-                            onClick = onCancel,
-                            enabled = !isCancelling,
-                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f)),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer // Changes inside color
-                            )
 
 
+                Column(Modifier.weight(1f).align(Alignment.Bottom)) {
+
+                    if (!isPast) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            Text("Cancel Reservation",
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.error)
+                            Button(
+                                onClick = onOpen,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.onSurface,
+                                    contentColor = MaterialTheme.colorScheme.surface
+                                )
+                            ) { Text("View") }
                         }
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    if(!reservation.rated) {
-                        Button(
-                            onClick = onLeaveReview,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.onSurface,
-                                contentColor = MaterialTheme.colorScheme.surface
-                            ),
-                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            Text("Leave a review!", fontWeight = FontWeight.SemiBold)
+                            OutlinedButton(
+                                onClick = onCancel,
+                                enabled = !isCancelling,
+                                border = BorderStroke(
+                                    2.dp,
+                                    MaterialTheme.colorScheme.error.copy(alpha = 0.3f)
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer // Changes inside color
+                                )
+
+
+                            ) {
+                                Text(
+                                    "Cancel",
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            if (!reservation.rated) {
+                                Button(
+                                    onClick = onLeaveReview,
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.onSurface,
+                                        contentColor = MaterialTheme.colorScheme.surface
+                                    ),
+                                    contentPadding = PaddingValues(
+                                        horizontal = 12.dp,
+                                        vertical = 8.dp
+                                    )
+                                ) {
+                                    Text("Leave a review!", fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                }
+                            }
                         }
                     }
                 }

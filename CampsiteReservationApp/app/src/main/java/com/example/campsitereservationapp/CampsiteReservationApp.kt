@@ -228,9 +228,6 @@ fun CampsiteReservationApp() {
                 onBack  = {
                     navController.navigate("userHome")
                 },
-                onToLotteries = {
-                    navController.navigate("userLotteries")
-                },
                 onOpenReservation = { reservationId ->
                     navController.navigate("userReservationDetails/$reservationId")
                 }
@@ -265,9 +262,6 @@ fun CampsiteReservationApp() {
                 onToBooking = { lotteryId ->
                     navController.navigate("userWonSelection/$lotteryId")
                 },
-                onToReservations = {
-                    navController.navigate("userReservations")
-                }
             )
         }
 
