@@ -18,7 +18,8 @@ import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
-import com.example.campsitereservationapp.ui.Owner.Reservations.OwnerReservationDetailsScreen
+import com.example.campsitereservationapp.ui.MessageScreen
+import com.example.campsitereservationapp.ui.owner.Reservations.OwnerReservationDetailsScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
@@ -499,7 +500,25 @@ fun CampsiteReservationApp() {
                 onBack = {
                     navController.popBackStack()
                 },
-                onMessageGuest = { /* TODO */ }
+                onMessageGuest = { guestId ->
+                    navController.navigate("ownerChat/$guestId")
+                }
+            )
+        }
+        composable(
+            route = "ownerChat/{guestId}",
+            arguments = listOf(
+                navArgument("guestId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+            MessageScreen(
+                yourID = OWNER_ID,
+                otherID = entry.arguments?.getString("guestId").orEmpty(),
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
 

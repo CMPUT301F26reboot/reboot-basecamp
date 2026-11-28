@@ -10,11 +10,12 @@
  *  - Screen descriptions page shows a guest count, but there is no implementation to
  *    input the number of guests for a reservation
  *  - Rejecting a reservation doesn't notify the guest yet
- *  - Message guest has not been implemented yet
+ *  - Message guest is sort of implemented but im not sure if the sent message can be viewed
+ *      by the entrant
  */
 
 
-package com.example.campsitereservationapp.ui.Owner.Reservations
+package com.example.campsitereservationapp.ui.owner.Reservations
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
