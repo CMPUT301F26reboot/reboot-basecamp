@@ -56,6 +56,7 @@ import java.util.Date
 @Composable
 fun OwnerLotteryCard(
     lottery: OwnerLotteryItem,
+    displayButtons: Boolean,
     onViewEntrants: () -> Unit,
     onEdit: () -> Unit,
     onViewResults: () -> Unit,
@@ -77,20 +78,24 @@ fun OwnerLotteryCard(
                 LotteryStatus.ACTIVE -> {
                     ActiveDetails(lottery)
                     EntrantsJoinedRow(lottery.entrantCount, lottery.waitlistCap)
-                    if (lottery.isCreator) {
-                        ActiveActions(lottery.entrantCount, onViewEntrants, onEdit)
-                    } else {
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            SecondaryButton("View Entrants (${lottery.entrantCount})", onViewEntrants, Modifier.weight(1f))
-                            SecondaryButton("Withdraw Campsite", onWithdraw, Modifier.weight(1f))
+                    if (displayButtons) {
+                        if (lottery.isCreator) {
+                            ActiveActions(lottery.entrantCount, onViewEntrants, onEdit)
+                        } else {
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                SecondaryButton("View Entrants (${lottery.entrantCount})", onViewEntrants, Modifier.weight(1f))
+                                SecondaryButton("Withdraw Campsite", onWithdraw, Modifier.weight(1f))
+                            }
                         }
                     }
                 }
                 LotteryStatus.COMPLETED -> {
                     CompletedDetails(lottery)
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        SecondaryButton("Entrants", onViewEntrants, Modifier.weight(1f))
-                        SecondaryButton("Results", onViewResults, Modifier.weight(1f))
+                    if(displayButtons) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            SecondaryButton("Entrants", onViewEntrants, Modifier.weight(1f))
+                            SecondaryButton("Results", onViewResults, Modifier.weight(1f))
+                        }
                     }
                 }
                 LotteryStatus.CANCELLED -> Unit

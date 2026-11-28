@@ -57,6 +57,7 @@ class OwnerLotteryCreationViewModel: DatabaseModel(
         lottery.lotteryWinners = winnersToDraw
         lottery.ownerID = ownerID
         lottery.pendingCampsiteIDs = invitedCampsiteIDs
+        lottery.drawn = false
         lotteriesRef.add(lottery)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure() }

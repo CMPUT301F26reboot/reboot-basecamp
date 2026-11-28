@@ -18,6 +18,11 @@ import com.example.campsitereservationapp.qrcode.CampsiteQrLink
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminAccessViewModel
 import com.example.campsitereservationapp.ui.Admin.AdminSetup.AdminGate
 import com.example.campsitereservationapp.ui.Admin.AdminHomeScreen
+import com.example.campsitereservationapp.ui.owner.Notifications.OwnerNotifLogScreen
+import com.example.campsitereservationapp.ui.owner.Notifications.OwnerSendNotificationScreen
+import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsitesScreen
+import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfilesScreen
+import com.example.campsitereservationapp.ui.Admin.CampsiteImages.CampsiteImagesScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
@@ -346,7 +351,7 @@ fun CampsiteReservationApp() {
                     navController.navigate("ownerListings")
                 },
                 onNotificationHistory = {
-                    //navController.navigate("ownerNotificationHistory")
+                    navController.navigate("ownerNotifLog")
                 },
                 onProfile = {
                     //navController.navigate("ownerProfile")
@@ -487,13 +492,40 @@ fun CampsiteReservationApp() {
         composable(
             route = "ownerWaitlist/{lotteryId}"
         ){ entry ->
+            val lotteryId = entry.arguments?.getString("lotteryId").orEmpty()
             OwnerWaitlistScreen(
-                lotteryID = entry.arguments?.getString("lotteryId").orEmpty()
-                ,
+                lotteryID = lotteryId,
                 onBack = {
                     navController.popBackStack()
                 },
-                onSendNotification = { /* TODO */},
+                onSendNotification = { navController.navigate("ownerSendNotif/$lotteryId")},
+            )
+        }
+
+        composable(
+            route = "ownerNotifLog"
+        ){
+            OwnerNotifLogScreen(
+                profileId = OWNER_ID,
+                onBack = {
+                    navController.navigate("ownerHome")
+                },
+                onOpenNotif = { lotteryId ->
+                    navController.navigate( "ownerSendNotif/$lotteryId")
+                }
+            )
+
+        }
+
+        composable(
+            route = "ownerSendNotif/{lotteryId}"
+        ){ entry ->
+            OwnerSendNotificationScreen(
+                profileId = OWNER_ID,
+                lotteryId = entry.arguments?.getString("lotteryId").orEmpty(),
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
 
@@ -513,10 +545,10 @@ fun CampsiteReservationApp() {
                         navController.popBackStack()
                     },
                     onManageCampsites = {
-                        //navController.navigate("adminCampsites")
+                        navController.navigate("adminBrowseCampsites")
                     },
                     onManageProfiles = {
-                        //navController.navigate("adminProfiles")
+                        navController.navigate("adminBrowseProfiles")
                     },
                     onNotificationLogs = {
                         //navController.navigate("adminNotificationLogs")
@@ -536,5 +568,43 @@ fun CampsiteReservationApp() {
                 )
             }
         }
+
+        composable(
+            route = "adminBrowseCampsites"
+        ){
+            AdminBrowseCampsitesScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onImages = {navController.navigate("adminBrowseCampsiteImage/$it")}
+            )
+        }
+
+        composable(
+            route = "adminBrowseCampsiteImage/{listingId}",
+            arguments = listOf(
+                navArgument("listingId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+            CampsiteImagesScreen(
+                listingID = entry.arguments?.getString("listingId").orEmpty(),
+                onBack = {
+                    navController.popBackStack()
+                },
+            )
+        }
+
+        composable(
+            route = "adminBrowseProfiles"
+        ){
+            AdminBrowseProfilesScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }
+

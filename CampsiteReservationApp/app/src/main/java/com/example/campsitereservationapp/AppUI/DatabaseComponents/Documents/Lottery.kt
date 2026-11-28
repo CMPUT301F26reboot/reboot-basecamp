@@ -36,6 +36,7 @@ class Lottery(var dates: List<Date> = emptyList(),
     var lotteryWinners: Int? = null
 
     var cancelled: Boolean = false
+    var drawn: Boolean = false
 
     /** Owner who created the lottery. Only they can edit or cancel it. */
     var ownerID: String = ""

@@ -233,6 +233,7 @@ fun OwnerLotteryListContent(
             items(shown, key = { it.id }) { lottery ->
                 OwnerLotteryCard(
                     lottery = lottery,
+                    displayButtons = true,
                     onViewEntrants = { onViewEntrants(lottery.id) },
                     onEdit = { onEditLottery(lottery.id) },
                     onViewResults = { onViewResults(lottery.id) },
