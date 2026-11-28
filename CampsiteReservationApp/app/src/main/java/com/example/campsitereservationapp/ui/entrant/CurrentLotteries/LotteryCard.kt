@@ -48,11 +48,11 @@ import com.example.campsitereservationapp.ui.theme.commonButtonColour
 /**
  * Lottery Card used in UserCurrentLotteries. Replaces WonLotteryCard and OngoingLotteryCard.
  * Shows the lottery's details in the same format as OwnerLotteryCard, with one button at the
- * bottom: a red "Cancel" button, or a "Claim" button in [commonButtonColour].
+ * bottom: a red "Leave Lottery" button, or a "Claim" button in [commonButtonColour].
  * @param lottery lottery being shown
  * @param imageURL first image in lottery, or "" for none
  * @param profileId document id of the entrant's profile, passed to [onClick]
- * @param buttonLabel either "Cancel" or "Claim"
+ * @param buttonLabel either "Leave Lottery" or "Claim"
  * @param onClick action when the button is pressed, given [lottery] and [profileId]
  */
 @Composable
@@ -80,7 +80,7 @@ fun UserLotteryCard(
                 entrantCount = lottery.waitlist.size + lottery.selectedlist.size,
                 waitlistCap = lottery.waitlistCapacity
             )
-            CancelOrClaimButton(buttonLabel, onClick = { onClick(lottery, profileId) })
+            LeaveLotteryOrClaimButton(buttonLabel, onClick = { onClick(lottery, profileId) })
         }
     }
 }
@@ -188,10 +188,10 @@ private fun EntrantsJoinedRow(entrantCount: Int, waitlistCap: Int?) {
     }
 }
 
-/** Full-width button: red for "Cancel", [commonButtonColour] for "Claim". */
+/** Full-width button: red for "Leave Lottery", [commonButtonColour] for "Claim". */
 @Composable
-private fun CancelOrClaimButton(buttonLabel: String, onClick: () -> Unit) {
-    val containerColor = if (buttonLabel == "Cancel") DeleteRed else commonButtonColour
+private fun LeaveLotteryOrClaimButton(buttonLabel: String, onClick: () -> Unit) {
+    val containerColor = if (buttonLabel == "Leave Lottery") DeleteRed else commonButtonColour
     Button(
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,

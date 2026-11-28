@@ -183,7 +183,7 @@ fun UserCurrentLotteriesScreen(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
                         profileId = profileId,
-                        buttonLabel = "Cancel",
+                        buttonLabel = "Leave Lottery",
                         onClick = vm::leaveLottery
                     )
                 }
