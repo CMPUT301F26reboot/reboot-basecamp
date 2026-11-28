@@ -33,6 +33,7 @@ class AdminNotificationLogsViewModel: DatabaseModel(){
      * @return the matching profile name, or "System"
      */
     fun getSenderName(profileId: String): String{
+        if (profileId.isBlank()) return "System"
         val profile =  allProfiles.find {it.id == profileId || it.deviceId == profileId}
         return profile?.name ?: "System"
     }
