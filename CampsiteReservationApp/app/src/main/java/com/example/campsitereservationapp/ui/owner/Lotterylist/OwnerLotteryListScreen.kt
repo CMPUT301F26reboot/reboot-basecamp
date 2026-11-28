@@ -4,7 +4,9 @@
 package com.example.campsitereservationapp.ui.owner.Lotterylist
 
 import com.example.campsitereservationapp.utils.appCalendar
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -49,9 +53,11 @@ import java.util.Date
  * @param onViewEntrants event -> navigate to the entrants of the lottery with the given ID.
  * @param onEditLottery event -> navigate to editing the lottery with the given ID.
  * @param onViewResults event -> navigate to the draw results of the lottery with the given ID.
+ * @param onViewInvitations event -> navigate to the invitations from other owners.
  *
- * Also shows invitations from other owners to add this owner's campsites to their lotteries,
- * and asks for confirmation before the owner withdraws their campsites from a lottery they joined.
+ * When other owners have invited this owner's campsites to their lotteries, a banner links to
+ * [OwnerLotteryInvitationsScreen]. Also asks for confirmation before the owner withdraws their
+ * campsites from a lottery they joined.
  */
 @Composable
 fun OwnerLotteryListScreen(
@@ -61,10 +67,10 @@ fun OwnerLotteryListScreen(
     onViewEntrants: (String) -> Unit,
     onEditLottery: (String) -> Unit,
     onViewResults: (String) -> Unit,
+    onViewInvitations: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: OwnerLotteryListViewModel = viewModel()
 ) {
-    var isSaving by remember { mutableStateOf(false) }
     var withdrawing by remember { mutableStateOf<OwnerLotteryItem?>(null) }
     var errorTitle by remember { mutableStateOf<String?>(null) }
 
@@ -78,24 +84,8 @@ fun OwnerLotteryListScreen(
         onEditLottery = onEditLottery,
         onViewResults = onViewResults,
         modifier = modifier,
-        invitations = viewModel.invitations(ownerId),
-        invitesEnabled = !isSaving,
-        onAcceptInvite = { invite ->
-            isSaving = true
-            viewModel.acceptInvite(
-                invite.lotteryId, invite.campsiteId,
-                onSuccess = { isSaving = false },
-                onFailure = { isSaving = false; errorTitle = "Couldn't accept the invitation" }
-            )
-        },
-        onDeclineInvite = { invite ->
-            isSaving = true
-            viewModel.declineInvite(
-                invite.lotteryId, invite.campsiteId,
-                onSuccess = { isSaving = false },
-                onFailure = { isSaving = false; errorTitle = "Couldn't decline the invitation" }
-            )
-        },
+        invitationCount = viewModel.invitations(ownerId).size,
+        onViewInvitations = onViewInvitations,
         onWithdraw = { lottery -> withdrawing = lottery }
     )
 
@@ -153,8 +143,8 @@ private fun WithdrawCampsiteDialog(lotteryTitle: String, onConfirm: () -> Unit, 
  * Compose Preview, with no database involved.
  *
  * @param lotteries every lottery the owner has; the tabs filter this list.
- * @param invitations invitations waiting for the owner's answer, shown above the tabs.
- * @param invitesEnabled false while an answer is being saved.
+ * @param invitationCount how many invitations are waiting; a banner above the tabs links to them.
+ * @param onViewInvitations event call when the owner taps the banner's button.
  * @param onWithdraw event call when the owner taps Withdraw on a lottery they joined.
  */
 @Composable
@@ -168,10 +158,8 @@ fun OwnerLotteryListContent(
     onEditLottery: (String) -> Unit,
     onViewResults: (String) -> Unit,
     modifier: Modifier = Modifier,
-    invitations: List<LotteryInvite> = emptyList(),
-    invitesEnabled: Boolean = true,
-    onAcceptInvite: (LotteryInvite) -> Unit = {},
-    onDeclineInvite: (LotteryInvite) -> Unit = {},
+    invitationCount: Int = 0,
+    onViewInvitations: () -> Unit = {},
     onWithdraw: (OwnerLotteryItem) -> Unit = {}
 ) {
     val counts = LotteryFilter.entries.associateWith { filter -> lotteries.count(filter::matches) }
@@ -201,21 +189,11 @@ fun OwnerLotteryListContent(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
-            if (invitations.isNotEmpty()) {
+            if (invitationCount > 0) {
                 item {
-                    Text(
-                        "Invitations (${invitations.size})",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                }
-                items(invitations, key = { "invite-${it.lotteryId}-${it.campsiteId}" }) { invite ->
-                    LotteryInvitationCard(
-                        invite = invite,
-                        enabled = invitesEnabled,
-                        onAccept = { onAcceptInvite(invite) },
-                        onDecline = { onDeclineInvite(invite) },
+                    InvitationsBanner(
+                        count = invitationCount,
+                        onView = onViewInvitations,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
@@ -240,6 +218,46 @@ fun OwnerLotteryListContent(
                     onWithdraw = { onWithdraw(lottery) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+            }
+        }
+    }
+}
+
+/**
+ * One banner telling the owner that other owners invited their campsites to lotteries, with a
+ * button to the invitations screen.
+ *
+ * @param count how many invitations are waiting.
+ * @param onView event call when the owner taps the button.
+ */
+@Composable
+private fun InvitationsBanner(count: Int, onView: () -> Unit, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                "Another owner has invited your campsite(s) to a lottery.",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            Button(
+                onClick = onView,
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.surface
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("View Invitations ($count)", fontWeight = FontWeight.Bold)
             }
         }
     }

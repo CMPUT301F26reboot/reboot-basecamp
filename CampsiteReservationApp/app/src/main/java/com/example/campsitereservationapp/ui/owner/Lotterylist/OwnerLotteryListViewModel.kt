@@ -23,10 +23,9 @@ import java.util.concurrent.TimeUnit
  * have no [Lottery.ownerID], so any owner with a campsite in them counts as their creator.
  *
  * Also lists the invitations waiting for this owner, and lets them accept or decline an
- * invitation, or withdraw their campsites from a lottery they joined.
- *
- * Outstanding issues:
- *  - Owners aren't notified about invitations, answers or withdrawals yet.
+ * invitation, or withdraw their campsites from a lottery they joined. Invitations are shown in
+ * the app (a banner on the lottery list and [OwnerLotteryInvitationsScreen]) rather than sent as
+ * notifications.
  */
 class OwnerLotteryListViewModel : DatabaseModel() {
 

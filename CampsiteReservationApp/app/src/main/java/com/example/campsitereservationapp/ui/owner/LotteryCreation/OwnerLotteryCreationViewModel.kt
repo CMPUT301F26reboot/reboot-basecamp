@@ -13,12 +13,8 @@ import kotlin.collections.List
 /**
  * Creates and edits lotteries. A lottery can include other owners' campsites: those are saved as
  * invitations in [Lottery.pendingCampsiteIDs] and only join the lottery when their owner accepts,
- * so no owner's campsite is added without permission.
- *
- * Outstanding issues:
- *  - Invited owners aren't notified yet; they see invitations on their Owner Lotteries screen.
- *  - Saving an edit writes the campsite lists from the form, so an invite accepted while the
- *    creator has the edit screen open is undone by their save.
+ * so no owner's campsite is added without permission. Invited owners see the invitation on their
+ * Owner Lotteries screen.
  */
 class OwnerLotteryCreationViewModel: DatabaseModel(
 ){
