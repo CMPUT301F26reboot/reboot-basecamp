@@ -66,7 +66,7 @@ fun CampsiteCard(
                     containerColor = MaterialTheme.colorScheme.onSurface,
                     contentColor = MaterialTheme.colorScheme.surface
                 ),
-                modifier = Modifier.align(Alignment.Bottom)
+                modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Text("Details")
             }
