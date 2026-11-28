@@ -1,11 +1,11 @@
 /*
  * OwnerReservationsViewModel.kt
  *
- * Role: ViewModel (MVVM) behind OwnerCampsiteDetailsScreen. It extends the shared
+ * Role: ViewModel (MVVM) behind OwnerCampsiteDetailsScreen and OwnerReservationDetailsScreen. It extends the shared
  * ReservationsViewModel (which holds the Firestore-backed lists and the selected
- * ReservationFilter) and adds the owner-specific queries the details screen needs:
+ * ReservationFilter) and adds the owner-specific queries the screens need:
  * look up one campsite, list/filter its reservations, count its bookings, collect its
- * booked nights, and resolve a guest's display name.
+ * booked nights, find a guests name and profile.
  *
  * Outstanding issues:
  *
@@ -118,11 +118,10 @@ class OwnerReservationsViewModel : ReservationsViewModel() {
         return allReservations.count { it.campsiteID == listingId && it.status == "reserved" }
     }
     /**
-     * Gets the profile to show for a guest.
+     * Finds a guest's profile, used for their picture and contact details.
      *
      * @param entrantId id of the guest's profile.
-     * @return the profile name, or [entrantId] itself when the profile is unknown or
-     *   its name is blank.
+     * @return the matching profile, or null if no loaded profile has that id.
      */
     fun getGuestProfile(entrantId: String): Profile? =
         _profiles.firstOrNull { it.id == entrantId }

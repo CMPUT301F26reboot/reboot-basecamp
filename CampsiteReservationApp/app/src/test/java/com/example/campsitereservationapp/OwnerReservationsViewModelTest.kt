@@ -151,4 +151,35 @@ class OwnerReservationsViewModelTest {
 
         assertEquals("entrant-no-name", viewModel.getGuestName("entrant-no-name"))
     }
+
+    // test getGuestProfile
+
+    @Test
+    fun getGuestProfile_shouldReturnTheMatchingProfile() {
+        val otherGuest = Profile(name = "Alex Chen").apply { id = "entrant-other" }
+        firestore.deliver("Profiles", Profile::class.java, listOf(otherGuest, guest))
+
+        assertEquals(guest, viewModel.getGuestProfile(entrantId))
+    }
+
+    @Test
+    fun getGuestProfile_shouldIncludeContactDetails() {
+        val contact = Profile(name = "Jordan Ellis").apply {
+            id = "entrant-contact"
+            email = "jordan.ellis@example.com"
+            phoneNumber = "+1 (202) 555-0148"
+        }
+        firestore.deliver("Profiles", Profile::class.java, listOf(contact))
+
+        val result = viewModel.getGuestProfile("entrant-contact")
+
+        assertEquals("jordan.ellis@example.com", result?.email)
+        assertEquals("+1 (202) 555-0148", result?.phoneNumber)
+    }
+
+    @Test
+    fun getGuestProfile_unknownId_shouldReturnNull() {
+        assertNull(viewModel.getGuestProfile("entrant-unknown"))
+    }
+
 }
