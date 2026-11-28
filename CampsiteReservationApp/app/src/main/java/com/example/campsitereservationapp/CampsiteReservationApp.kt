@@ -23,6 +23,7 @@ import com.example.campsitereservationapp.ui.owner.Notifications.OwnerSendNotifi
 import com.example.campsitereservationapp.ui.Admin.BrowseCampsites.AdminBrowseCampsitesScreen
 import com.example.campsitereservationapp.ui.Admin.BrowseProfile.AdminBrowseProfilesScreen
 import com.example.campsitereservationapp.ui.Admin.CampsiteImages.CampsiteImagesScreen
+import com.example.campsitereservationapp.ui.Admin.Notifications.AdminNotificationLogsScreen
 import com.example.campsitereservationapp.ui.owner.CampsiteDetails.OwnerCampsiteDetailsScreen
 import com.example.campsitereservationapp.ui.owner.OwnerLotteryCreationScreen
 import com.example.campsitereservationapp.ui.TempNavigationScreen
@@ -566,7 +567,7 @@ fun CampsiteReservationApp() {
                         navController.navigate("adminBrowseProfiles")
                     },
                     onNotificationLogs = {
-                        //navController.navigate("adminNotificationLogs")
+                        navController.navigate("adminNotificationLogs")
                     },
                     onMessageLogs = {
                         //navController.navigate("adminMessageLogs")
@@ -615,6 +616,16 @@ fun CampsiteReservationApp() {
             route = "adminBrowseProfiles"
         ){
             AdminBrowseProfilesScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = "adminNotificationLogs"
+        ){
+            AdminNotificationLogsScreen(
                 onBack = {
                     navController.popBackStack()
                 }
