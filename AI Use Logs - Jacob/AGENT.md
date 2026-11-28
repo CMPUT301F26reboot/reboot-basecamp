@@ -9,6 +9,10 @@ Follow these instructions in any Claude chat that is given this file. Keep a Mar
 - Never edit or overwrite another chat's log.
 - Create the log on the first prompt after receiving this file, and include the whole chat so far.
 
+## Project location
+
+After reading this file, ask the user for the location path of the project.
+
 ## When to update
 
 Update the log after every prompt, with no exceptions:
