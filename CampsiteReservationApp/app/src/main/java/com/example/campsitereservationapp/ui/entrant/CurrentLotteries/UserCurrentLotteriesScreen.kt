@@ -3,7 +3,6 @@
  */
 package com.example.campsitereservationapp.ui.entrant.CurrentLotteries
 
-import android.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.*
@@ -56,7 +54,10 @@ fun UserCurrentLotteriesScreen(
 ){
     vm.start(profileId)
     var showWon by remember{ mutableStateOf(true) }
-    var showOngoing by remember{ mutableStateOf(false) }
+    var showOngoing by remember{ mutableStateOf(true) }
+    var allButtonToggled by remember { mutableStateOf(true) }
+    var wonButtonToggled by remember { mutableStateOf(false) }
+    var ongoingButtonToggled by remember { mutableStateOf(false) }
 
     //--------Back Button----------
     FilledTonalIconButton(
@@ -70,41 +71,90 @@ fun UserCurrentLotteriesScreen(
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)){
         Spacer(Modifier.padding(32.dp))
 
-        //--------Which Lottery Type Buttons----
-        Row(modifier = Modifier.fillMaxWidth(fraction = 0.7f), horizontalArrangement = Arrangement.spacedBy(10.dp)){
-            //show won button
-            TextButton(
-                modifier = Modifier.toggleable(value = showWon, interactionSource = null, indication = null,
-                    onValueChange = {}),
-                shape = MaterialTheme.shapes.medium,
-                onClick = {showWon = true
-                    showOngoing = false},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+        // Filter buttons
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+
+            //all button
+            Button(
+                onClick = {
+                    showWon = true
+                    showOngoing = true
+                    allButtonToggled = true
+                    wonButtonToggled = false
+                    ongoingButtonToggled = false
+                },
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+                colors = if (allButtonToggled) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            ) {
+                Text(
+                    "All",
+                    fontWeight = FontWeight.Medium,
                 )
-            {
-                Text("Show Won")
             }
-            //show ongoing button
-            TextButton(
-                modifier = Modifier.toggleable(
-                    value = showOngoing, interactionSource = null, indication = null,
-                    onValueChange = {}),
-                shape = MaterialTheme.shapes.medium,
-                onClick = {showWon = false
-                    showOngoing = true},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-            )
-            {
-                Text("Show Ongoing")
+            //won button
+            Button(
+                onClick =  {
+                    showWon = true
+                    showOngoing = false
+                    allButtonToggled = false
+                    wonButtonToggled = true
+                    ongoingButtonToggled = false
+                },
+                colors = if (wonButtonToggled) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+            ) {
+                Text("Won", fontWeight = FontWeight.Medium)
             }
+            // Ongoing button
+            Button(
+                onClick = {
+                    showWon = false
+                    showOngoing = true
+                    allButtonToggled = false
+                    wonButtonToggled = false
+                    ongoingButtonToggled = true
+                },
+                colors = if (ongoingButtonToggled) {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            ) {
+                Text("Ongoing", fontWeight = FontWeight.Medium)
+            }
+
         }
 
         if(showWon){
@@ -114,10 +164,12 @@ fun UserCurrentLotteriesScreen(
                         lottery = lottery,
                         imageURL = vm.getLotteryImage(lottery),
                         profileId = profileId,
-                        onToBooking = onToBooking)
+                        onToBooking = onToBooking
+                    )
                 }
             }
-        }else{
+        }
+        if(showOngoing){
             LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 items(vm.ongoingLotteries.toList()){ lottery ->
                     OngoingLotteryCard(
